@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>edu.hcmus</groupId>
-    <artifactId>doc</artifactId>
+    <artifactId>doc-back</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
@@ -18,6 +18,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
     <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+    <typescript-generator.version>3.1.1185</typescript-generator.version>
+    <typescript-generator.outputFile>target/models.ts</typescript-generator.outputFile>
   </properties>
   <dependencies>
     <dependency>
@@ -66,6 +68,34 @@
               <version>${org.mapstruct.version}</version>
             </path>
           </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>cz.habarta.typescript-generator</groupId>
+        <artifactId>typescript-generator-maven-plugin</artifactId>
+        <version>${typescript-generator.version}</version>
+        <executions>
+          <execution>
+            <id>generate</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <jsonLibrary>jackson2</jsonLibrary>
+          <classPatterns>
+            <classPattern>edu.hcmus.doc.model.dto.*</classPattern>
+          </classPatterns>
+          <excludeClasses>
+            <class>java.io.Serializable</class>
+          </excludeClasses>
+          <mapEnum>asEnum</mapEnum>
+          <outputKind>module</outputKind>
+          <outputFileType>implementationFile</outputFileType>
+          <outputFile>${typescript-generator.outputFile}</outputFile>
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>
