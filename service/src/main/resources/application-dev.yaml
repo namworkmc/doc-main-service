@@ -1,8 +1,8 @@
 spring:
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: validate
-    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -22,3 +22,8 @@ spring:
 logging:
   level:
     sql: debug
+
+doc:
+  http:
+    auth-token-header-name: DOC-Auth-Token
+    auth-token: secret

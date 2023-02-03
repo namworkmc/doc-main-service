@@ -18,10 +18,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.50'
+          cpus: '2'
           memory: 512M
         reservations:
-          cpus: '0.25'
+          cpus: '1'
           memory: 256M
 
   # Keycloak service
@@ -38,16 +38,17 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.50'
+          cpus: '2'
           memory: 512M
         reservations:
-          cpus: '0.25'
+          cpus: '1'
           memory: 256M
   keycloak:
     container_name: keycloak
     image: bitnami/keycloak:20.0.3
     volumes:
       - ./keycloak/realms:/opt/bitnami/keycloak/data/import
+      - ./keycloak/providers/doc-user-provider-1.0.jar:/opt/bitnami/keycloak/providers/doc-user-provider-1.0.jar
     depends_on:
       - keycloak-database
     ports:

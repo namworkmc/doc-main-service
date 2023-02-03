@@ -1,18 +1,16 @@
 package edu.hcmus.doc.model.entity;
 
-import java.util.HashSet;
+import edu.hcmus.doc.model.enums.DocRoleEnum;
 import java.util.Objects;
-import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.ToString.Exclude;
 import org.hibernate.Hibernate;
 
 @Getter
@@ -20,21 +18,12 @@ import org.hibernate.Hibernate;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "user", schema = "public")
-public class User extends DocAbstractEntity {
+@Table(name = "doc_role", schema = "public")
+public class DocRole extends DocAbstractEntity {
 
-  @Column(name = "username")
-  private String username;
-
-  @Column(name = "password")
-  private String password;
-
-  @Column(name = "email")
-  private String email;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  @Exclude
-  private Set<UserRole> roles = new HashSet<>();
+  @Enumerated(EnumType.STRING)
+  @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(10)")
+  private DocRoleEnum name;
 
   @Override
   public boolean equals(Object o) {
@@ -44,8 +33,8 @@ public class User extends DocAbstractEntity {
     if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
       return false;
     }
-    User user = (User) o;
-    return getId() != null && Objects.equals(getId(), user.getId());
+    DocRole docRole = (DocRole) o;
+    return getId() != null && Objects.equals(getId(), docRole.getId());
   }
 
   @Override
