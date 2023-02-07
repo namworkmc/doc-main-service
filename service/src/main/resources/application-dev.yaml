@@ -17,7 +17,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8180/realms/doc-realm
+          issuer-uri: http://host.docker.internal:8180/realms/doc-realm
 
 logging:
   level:
