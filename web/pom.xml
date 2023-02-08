@@ -4,8 +4,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>edu.hcmus</groupId>
-    <artifactId>doc-back</artifactId>
+    <groupId>edu.hcmus.doc.main-service</groupId>
+    <artifactId>doc-main-service-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
@@ -21,14 +21,15 @@
     <typescript-generator.version>3.1.1185</typescript-generator.version>
     <typescript-generator.outputFile>target/models.ts</typescript-generator.outputFile>
   </properties>
+
   <dependencies>
     <dependency>
-      <groupId>edu.hcmus</groupId>
+      <groupId>edu.hcmus.doc.main-service</groupId>
       <artifactId>service</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>edu.hcmus</groupId>
+      <groupId>edu.hcmus.doc.main-service</groupId>
       <artifactId>common</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>

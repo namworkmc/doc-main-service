@@ -6,9 +6,9 @@
 
   <packaging>pom</packaging>
   <modules>
+    <module>common</module>
     <module>service</module>
     <module>web</module>
-    <module>common</module>
   </modules>
 
   <parent>
@@ -18,11 +18,11 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
-  <groupId>edu.hcmus</groupId>
-  <artifactId>doc-back</artifactId>
+  <groupId>edu.hcmus.doc.main-service</groupId>
+  <artifactId>doc-main-service-parent</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>doc-back</name>
-  <description>doc-back</description>
+  <name>doc-main-service</name>
+  <description>doc-main-service</description>
 
   <properties>
     <java.version>17</java.version>
@@ -42,7 +42,7 @@
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 
-    <!--    Util dependencies    -->
+    <!--    Utils dependencies    -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
@@ -82,6 +82,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -100,7 +101,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <mainClass>edu.hcmus.doc.DocBackApplication</mainClass>
+          <mainClass>edu.hcmus.doc.mainservice.DocMainServiceApplication</mainClass>
           <excludes>
             <exclude>
               <groupId>org.projectlombok</groupId>
