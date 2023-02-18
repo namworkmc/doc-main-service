@@ -1,0 +1,29 @@
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/doc?stringtype=unspecified
+    username: admin
+    password: admin
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://host.docker.internal:8180/realms/doc-realm
+
+logging:
+  level:
+    sql: debug
+
+doc:
+  http:
+    auth-token-header-name: DOC-Auth-Token
+    auth-token: secret

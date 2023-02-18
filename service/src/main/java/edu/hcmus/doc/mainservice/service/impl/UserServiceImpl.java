@@ -51,9 +51,6 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public boolean validateUserCredentialsByUserId(Long id, String password) {
-    return passwordEncoder.matches(password, userRepository
-        .findById(id)
-        .orElseThrow(() -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND))
-        .getPassword());
+    return passwordEncoder.matches(password, getUserById(id).getPassword());
   }
 }

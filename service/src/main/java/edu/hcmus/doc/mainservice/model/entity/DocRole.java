@@ -22,7 +22,7 @@ import org.hibernate.Hibernate;
 public class DocRole extends DocAbstractEntity {
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(10)")
+  @Column(name = "name", nullable = false, unique = true, columnDefinition = "VARCHAR(10)")
   private DocRoleEnum name;
 
   @Override

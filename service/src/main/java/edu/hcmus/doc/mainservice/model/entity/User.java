@@ -3,7 +3,6 @@ package edu.hcmus.doc.mainservice.model.entity;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -23,17 +22,23 @@ import org.hibernate.Hibernate;
 @Table(name = "user", schema = "public")
 public class User extends DocAbstractEntity {
 
-  @Column(name = "username")
+  @Column(name = "first_name", nullable = false, columnDefinition = "VARCHAR(255)")
+  private String firstName;
+
+  @Column(name = "last_name", nullable = false, columnDefinition = "VARCHAR(255)")
+  private String lastName;
+
+  @Column(name = "username", nullable = false, unique = true, columnDefinition = "VARCHAR(255)")
   private String username;
 
-  @Column(name = "password")
+  @Column(name = "password", nullable = false, unique = true, columnDefinition = "VARCHAR(255)")
   private String password;
 
-  @Column(name = "email")
+  @Column(name = "email", nullable = false, unique = true, columnDefinition = "VARCHAR(255)")
   private String email;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   @Exclude
+  @OneToMany(mappedBy = "user")
   private Set<UserRole> roles = new HashSet<>();
 
   @Override
