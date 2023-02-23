@@ -22,7 +22,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Order(1)
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig {
+public class DocMainServiceSecurityConfig {
 
   private static final String REALM_ACCESS = "realm_access";
 

@@ -1,6 +1,6 @@
 package edu.hcmus.doc.mainservice.security.config;
 
-import edu.hcmus.doc.DocURL;
+import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.security.filter.SecretKeyAuthFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

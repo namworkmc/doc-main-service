@@ -53,7 +53,7 @@
       <version>${com.querydsl.version}</version>
     </dependency>
     <dependency>
-      <groupId>edu.hcmus</groupId>
+      <groupId>edu.hcmus.doc.main-service</groupId>
       <artifactId>common</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>

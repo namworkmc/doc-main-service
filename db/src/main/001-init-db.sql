@@ -20,7 +20,9 @@ CREATE TABLE "user_role"
 (
     "user_id" BIGINT NOT NULL,
     "role_id" BIGINT NOT NULL,
-    CONSTRAINT "user_role_pk" PRIMARY KEY ("user_id", "role_id")
+    CONSTRAINT "user_role_pk" PRIMARY KEY ("user_id", "role_id"),
+    CONSTRAINT "user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user" ("id"),
+    CONSTRAINT "role_id_fk" FOREIGN KEY ("role_id") REFERENCES "doc_role" ("id")
 );
 
 INSERT INTO "user" ("first_name", "last_name", "username", "password", "email")
