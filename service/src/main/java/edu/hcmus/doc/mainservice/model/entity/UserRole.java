@@ -1,60 +1,38 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
 import edu.hcmus.doc.mainservice.model.entity.pk.UserRolePK;
-import java.util.Objects;
-import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.Hibernate;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
+@Data
+@NoArgsConstructor
 @Entity
-@Table(name = "user_role", schema = "public")
-@IdClass(UserRolePK.class)
-public class UserRole {
+@Table(name = "user_role", schema = "doc_main", catalog = "doc")
+public class UserRole extends DocBaseEntity {
 
-  @Id
-  @Column(name = "user_id")
-  private Long userId;
+  @EmbeddedId
+  private UserRolePK id;
 
-  @Id
-  @Column(name = "role_id")
-  private Long roleId;
-
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("userId")
+  @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
   private User user;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("roleId")
-  private DocRole role;
+  @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
+  private DocSystemRole role;
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-      return false;
-    }
-    UserRole userRole = (UserRole) o;
-    return userId != null && Objects.equals(userId, userRole.userId)
-        && roleId != null && Objects.equals(roleId, userRole.roleId);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(userId, roleId);
+  public UserRole(User user, DocSystemRole role) {
+    this.id = new UserRolePK(user.getId(), role.getId());
+    this.user = user;
+    this.role = role;
   }
 }

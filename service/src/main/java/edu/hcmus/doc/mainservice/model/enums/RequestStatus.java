@@ -3,11 +3,13 @@ package edu.hcmus.doc.mainservice.model.enums;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum DocRoleEnum {
+public enum RequestStatus {
 
-  APPROVER("APPROVER"),
-  REVIEWER("REVIEWER"),
-  SUBMITTER("SUBMITTER");
+  PENDING("PENDING"),
+
+  APPROVED("APPROVED"),
+
+  REJECTED("REJECTED");
 
   public final String value;
 }

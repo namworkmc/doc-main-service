@@ -39,17 +39,17 @@ public class KeycloakUserController extends DocAbstractController {
 
   @GetMapping("/{id}")
   public UserDto getUserById(@PathVariable Long id) {
-    return userMapper.toDto(userService.getUserById(id));
+    return userDecoratorMapper.toDto(userService.getUserById(id));
   }
 
   @GetMapping("/username/{username}")
   public UserDto getUserByUsername(@PathVariable String username) {
-    return userMapper.toDto(userService.getUserByUsername(username));
+    return userDecoratorMapper.toDto(userService.getUserByUsername(username));
   }
 
   @GetMapping("/email/{email}")
   public UserDto getUserByEmail(@PathVariable String email) {
-    return userMapper.toDto(userService.getUserByEmail(email));
+    return userDecoratorMapper.toDto(userService.getUserByEmail(email));
   }
 
   @GetMapping("/total-users")

@@ -3,7 +3,10 @@
 
 name: DOC build and test
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches: [ main ]
 
 jobs:
   Test:
@@ -21,8 +24,5 @@ jobs:
           distribution: 'temurin'
           java-version: '17.0.5'
 
-      - name: Build
-        run:  mvn clean install -DskipTests=true -DskipTypescriptGenerator=true
-
       - name: Test
-        run: mvn test -DskipTypescriptGenerator=true
+        run: mvn clean test -DskipTypescriptGenerator=true

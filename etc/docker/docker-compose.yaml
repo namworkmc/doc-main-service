@@ -2,7 +2,7 @@ version: '3.7'
 services:
   # Databases
   doc-database:
-    container_name: doc-database
+    container_name: doc-main-service-database
     image: postgres:15.1-alpine3.17
     ports:
       - "5432:5432"

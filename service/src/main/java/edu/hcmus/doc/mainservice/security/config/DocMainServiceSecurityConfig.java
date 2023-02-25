@@ -39,7 +39,7 @@ public class DocMainServiceSecurityConfig {
         .and()
         .authorizeRequests()
         .anyRequest()
-        .authenticated()
+        .permitAll()
         .and()
         .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 

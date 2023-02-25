@@ -2,17 +2,16 @@ package edu.hcmus.doc.mainservice.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import edu.hcmus.doc.mainservice.model.entity.DocRole;
+import edu.hcmus.doc.mainservice.model.entity.DocSystemRole;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.entity.UserRole;
-import edu.hcmus.doc.mainservice.model.enums.DocRoleEnum;
+import edu.hcmus.doc.mainservice.model.exception.RoleNotFoundException;
 import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-class UserRepositoryTest extends AbstractRepositoryTest {
+class UserRepositoryTest extends DocAbstractRepositoryTest {
 
   @Autowired
   private PasswordEncoder passwordEncoder;
@@ -26,14 +25,13 @@ class UserRepositoryTest extends AbstractRepositoryTest {
     user.setUsername("test");
     user.setEmail("test");
     user.setPassword(passwordEncoder.encode("test"));
-
-    DocRole role = new DocRole();
-    role.setName(DocRoleEnum.REVIEWER);
-    UserRole userRole = new UserRole();
-    userRole.setRole(role);
-    user.setRoles(Set.of(userRole));
-
     userRepository.save(user);
+
+    DocSystemRole docSystemRole = docSystemRoleRepository.findById(1L)
+        .orElseThrow(() -> new RoleNotFoundException(RoleNotFoundException.ROLE_NOT_FOUND));
+
+    UserRole userRole = new UserRole(user, docSystemRole);
+    userRoleRepository.save(userRole);
 
     // When
     List<User> users = userRepository.getUsers("", 0, 10);
@@ -47,20 +45,20 @@ class UserRepositoryTest extends AbstractRepositoryTest {
     // Given
     String query = "test";
 
+    // Given
     User user = new User();
-    user.setFirstName(query);
-    user.setLastName(query);
-    user.setUsername(query);
-    user.setEmail(query);
-    user.setPassword(passwordEncoder.encode(query));
-
-    DocRole role = new DocRole();
-    role.setName(DocRoleEnum.REVIEWER);
-    UserRole userRole = new UserRole();
-    userRole.setRole(role);
-    user.setRoles(Set.of(userRole));
-
+    user.setFirstName("test");
+    user.setLastName("test");
+    user.setUsername("test");
+    user.setEmail("test");
+    user.setPassword(passwordEncoder.encode("test"));
     userRepository.save(user);
+
+    DocSystemRole docSystemRole = docSystemRoleRepository.findById(1L)
+        .orElseThrow(() -> new RoleNotFoundException(RoleNotFoundException.ROLE_NOT_FOUND));
+
+    UserRole userRole = new UserRole(user, docSystemRole);
+    userRoleRepository.save(userRole);
 
     // When
     List<User> users = userRepository.getUsers(query, 0, 10);
@@ -86,20 +84,20 @@ class UserRepositoryTest extends AbstractRepositoryTest {
     // Given
     String username = "username";
 
+    // Given
     User user = new User();
     user.setFirstName(username);
     user.setLastName(username);
     user.setUsername(username);
     user.setEmail(username);
     user.setPassword(passwordEncoder.encode(username));
-
-    DocRole role = new DocRole();
-    role.setName(DocRoleEnum.REVIEWER);
-    UserRole userRole = new UserRole();
-    userRole.setRole(role);
-    user.setRoles(Set.of(userRole));
-
     userRepository.save(user);
+
+    DocSystemRole docSystemRole = docSystemRoleRepository.findById(1L)
+        .orElseThrow(() -> new RoleNotFoundException(RoleNotFoundException.ROLE_NOT_FOUND));
+
+    UserRole userRole = new UserRole(user, docSystemRole);
+    userRoleRepository.save(userRole);
 
     // When
     User actual = userRepository.findByUsername(username).orElse(null);
@@ -113,20 +111,20 @@ class UserRepositoryTest extends AbstractRepositoryTest {
     // Given
     String email = "email";
 
+    // Given
     User user = new User();
     user.setFirstName(email);
     user.setLastName(email);
     user.setUsername(email);
     user.setEmail(email);
     user.setPassword(passwordEncoder.encode(email));
-
-    DocRole role = new DocRole();
-    role.setName(DocRoleEnum.REVIEWER);
-    UserRole userRole = new UserRole();
-    userRole.setRole(role);
-    user.setRoles(Set.of(userRole));
-
     userRepository.save(user);
+
+    DocSystemRole docSystemRole = docSystemRoleRepository.findById(1L)
+        .orElseThrow(() -> new RoleNotFoundException(RoleNotFoundException.ROLE_NOT_FOUND));
+
+    UserRole userRole = new UserRole(user, docSystemRole);
+    userRoleRepository.save(userRole);
 
     // When
     User actual = userRepository.findByEmail(email).orElse(null);
