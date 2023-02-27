@@ -9,7 +9,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>web</artifactId>
+  <artifactId>doc-main-service-web</artifactId>
   <packaging>jar</packaging>
 
   <properties>
@@ -21,19 +21,19 @@
     <typescript-generator.version>3.1.1185</typescript-generator.version>
     <typescript-generator.outputFile>target/models.ts</typescript-generator.outputFile>
 
-    <!--    Flags-->
-    <skipTypescriptGenerator>false</skipTypescriptGenerator>
+    <!--    Flags   -->
+    <skipTypescriptGenerator>true</skipTypescriptGenerator>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>edu.hcmus.doc.main-service</groupId>
-      <artifactId>service</artifactId>
+      <artifactId>doc-main-service-service</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>edu.hcmus.doc.main-service</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>doc-main-service-common</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
 

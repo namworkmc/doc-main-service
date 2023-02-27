@@ -9,7 +9,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>service</artifactId>
+  <artifactId>doc-main-service-service</artifactId>
   <packaging>jar</packaging>
 
   <properties>
@@ -52,9 +52,10 @@
       <artifactId>querydsl-core</artifactId>
       <version>${com.querydsl.version}</version>
     </dependency>
+
     <dependency>
       <groupId>edu.hcmus.doc.main-service</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>doc-main-service-common</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>

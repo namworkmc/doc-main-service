@@ -1,8 +1,5 @@
 package edu.hcmus.doc.mainservice.common;
 
-import lombok.Data;
-
-@Data
 public class PostgresContainerProps {
 
   public static final String IMAGE = "postgres:15.1-alpine3.17";
