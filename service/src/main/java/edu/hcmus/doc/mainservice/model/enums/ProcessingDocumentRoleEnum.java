@@ -7,7 +7,8 @@ public enum ProcessingDocumentRoleEnum {
 
   APPROVER("APPROVER"),
   REVIEWER("REVIEWER"),
-  SUBMITTER("SUBMITTER");
+  SUBMITTER("SUBMITTER"),
+  COLLABORATOR("COLLABORATOR");
 
   public final String value;
 }

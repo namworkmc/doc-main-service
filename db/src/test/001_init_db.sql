@@ -19,14 +19,15 @@ CREATE TABLE "doc_base_table"
 CREATE TABLE "processing_document_role"
 (
     "id"   SERIAL      NOT NULL,
-    "name" VARCHAR(20) NOT NULL UNIQUE,
+    "name" VARCHAR(20) NOT NULL UNIQUE CHECK ( "name" IN ('APPROVER', 'REVIEWER', 'SUBMITTER',
+                                                          'COLLABORATOR') ),
     CONSTRAINT "processing_document_role_pk" PRIMARY KEY ("id")
 ) INHERITS ("doc_base_table");
 
 CREATE TABLE "doc_system_role"
 (
     "id"   SERIAL      NOT NULL,
-    "name" VARCHAR(20) NOT NULL UNIQUE,
+    "name" VARCHAR(20) NOT NULL UNIQUE CHECK ( "name" IN ('DIRECTOR', 'EXPERT', 'MANAGER', 'STAFF') ),
     CONSTRAINT "doc_system_role_pk" PRIMARY KEY ("id")
 ) INHERITS ("doc_base_table");
 
@@ -117,7 +118,7 @@ CREATE TABLE "processing_user"
 (
     "user_id"           BIGINT NOT NULL,
     "processing_doc_id" BIGINT NOT NULL,
-    "step"              INT    NOT NULL,
+    "step"              INT    NOT NULL CHECK ( "step" > 0 ),
     CONSTRAINT "processing_user_pk" PRIMARY KEY ("user_id", "processing_doc_id", "step")
 ) INHERITS ("doc_base_table");
 
@@ -133,7 +134,7 @@ CREATE TABLE "return_request"
     "id"                SERIAL           NOT NULL,
     "user_id"           BIGINT           NOT NULL,
     "processing_doc_id" BIGINT           NOT NULL,
-    "step"              INT              NOT NULL,
+    "step"              INT              NOT NULL CHECK ( "step" > 0 ),
     "reason"            VARCHAR(200)     NOT NULL,
     "status"            "request_status" NOT NULL,
     CONSTRAINT "return_request_pk" PRIMARY KEY ("id")
@@ -153,7 +154,7 @@ CREATE TABLE "processing_user_role"
 (
     "user_id"            BIGINT NOT NULL,
     "processing_doc_id"  BIGINT NOT NULL,
-    "step"               INT    NOT NULL,
+    "step"               INT    NOT NULL CHECK ( "step" > 0 ),
     "processing_role_id" BIGINT NOT NULL,
     CONSTRAINT "processing_user_role_pk" PRIMARY KEY ("user_id", "processing_doc_id", "step",
                                                       "processing_role_id")
@@ -161,7 +162,7 @@ CREATE TABLE "processing_user_role"
 
 CREATE TABLE "processing_flow"
 (
-    "flow_version" BIGINT         NOT NULL,
+    "flow_version" BIGINT         NOT NULL CHECK ( "flow_version" > 0 ),
     "doc_type_id"  BIGINT         NOT NULL,
     "flow"         VARCHAR(255)[] NOT NULL,
     CONSTRAINT "processing_flow_pk" PRIMARY KEY ("flow_version", "doc_type_id")
