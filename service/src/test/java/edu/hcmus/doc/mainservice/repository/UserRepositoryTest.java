@@ -2,10 +2,9 @@ package edu.hcmus.doc.mainservice.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import edu.hcmus.doc.mainservice.model.entity.DocSystemRole;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.entity.UserRole;
-import edu.hcmus.doc.mainservice.model.exception.RoleNotFoundException;
+import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setPassword(passwordEncoder.encode("test"));
     userRepository.save(user);
 
-    DocSystemRole docSystemRole = docSystemRoleRepository.findById(1L)
-        .orElseThrow(() -> new RoleNotFoundException(RoleNotFoundException.ROLE_NOT_FOUND));
+    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
 
     UserRole userRole = new UserRole(user, docSystemRole);
     userRoleRepository.save(userRole);
@@ -54,8 +52,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setPassword(passwordEncoder.encode("test"));
     userRepository.save(user);
 
-    DocSystemRole docSystemRole = docSystemRoleRepository.findById(1L)
-        .orElseThrow(() -> new RoleNotFoundException(RoleNotFoundException.ROLE_NOT_FOUND));
+    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
 
     UserRole userRole = new UserRole(user, docSystemRole);
     userRoleRepository.save(userRole);
@@ -93,8 +90,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setPassword(passwordEncoder.encode(username));
     userRepository.save(user);
 
-    DocSystemRole docSystemRole = docSystemRoleRepository.findById(1L)
-        .orElseThrow(() -> new RoleNotFoundException(RoleNotFoundException.ROLE_NOT_FOUND));
+    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
 
     UserRole userRole = new UserRole(user, docSystemRole);
     userRoleRepository.save(userRole);
@@ -120,8 +116,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setPassword(passwordEncoder.encode(email));
     userRepository.save(user);
 
-    DocSystemRole docSystemRole = docSystemRoleRepository.findById(1L)
-        .orElseThrow(() -> new RoleNotFoundException(RoleNotFoundException.ROLE_NOT_FOUND));
+    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
 
     UserRole userRole = new UserRole(user, docSystemRole);
     userRoleRepository.save(userRole);

@@ -1,6 +1,5 @@
 CREATE SCHEMA doc_main;
-SET
-    SEARCH_PATH TO doc_main;
+SET SEARCH_PATH TO doc_main;
 
 CREATE TYPE "request_status" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 CREATE TYPE "urgency" AS ENUM ('LOW', 'MEDIUM', 'HIGH');

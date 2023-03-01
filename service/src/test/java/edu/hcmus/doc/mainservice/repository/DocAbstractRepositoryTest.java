@@ -47,9 +47,6 @@ abstract class DocAbstractRepositoryTest {
   protected ProcessingDocumentRepository processingDocumentRepository;
 
   @Autowired
-  protected ProcessingDocumentRoleRepository processingDocumentRoleRepository;
-
-  @Autowired
   protected ProcessingFlowRepository processingFlowRepository;
 
   @Autowired
@@ -66,9 +63,6 @@ abstract class DocAbstractRepositoryTest {
 
   @Autowired
   protected UserRepository userRepository;
-
-  @Autowired
-  protected DocSystemRoleRepository docSystemRoleRepository;
 
   @Autowired
   protected UserRoleRepository userRoleRepository;

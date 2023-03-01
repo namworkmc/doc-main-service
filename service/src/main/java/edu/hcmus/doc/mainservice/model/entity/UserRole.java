@@ -1,6 +1,7 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
 import edu.hcmus.doc.mainservice.model.entity.pk.UserRolePK;
+import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,21 +19,23 @@ import lombok.NoArgsConstructor;
 public class UserRole extends DocBaseEntity {
 
   @EmbeddedId
-  private UserRolePK id;
+  private UserRolePK id = new UserRolePK();
 
   @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("userId")
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
   private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @MapsId("roleId")
-  @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
-  private DocSystemRole role;
-
-  public UserRole(User user, DocSystemRole role) {
-    this.id = new UserRolePK(user.getId(), role.getId());
+  public UserRole(User user, DocSystemRoleEnum role) {
     this.user = user;
-    this.role = role;
+    this.setRole(role);
+  }
+
+  public DocSystemRoleEnum getRole() {
+    return id.getRole();
+  }
+
+  public void setRole(DocSystemRoleEnum role) {
+    id.setRole(role);
   }
 }
