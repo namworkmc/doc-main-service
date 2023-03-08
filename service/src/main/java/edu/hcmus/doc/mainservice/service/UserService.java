@@ -16,4 +16,6 @@ public interface UserService {
   long getTotalUsers();
 
   boolean validateUserCredentialsByUserId(Long id, String password);
+
+  User getCurrentUser();
 }

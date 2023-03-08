@@ -1,9 +1,10 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
+import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
+import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.UserService;
-import edu.hcmus.doc.mainservice.model.entity.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,5 +53,12 @@ public class UserServiceImpl implements UserService {
   @Override
   public boolean validateUserCredentialsByUserId(Long id, String password) {
     return passwordEncoder.matches(password, getUserById(id).getPassword());
+  }
+
+  @Override
+  public User getCurrentUser() {
+    return userRepository
+        .findByUsername(SecurityUtils.getCurrentName())
+        .orElseThrow(() -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND));
   }
 }

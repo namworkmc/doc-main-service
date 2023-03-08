@@ -1,10 +1,14 @@
 package edu.hcmus.doc.mainservice.security.config;
 
+import static java.util.Arrays.asList;
+
+import edu.hcmus.doc.mainservice.DocURL;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,8 +22,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@Order(1)
+@RequiredArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class DocMainServiceSecurityConfig {
@@ -27,6 +34,8 @@ public class DocMainServiceSecurityConfig {
   private static final String REALM_ACCESS = "realm_access";
 
   private static final String ROLES = "roles";
+
+  private static final String USERNAME = "username";
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,12 +47,26 @@ public class DocMainServiceSecurityConfig {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-        .anyRequest()
+        .antMatchers(DocURL.API_V1 + "/security/auth/**")
         .permitAll()
+        .anyRequest()
+        .authenticated()
         .and()
         .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 
     return http.build();
+  }
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    final CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(List.of("*"));
+    configuration.setAllowedMethods(asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
+    configuration.setAllowCredentials(false);
+    configuration.setAllowedHeaders(asList("Authorization", "Cache-Control", "Content-Type"));
+    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
   }
 
   @Bean
@@ -58,6 +81,7 @@ public class DocMainServiceSecurityConfig {
 
     JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
     jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+    jwtAuthenticationConverter.setPrincipalClaimName(USERNAME);
 
     return jwtAuthenticationConverter;
   }

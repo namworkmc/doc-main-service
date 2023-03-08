@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
+import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.impl.UserServiceImpl;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 
 class UserServiceTest extends AbstractServiceTest {
 
@@ -250,5 +252,31 @@ class UserServiceTest extends AbstractServiceTest {
     assertThat(passwordCaptor.getAllValues()).containsExactly(password, encodedPassword);
 
     assertThat(userService.validateUserCredentialsByUserId(id, password)).isFalse();
+  }
+
+  @Test
+  @WithMockUser(username = "username")
+  void testGetCurrentUser() {
+    // Given
+    String username = "username";
+
+    User user = new User();
+    user.setUsername(username);
+
+    // When
+    when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
+
+    // Then
+    userService.getCurrentUser();
+
+    ArgumentCaptor<String> usernameCaptor = ArgumentCaptor.forClass(String.class);
+    verify(userRepository).findByUsername(usernameCaptor.capture());
+
+    assertThat(usernameCaptor.getValue()).isEqualTo(username);
+    assertThat(usernameCaptor.getValue()).isEqualTo(SecurityUtils.getCurrentName());
+
+    assertThat(userService.getCurrentUser())
+        .isNotNull()
+        .is(new Condition<>(u -> username.equals(u.getUsername()), "User username is: " + username));
   }
 }

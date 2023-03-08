@@ -27,3 +27,9 @@ doc:
   http:
     auth-token-header-name: DOC-Auth-Token
     auth-token: secret
+
+keycloak:
+  url: http://host.docker.internal:8180/realms/doc-realm/protocol/openid-connect/token
+  scope: openid
+  client-id: doc-client
+  client-secret: AW4aUnOGcPpitHX0TI6grfZeA3WLt5ru
