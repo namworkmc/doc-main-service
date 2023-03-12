@@ -27,4 +27,12 @@ public class ProcessingUser extends DocBaseEntity {
   @MapsId("processingDocId")
   @JoinColumn(name = "processing_doc_id", referencedColumnName = "id", nullable = false)
   private ProcessingDocument processingDocument;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "processing_user_role_id", referencedColumnName = "id", nullable = false)
+  private ProcessingUserRole processingUserRole;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "return_request_id", referencedColumnName = "id", nullable = false)
+  private ReturnRequest returnRequest;
 }
