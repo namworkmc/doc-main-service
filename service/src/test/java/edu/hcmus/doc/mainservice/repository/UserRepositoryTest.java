@@ -28,7 +28,9 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
 
     DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
 
-    UserRole userRole = new UserRole(user, docSystemRole);
+    UserRole userRole = new UserRole();
+    userRole.setUser(user);
+    userRole.setRole(docSystemRole);
     userRoleRepository.save(userRole);
 
     // When
@@ -54,7 +56,9 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
 
     DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
 
-    UserRole userRole = new UserRole(user, docSystemRole);
+    UserRole userRole = new UserRole();
+    userRole.setUser(user);
+    userRole.setRole(docSystemRole);
     userRoleRepository.save(userRole);
 
     // When
@@ -92,7 +96,9 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
 
     DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
 
-    UserRole userRole = new UserRole(user, docSystemRole);
+    UserRole userRole = new UserRole();
+    userRole.setUser(user);
+    userRole.setRole(docSystemRole);
     userRoleRepository.save(userRole);
 
     // When
@@ -118,7 +124,9 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
 
     DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
 
-    UserRole userRole = new UserRole(user, docSystemRole);
+    UserRole userRole = new UserRole();
+    userRole.setUser(user);
+    userRole.setRole(docSystemRole);
     userRoleRepository.save(userRole);
 
     // When
