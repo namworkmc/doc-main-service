@@ -25,14 +25,14 @@ public class IncomingDocument extends DocAbstractEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "document_type_id", referencedColumnName = "id", nullable = false)
-  private DocumentType documentType;
+  private DocumentType documentType = new DocumentType();
 
   @Column(name = "original_symbol_number", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
   private String originalSymbolNumber;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "distribution_org_id", referencedColumnName = "id", nullable = false)
-  private DistributionOrganization distributionOrg;
+  private DistributionOrganization distributionOrg = new DistributionOrganization();
 
   @Column(name = "distribution_date", nullable = false, columnDefinition = "TIMESTAMP NOT NULL")
   private LocalDateTime distributionDate;
@@ -43,8 +43,8 @@ public class IncomingDocument extends DocAbstractEntity {
   @Column(name = "arriving_time", nullable = false, columnDefinition = "TIME NOT NULL")
   private LocalTime arrivingTime;
 
-  @Column(name = "comment", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
-  private String comment;
+  @Column(name = "summary", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
+  private String summary;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "urgency", nullable = false)
@@ -59,7 +59,7 @@ public class IncomingDocument extends DocAbstractEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "sending_level_id", referencedColumnName = "id", nullable = false)
-  private SendingLevel sendingLevel;
+  private SendingLevel sendingLevel = new SendingLevel();
 
   @Column(name = "is_deleted", nullable = false)
   private boolean isDeleted;

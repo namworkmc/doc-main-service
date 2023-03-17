@@ -18,7 +18,7 @@ public class ProcessingDocument extends DocAbstractEntity {
 
   @OneToOne
   @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id", nullable = false)
-  private IncomingDocument incomingDoc;
+  private IncomingDocument incomingDoc = new IncomingDocument();
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false)

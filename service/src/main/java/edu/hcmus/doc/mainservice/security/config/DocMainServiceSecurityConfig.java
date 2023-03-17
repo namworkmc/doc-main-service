@@ -50,7 +50,7 @@ public class DocMainServiceSecurityConfig {
         .antMatchers(DocURL.API_V1 + "/security/auth/**")
         .permitAll()
         .anyRequest()
-        .authenticated()
+        .permitAll()
         .and()
         .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 

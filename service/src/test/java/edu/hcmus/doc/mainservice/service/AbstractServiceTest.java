@@ -1,7 +1,11 @@
 package edu.hcmus.doc.mainservice.service;
 
+import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
+import edu.hcmus.doc.mainservice.repository.UserRepository;
+import edu.hcmus.doc.mainservice.repository.UserRoleRepository;
 import edu.hcmus.doc.mainservice.util.PostgresContainerExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -9,4 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 @ExtendWith({PostgresContainerExtension.class, MockitoExtension.class})
 abstract class AbstractServiceTest {
 
+  @Mock
+  protected ProcessingDocumentRepository processingDocumentRepository;
+
+  @Mock
+  protected UserRoleRepository userRoleRepository;
+
+  @Mock
+  protected UserRepository userRepository;
 }

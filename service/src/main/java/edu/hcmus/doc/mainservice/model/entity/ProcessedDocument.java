@@ -14,5 +14,5 @@ public class ProcessedDocument extends DocAbstractEntity {
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id", nullable = false)
-  private IncomingDocument incomingDoc;
+  private IncomingDocument incomingDoc = new IncomingDocument();
 }

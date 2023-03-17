@@ -8,18 +8,13 @@ import static org.mockito.Mockito.when;
 
 import edu.hcmus.doc.mainservice.model.entity.UserRole;
 import edu.hcmus.doc.mainservice.model.exception.UserRoleNotFoundException;
-import edu.hcmus.doc.mainservice.repository.UserRoleRepository;
 import edu.hcmus.doc.mainservice.service.impl.UserRoleServiceImpl;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 
 class UserRoleServiceTest extends AbstractServiceTest {
-
-  @Mock
-  private UserRoleRepository userRoleRepository;
 
   private UserRoleService userRoleService;
 

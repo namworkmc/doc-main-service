@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
-import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.impl.UserServiceImpl;
 import java.util.List;
@@ -18,16 +17,12 @@ import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 
 class UserServiceTest extends AbstractServiceTest {
-
-  @Mock
-  private UserRepository userRepository;
 
   @Spy
   private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

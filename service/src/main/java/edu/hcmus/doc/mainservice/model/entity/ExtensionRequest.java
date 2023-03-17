@@ -18,7 +18,7 @@ public class ExtensionRequest extends DocAbstractEntity {
 
   @OneToOne
   @JoinColumn(name = "processing_doc_id", referencedColumnName = "id", nullable = false)
-  private ProcessingDocument processingDoc;
+  private ProcessingDocument processingDoc = new ProcessingDocument();
 
   @Column(name = "reason", nullable = false, length = 200)
   private String reason;

@@ -16,9 +16,9 @@ public class LinkedDocument extends DocAbstractEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id", nullable = false)
-  private IncomingDocument incomingDocument;
+  private IncomingDocument incomingDocument = new IncomingDocument();
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "outgoing_doc_id", referencedColumnName = "id", nullable = false)
-  private OutgoingDocument outgoingDocument;
+  private OutgoingDocument outgoingDocument = new OutgoingDocument();
 }

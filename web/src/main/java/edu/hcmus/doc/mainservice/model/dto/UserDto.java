@@ -5,9 +5,8 @@ import java.util.Set;
 import lombok.Data;
 
 @Data
-public class UserDto {
+public class UserDto extends DocAbstractDto {
 
-  private Long id;
   private String username;
   private String email;
   private Set<DocSystemRoleEnum> roles;

@@ -15,7 +15,7 @@ public class Feedback extends DocAbstractEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "processing_doc_id", referencedColumnName = "id", nullable = false)
-  private ProcessingDocument processingDocument;
+  private ProcessingDocument processingDocument = new ProcessingDocument();
 
   @Column(name = "content", nullable = false, length = 200)
   private String content;

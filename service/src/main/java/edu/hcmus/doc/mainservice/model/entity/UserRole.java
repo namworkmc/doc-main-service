@@ -24,5 +24,5 @@ public class UserRole extends DocAbstractEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-  private User user;
+  private User user = new User();
 }
