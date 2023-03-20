@@ -1,5 +1,7 @@
 package edu.hcmus.doc.mainservice.controller;
 
+import edu.hcmus.doc.mainservice.util.mapper.DistributionOrganizationMapper;
+import edu.hcmus.doc.mainservice.util.mapper.DocumentTypeMapper;
 import edu.hcmus.doc.mainservice.util.mapper.IncomingDocumentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.PaginationMapper;
 import edu.hcmus.doc.mainservice.util.mapper.UserMapper;
@@ -20,4 +22,10 @@ public abstract class DocAbstractController {
 
   @Autowired
   protected PaginationMapper paginationMapper;
+
+  @Autowired
+  protected DocumentTypeMapper documentTypeMapper;
+
+  @Autowired
+  protected DistributionOrganizationMapper distributionOrganizationMapper;
 }

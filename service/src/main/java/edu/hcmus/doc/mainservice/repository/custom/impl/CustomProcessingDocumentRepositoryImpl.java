@@ -4,6 +4,8 @@ import static edu.hcmus.doc.mainservice.model.entity.QIncomingDocument.incomingD
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
@@ -11,6 +13,7 @@ import edu.hcmus.doc.mainservice.model.entity.QDistributionOrganization;
 import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.QSendingLevel;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import java.util.List;
@@ -20,11 +23,20 @@ public class CustomProcessingDocumentRepositoryImpl
     extends DocAbstractCustomRepository<ProcessingDocument>
     implements CustomProcessingDocumentRepository {
 
+  private final StringExpression processingStatusCases = Expressions
+      .cases()
+      .when(processingDocument.status.eq(ProcessingStatus.IN_PROGRESS))
+      .then(ProcessingStatus.IN_PROGRESS.value)
+      .when(processingDocument.status.eq(ProcessingStatus.CLOSED))
+      .then(ProcessingStatus.CLOSED.value)
+      .otherwise(ProcessingStatus.UNPROCESSED.value)
+      .as("status");
+
   @Override
   public Long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
     return searchQueryByCriteria(searchCriteriaDto)
-        .select(processingDocument.id.count())
-        .fetchOne();
+        .select(incomingDocument.id.count())
+        .fetchFirst();
   }
 
   @Override
@@ -39,7 +51,7 @@ public class CustomProcessingDocumentRepositoryImpl
         searchQueryByCriteria(searchCriteriaDto)
             .select(
                 processingDocument.id,
-                processingDocument.status,
+                processingStatusCases,
                 processingDocument.processingDuration,
                 incomingDocument.id,
                 incomingDocument.incomingNumber,
@@ -60,7 +72,7 @@ public class CustomProcessingDocumentRepositoryImpl
             .map(tuple -> {
               ProcessingDocument processingDocument = new ProcessingDocument();
               processingDocument.setId(tuple.get(QProcessingDocument.processingDocument.id));
-              processingDocument.setStatus(tuple.get(QProcessingDocument.processingDocument.status));
+              processingDocument.setStatus(ProcessingStatus.valueOf(tuple.get(processingStatusCases)));
               processingDocument.setProcessingDuration(tuple.get(QProcessingDocument.processingDocument.processingDuration));
               processingDocument.getIncomingDoc().setId(tuple.get(incomingDocument.id));
               processingDocument.getIncomingDoc().setIncomingNumber(tuple.get(incomingDocument.incomingNumber));
@@ -88,11 +100,11 @@ public class CustomProcessingDocumentRepositoryImpl
       where.and(
           incomingDocument.originalSymbolNumber.eq(searchCriteriaDto.getOriginalSymbolNumber()));
     }
-    if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getDocumentType())) {
-      where.and(incomingDocument.documentType.type.eq(searchCriteriaDto.getDocumentType()));
+    if (searchCriteriaDto != null && searchCriteriaDto.getDocumentTypeId() != null) {
+      where.and(incomingDocument.documentType.id.eq(searchCriteriaDto.getDocumentTypeId()));
     }
-    if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getDistributionOrg())) {
-      where.and(incomingDocument.distributionOrg.name.eq(searchCriteriaDto.getDistributionOrg()));
+    if (searchCriteriaDto != null && searchCriteriaDto.getDistributionOrgId() != null) {
+      where.and(incomingDocument.distributionOrg.id.eq(searchCriteriaDto.getDistributionOrgId()));
     }
     if (searchCriteriaDto != null
         && searchCriteriaDto.getArrivingDateFrom() != null
@@ -110,13 +122,12 @@ public class CustomProcessingDocumentRepositoryImpl
           searchCriteriaDto.getProcessingDurationTo().plusDays(1).atStartOfDay().toLocalDate()
       ));
     }
-    if (searchCriteriaDto != null
-        && StringUtils.isNotBlank(searchCriteriaDto.getSummary())) {
+    if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getSummary())) {
       where.and(incomingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
     }
 
     return selectFrom(processingDocument)
-        .innerJoin(processingDocument.incomingDoc, incomingDocument)
+        .rightJoin(processingDocument.incomingDoc, incomingDocument)
         .innerJoin(incomingDocument.sendingLevel, QSendingLevel.sendingLevel)
         .innerJoin(incomingDocument.documentType, QDocumentType.documentType)
         .innerJoin(incomingDocument.distributionOrg, QDistributionOrganization.distributionOrganization)

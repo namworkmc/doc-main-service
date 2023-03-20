@@ -9,8 +9,8 @@ public class SearchCriteriaDto {
 
   private String incomingNumber;
   private String originalSymbolNumber;
-  private String documentType;
-  private String distributionOrg;
+  private Long documentTypeId;
+  private Long distributionOrgId;
   @JsonFormat(pattern = "dd-MM-yyyy")
   private LocalDate arrivingDateFrom;
   @JsonFormat(pattern = "dd-MM-yyyy")

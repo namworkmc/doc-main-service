@@ -23,11 +23,12 @@ public class PostgresContainerExtension implements BeforeAllCallback {
   @Container
   private static final PostgreSQLContainer<?> postgreSQLContainer =
       (PostgreSQLContainer<?>) new PostgreSQLContainer(IMAGE)
-      .withDatabaseName(DATABASE_NAME)
-      .withUsername(USERNAME)
-      .withPassword(PASSWORD)
-      .withExposedPorts(PORT)
-      .withFileSystemBind(DB_SCRIPTS_PATH, ENTRYPOINT_INIT_DB_PATH, BindMode.READ_ONLY);
+          .withDatabaseName(DATABASE_NAME)
+          .withUsername(USERNAME)
+          .withPassword(PASSWORD)
+          .withExposedPorts(PORT)
+          .withFileSystemBind(DB_SCRIPTS_PATH, ENTRYPOINT_INIT_DB_PATH, BindMode.READ_ONLY)
+          .withEnv("TZ", "Asia/Ho_Chi_Minh");
 
   @Override
   public void beforeAll(ExtensionContext extensionContext) {

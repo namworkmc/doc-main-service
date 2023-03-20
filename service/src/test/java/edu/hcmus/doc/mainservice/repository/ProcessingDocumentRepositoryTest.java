@@ -9,6 +9,31 @@ import org.junit.jupiter.api.Test;
 class ProcessingDocumentRepositoryTest extends DocAbstractRepositoryTest {
 
   @Test
+  void testGetTotalElements() {
+    // Given
+    SearchCriteriaDto query = new SearchCriteriaDto();
+
+    // When
+    Long totalElements = processingDocumentRepository.getTotalElements(query);
+
+    // Then
+    Assertions.assertThat(totalElements).isPositive();
+  }
+
+  @Test
+  void testGetTotalPages() {
+    // Given
+    SearchCriteriaDto query = new SearchCriteriaDto();
+    long limit = 3;
+
+    // When
+    long totalPages = processingDocumentRepository.getTotalPages(query, limit);
+
+    // Then
+    Assertions.assertThat(totalPages).isPositive();
+  }
+
+  @Test
   void testSearchByCriteria() {
     // Given
     SearchCriteriaDto query = new SearchCriteriaDto();

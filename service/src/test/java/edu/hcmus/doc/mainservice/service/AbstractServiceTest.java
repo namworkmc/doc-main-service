@@ -1,5 +1,7 @@
 package edu.hcmus.doc.mainservice.service;
 
+import edu.hcmus.doc.mainservice.repository.DistributionOrganizationRepository;
+import edu.hcmus.doc.mainservice.repository.DocumentTypeRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.repository.UserRoleRepository;
@@ -14,6 +16,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 abstract class AbstractServiceTest {
 
   @Mock
+  protected DistributionOrganizationRepository distributionOrganizationRepository;
+
+  @Mock
+  protected DocumentTypeRepository documentTypeRepository;
+
+  @Mock
   protected ProcessingDocumentRepository processingDocumentRepository;
 
   @Mock
@@ -21,4 +29,5 @@ abstract class AbstractServiceTest {
 
   @Mock
   protected UserRepository userRepository;
+
 }
