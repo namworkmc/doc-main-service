@@ -3,20 +3,27 @@ package edu.hcmus.doc.mainservice.service.impl;
 import edu.hcmus.doc.mainservice.model.entity.DocumentType;
 import edu.hcmus.doc.mainservice.repository.DocumentTypeRepository;
 import edu.hcmus.doc.mainservice.service.DocumentTypeService;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
+import java.util.List;
+
 @Service
-@Transactional(rollbackFor = Throwable.class)
+@Transactional
 public class DocumentTypeServiceImpl implements DocumentTypeService {
+    private final DocumentTypeRepository documentTypeRepository;
 
-  private final DocumentTypeRepository documentTypeRepository;
+    public DocumentTypeServiceImpl(DocumentTypeRepository documentTypeRepository) {
+        this.documentTypeRepository = documentTypeRepository;
+    }
 
-  @Override
-  public List<DocumentType> findDocumentTypes() {
-    return documentTypeRepository.findAll();
-  }
+    @Override
+    public List<DocumentType> findAll() {
+        return documentTypeRepository.findAll();
+    }
+
+    @Override
+    public DocumentType findById(Long id) {
+        return documentTypeRepository.findById(id).orElse(null);
+    }
 }

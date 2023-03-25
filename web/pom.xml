@@ -91,10 +91,15 @@
           <jsonLibrary>jackson2</jsonLibrary>
           <classPatterns>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DistributionOrganizationDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPostDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentGetDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.enums.Urgency</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.enums.Confidentiality</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.FolderDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocAbstractDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocPaginationDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocumentTypeDto</classPattern>
-            <classPattern>edu.hcmus.doc.mainservice.model.dto.IncomingDocumentDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.SendingLevelDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.UserDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto</classPattern>

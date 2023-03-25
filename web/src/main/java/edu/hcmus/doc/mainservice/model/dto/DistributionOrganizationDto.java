@@ -7,6 +7,6 @@ import lombok.Data;
  */
 @Data
 public class DistributionOrganizationDto extends DocAbstractDto {
-
   private String name;
+  private String symbol;
 }

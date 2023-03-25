@@ -6,6 +6,8 @@ import lombok.Data;
  * A DTO for the {@link edu.hcmus.doc.mainservice.model.entity.DocumentType} entity
  */
 @Data
-public class DocumentTypeDto extends DocAbstractDto {
-  private String type;
+public class FolderDto extends DocAbstractDto {
+  private String folderName;
+  private Long nextNumber;
+  private int year;
 }

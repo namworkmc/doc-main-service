@@ -8,6 +8,8 @@ public interface IncomingDocumentService {
 
   long getTotalElements(SearchCriteriaDto searchCriteriaDto);
 
+  IncomingDocument createIncomingDocument(IncomingDocument incomingDocument);
+
   long getTotalPages(SearchCriteriaDto searchCriteriaDto, long limit);
 
   List<IncomingDocument> getIncomingDocuments(String query, long offset, long limit);

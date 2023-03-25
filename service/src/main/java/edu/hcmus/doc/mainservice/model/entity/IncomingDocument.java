@@ -54,13 +54,14 @@ public class IncomingDocument extends DocAbstractEntity {
   @Column(name = "confidentiality", nullable = false)
   private Confidentiality confidentiality;
 
-  @Column(name = "folder", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
-  private String folder;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "folder_id", referencedColumnName = "id", nullable = false)
+  private Folder folder;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "sending_level_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "sending_level_id", referencedColumnName = "id")
   private SendingLevel sendingLevel = new SendingLevel();
 
-  @Column(name = "is_deleted", nullable = false)
+  @Column(name = "is_deleted")
   private boolean isDeleted;
 }

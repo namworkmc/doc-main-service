@@ -42,6 +42,6 @@ public class ExceptionController {
   public ResponseEntity<ExceptionDto> handleInternalErrorException(Throwable throwable) {
     return ResponseEntity
         .internalServerError()
-        .body(new ExceptionDto("INTERNAL_SERVER_ERROR"));
+        .body(new ExceptionDto(throwable.getMessage()));
   }
 }

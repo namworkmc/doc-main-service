@@ -8,5 +8,6 @@ public class DocMainServiceApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(DocMainServiceApplication.class, args);
+    System.out.println("Application's running");
   }
 }
