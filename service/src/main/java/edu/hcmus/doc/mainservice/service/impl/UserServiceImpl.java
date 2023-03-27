@@ -61,4 +61,9 @@ public class UserServiceImpl implements UserService {
         .findByUsername(SecurityUtils.getCurrentName())
         .orElseThrow(() -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND));
   }
+
+  @Override
+  public List<User> getDirectors() {
+    return userRepository.getDirectors();
+  }
 }

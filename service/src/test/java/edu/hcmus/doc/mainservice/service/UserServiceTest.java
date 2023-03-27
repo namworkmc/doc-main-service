@@ -31,7 +31,10 @@ class UserServiceTest extends AbstractServiceTest {
 
   @BeforeEach
   void setUp() {
-    userService = new UserServiceImpl(userRepository, passwordEncoder);
+    userService = new UserServiceImpl(
+        userRepository,
+        passwordEncoder
+    );
   }
 
   @Test

@@ -19,8 +19,6 @@ class UserRoleRepositoryTest extends DocAbstractRepositoryTest {
   void testGetUserRolesByUserId() {
     // Given
     User user = new User();
-    user.setFirstName("test");
-    user.setLastName("test");
     user.setUsername("test");
     user.setEmail("test");
     user.setPassword(passwordEncoder.encode("test"));

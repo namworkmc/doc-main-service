@@ -19,8 +19,6 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
   void testGetUsersWithBlankQuery() {
     // Given
     User user = new User();
-    user.setFirstName("test");
-    user.setLastName("test");
     user.setUsername("test");
     user.setEmail("test");
     user.setPassword(passwordEncoder.encode("test"));
@@ -47,8 +45,6 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
 
     // Given
     User user = new User();
-    user.setFirstName("test");
-    user.setLastName("test");
     user.setUsername("test");
     user.setEmail("test");
     user.setPassword(passwordEncoder.encode("test"));
@@ -87,8 +83,6 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
 
     // Given
     User user = new User();
-    user.setFirstName(username);
-    user.setLastName(username);
     user.setUsername(username);
     user.setEmail(username);
     user.setPassword(passwordEncoder.encode(username));
@@ -115,8 +109,6 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
 
     // Given
     User user = new User();
-    user.setFirstName(email);
-    user.setLastName(email);
     user.setUsername(email);
     user.setEmail(email);
     user.setPassword(passwordEncoder.encode(email));

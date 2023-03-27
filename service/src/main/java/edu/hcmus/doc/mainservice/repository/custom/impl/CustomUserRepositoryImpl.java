@@ -2,7 +2,9 @@ package edu.hcmus.doc.mainservice.repository.custom.impl;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import edu.hcmus.doc.mainservice.model.entity.QUser;
+import edu.hcmus.doc.mainservice.model.entity.QUserRole;
 import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.repository.custom.CustomUserRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import java.util.List;
@@ -52,5 +54,16 @@ public class CustomUserRepositoryImpl
             .where(QUser.user.email.eq(email))
             .fetchOne()
     );
+  }
+
+  @Override
+  public List<User> getDirectors() {
+    return selectFrom(QUserRole.userRole)
+        .select(QUser.user)
+        .innerJoin(QUserRole.userRole.user, QUser.user)
+        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.DIRECTOR))
+        .fetch()
+        .stream()
+        .toList();
   }
 }

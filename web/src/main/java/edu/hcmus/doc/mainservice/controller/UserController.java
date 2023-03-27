@@ -3,6 +3,7 @@ package edu.hcmus.doc.mainservice.controller;
 import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.dto.UserDto;
 import edu.hcmus.doc.mainservice.service.UserService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,5 +19,10 @@ public class UserController extends DocAbstractController {
   @GetMapping("/current")
   public UserDto getCurrentUser() {
     return userDecoratorMapper.toDto(userService.getCurrentUser());
+  }
+
+  @GetMapping("/directors")
+  public List<UserDto> getDirectors() {
+    return userMapper.toDto(userService.getDirectors());
   }
 }

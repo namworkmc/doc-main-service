@@ -1,4 +1,4 @@
-package edu.hcmus.doc.mainservice.util.mapper;
+package edu.hcmus.doc.mainservice.util.mapper.decorator;
 
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPostDto;
@@ -7,6 +7,7 @@ import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.service.DistributionOrganizationService;
 import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.FolderService;
+import edu.hcmus.doc.mainservice.util.mapper.IncomingDocumentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
