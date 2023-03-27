@@ -19,6 +19,15 @@ spring:
         jwt:
           issuer-uri: http://host.docker.internal:8180/realms/doc-realm
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    template:
+      exchange: doc.exchange
+      routing-key: doc.routingkey
+
 logging:
   level:
     sql: debug

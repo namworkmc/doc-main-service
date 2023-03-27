@@ -12,14 +12,18 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 
 class ProcessingDocumentServiceTest extends AbstractServiceTest {
 
   private ProcessingDocumentService processingDocumentService;
 
+  private AsyncRabbitTemplate asyncRabbitTemplate;
+
+
   @BeforeEach
   void setUp() {
-    this.processingDocumentService = new ProcessingDocumentServiceImpl(processingDocumentRepository);
+    this.processingDocumentService = new ProcessingDocumentServiceImpl(processingDocumentRepository,asyncRabbitTemplate);
   }
 
   @Test
