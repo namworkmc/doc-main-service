@@ -1,13 +1,14 @@
 version: '3.7'
 services:
   # Databases
-  doc-database:
-    container_name: doc-main-service-database
+  doc-main-postgres:
+    container_name: doc-main-postgres
     image: postgres:15.1-alpine3.17
     ports:
       - "5432:5432"
     volumes:
-      - doc-data:/data/postgres
+      - doc-main-data:/data/postgres
+      - doc-keycloak-data:/var/lib/postgresql
       - ../../db/src/main:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_USER: admin
@@ -23,6 +24,40 @@ services:
           cpus: '1'
           memory: 256M
 
+  # Keycloak
+  doc-keycloak:
+    container_name: doc-keycloak
+    image: bitnami/keycloak:20.0.3
+    ports:
+      - "8180:8180"
+    depends_on:
+      - doc-main-postgres
+    volumes:
+      - ./keycloak/realms:/opt/bitnami/keycloak/data/import
+      - ./keycloak/providers/doc-user-provider-1.0.2.jar:/opt/bitnami/keycloak/providers/doc-user-provider-1.0.2.jar
+    environment:
+      KEYCLOAK_ADMIN_USER: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_EXTRA_ARGS=-Dkeycloak.import: /opt/bitnami/keycloak/data/import/realm-export.json
+      KEYCLOAK_HTTP_PORT: 8180
+      KEYCLOAK_DATABASE_HOST: doc-main-postgres
+      KEYCLOAK_DATABASE_PORT: 5432
+      KEYCLOAK_DATABASE_NAME: doc-keycloak-db
+      KEYCLOAK_DATABASE_USER: admin
+      KEYCLOAK_DATABASE_PASSWORD: admin
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+# uncomment this line when using linux
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
 
 volumes:
-  doc-data:
+  doc-main-data:
+    name: doc-main-data
+  doc-keycloak-data:
+    name: doc-keycloak-data
+    driver: local
