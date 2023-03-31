@@ -27,6 +27,7 @@ spring:
     template:
       exchange: doc.exchange
       routing-key: doc.routingkey
+      attachment-routing-key: doc.attachment-routing-key
 
 logging:
   level:

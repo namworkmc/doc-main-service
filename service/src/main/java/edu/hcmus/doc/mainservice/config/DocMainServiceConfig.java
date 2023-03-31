@@ -1,6 +1,9 @@
 package edu.hcmus.doc.mainservice.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import edu.hcmus.doc.mainservice.util.KeycloakProperty;
+import javax.annotation.PostConstruct;
 import javax.ws.rs.client.ClientBuilder;
 import lombok.RequiredArgsConstructor;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
@@ -18,6 +21,8 @@ public class DocMainServiceConfig {
 
   private final KeycloakProperty keycloakProperty;
 
+  private final ObjectMapper objectMapper;
+
   @Bean
   public ResteasyClient resteasyClient() {
     return (ResteasyClient) ClientBuilder.newClient();
@@ -27,5 +32,10 @@ public class DocMainServiceConfig {
   public ResteasyWebTarget resteasyWebTarget() {
     ResteasyClient resteasyClient = resteasyClient();
     return resteasyClient.target(keycloakProperty.getUrl());
+  }
+
+  @PostConstruct
+  public void setUp() {
+    objectMapper.registerModule(new JavaTimeModule());
   }
 }
