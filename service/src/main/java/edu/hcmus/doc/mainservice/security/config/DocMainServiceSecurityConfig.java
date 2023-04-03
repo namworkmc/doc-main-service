@@ -39,7 +39,7 @@ public class DocMainServiceSecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.cors()
+    return http.cors()
         .and()
         .csrf()
         .disable()
@@ -53,9 +53,8 @@ public class DocMainServiceSecurityConfig {
         .permitAll()
 //        .authenticated()
         .and()
-        .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
-
-    return http.build();
+        .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+        .build();
   }
 
   @Bean

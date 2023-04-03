@@ -34,7 +34,7 @@ public class CustomProcessingDocumentRepositoryImpl
       .as("status");
 
   @Override
-  public Long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
+  public long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
     return searchQueryByCriteria(searchCriteriaDto)
         .select(incomingDocument.id.count())
         .fetchFirst();
@@ -42,7 +42,7 @@ public class CustomProcessingDocumentRepositoryImpl
 
   @Override
   public long getTotalPages(SearchCriteriaDto searchCriteriaDto, long limit) {
-    Long totalElements = getTotalElements(searchCriteriaDto);
+    long totalElements = getTotalElements(searchCriteriaDto);
     return (totalElements / limit) + (totalElements % limit == 0 ? 0 : 1);
   }
 
@@ -89,50 +89,6 @@ public class CustomProcessingDocumentRepositoryImpl
               return processingDocument;
             })
             .toList();
-  }
-
-  private JPAQuery<ProcessingDocument> searchQueryByCriteria(SearchCriteriaDto searchCriteriaDto) {
-    BooleanBuilder where = new BooleanBuilder();
-
-    if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getIncomingNumber())) {
-      where.and(incomingDocument.incomingNumber.eq(searchCriteriaDto.getIncomingNumber()));
-    }
-    if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getOriginalSymbolNumber())) {
-      where.and(
-          incomingDocument.originalSymbolNumber.eq(searchCriteriaDto.getOriginalSymbolNumber()));
-    }
-    if (searchCriteriaDto != null && searchCriteriaDto.getDocumentTypeId() != null) {
-      where.and(incomingDocument.documentType.id.eq(searchCriteriaDto.getDocumentTypeId()));
-    }
-    if (searchCriteriaDto != null && searchCriteriaDto.getDistributionOrgId() != null) {
-      where.and(incomingDocument.distributionOrg.id.eq(searchCriteriaDto.getDistributionOrgId()));
-    }
-    if (searchCriteriaDto != null
-        && searchCriteriaDto.getArrivingDateFrom() != null
-        && searchCriteriaDto.getArrivingDateTo() != null) {
-      where.and(incomingDocument.arrivingDate.between(
-          searchCriteriaDto.getArrivingDateFrom().atStartOfDay().toLocalDate(),
-          searchCriteriaDto.getArrivingDateTo().plusDays(1).atStartOfDay().toLocalDate()
-      ));
-    }
-    if (searchCriteriaDto != null
-        && searchCriteriaDto.getProcessingDurationFrom() != null
-        && searchCriteriaDto.getProcessingDurationTo() != null) {
-      where.and(incomingDocument.arrivingDate.between(
-          searchCriteriaDto.getProcessingDurationFrom().atStartOfDay().toLocalDate(),
-          searchCriteriaDto.getProcessingDurationTo().plusDays(1).atStartOfDay().toLocalDate()
-      ));
-    }
-    if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getSummary())) {
-      where.and(incomingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
-    }
-
-    return selectFrom(processingDocument)
-        .rightJoin(processingDocument.incomingDoc, incomingDocument)
-        .innerJoin(incomingDocument.sendingLevel, QSendingLevel.sendingLevel)
-        .innerJoin(incomingDocument.documentType, QDocumentType.documentType)
-        .innerJoin(incomingDocument.distributionOrg, QDistributionOrganization.distributionOrganization)
-        .where(where);
   }
 
   @Override
@@ -201,4 +157,47 @@ public class CustomProcessingDocumentRepositoryImpl
         .toList();
   }
 
+  private JPAQuery<ProcessingDocument> searchQueryByCriteria(SearchCriteriaDto searchCriteriaDto) {
+    BooleanBuilder where = new BooleanBuilder();
+
+    if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getIncomingNumber())) {
+      where.and(incomingDocument.incomingNumber.eq(searchCriteriaDto.getIncomingNumber()));
+    }
+    if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getOriginalSymbolNumber())) {
+      where.and(
+          incomingDocument.originalSymbolNumber.eq(searchCriteriaDto.getOriginalSymbolNumber()));
+    }
+    if (searchCriteriaDto != null && searchCriteriaDto.getDocumentTypeId() != null) {
+      where.and(incomingDocument.documentType.id.eq(searchCriteriaDto.getDocumentTypeId()));
+    }
+    if (searchCriteriaDto != null && searchCriteriaDto.getDistributionOrgId() != null) {
+      where.and(incomingDocument.distributionOrg.id.eq(searchCriteriaDto.getDistributionOrgId()));
+    }
+    if (searchCriteriaDto != null
+        && searchCriteriaDto.getArrivingDateFrom() != null
+        && searchCriteriaDto.getArrivingDateTo() != null) {
+      where.and(incomingDocument.arrivingDate.between(
+          searchCriteriaDto.getArrivingDateFrom().atStartOfDay().toLocalDate(),
+          searchCriteriaDto.getArrivingDateTo().plusDays(1).atStartOfDay().toLocalDate()
+      ));
+    }
+    if (searchCriteriaDto != null
+        && searchCriteriaDto.getProcessingDurationFrom() != null
+        && searchCriteriaDto.getProcessingDurationTo() != null) {
+      where.and(incomingDocument.arrivingDate.between(
+          searchCriteriaDto.getProcessingDurationFrom().atStartOfDay().toLocalDate(),
+          searchCriteriaDto.getProcessingDurationTo().plusDays(1).atStartOfDay().toLocalDate()
+      ));
+    }
+    if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getSummary())) {
+      where.and(incomingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
+    }
+
+    return selectFrom(processingDocument)
+        .rightJoin(processingDocument.incomingDoc, incomingDocument)
+        .innerJoin(incomingDocument.sendingLevel, QSendingLevel.sendingLevel)
+        .innerJoin(incomingDocument.documentType, QDocumentType.documentType)
+        .innerJoin(incomingDocument.distributionOrg, QDistributionOrganization.distributionOrganization)
+        .where(where);
+  }
 }

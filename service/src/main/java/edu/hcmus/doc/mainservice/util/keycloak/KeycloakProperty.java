@@ -1,4 +1,4 @@
-package edu.hcmus.doc.mainservice.util;
+package edu.hcmus.doc.mainservice.util.keycloak;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

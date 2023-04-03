@@ -69,6 +69,122 @@
           "view-profile"
         ]
       }
+    },
+    {
+      "username": "user1test",
+      "enabled": true,
+      "email": "user1test@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user1test",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "offline_access",
+        "uma_authorization",
+        "DOC_ADMIN",
+        "default-roles-doc",
+        "DIRECTOR"
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "manage-users"
+        ],
+        "account": [
+          "manage-account",
+          "manage-account-links",
+          "view-profile"
+        ]
+      }
+    },
+    {
+      "username": "user2test",
+      "enabled": true,
+      "email": "user2test@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user2test",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "offline_access",
+        "uma_authorization",
+        "DOC_ADMIN",
+        "default-roles-doc",
+        "EXPERT"
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "manage-users"
+        ],
+        "account": [
+          "manage-account",
+          "manage-account-links",
+          "view-profile"
+        ]
+      }
+    },
+    {
+      "username": "user3test",
+      "enabled": true,
+      "email": "user3test@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user3test",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "offline_access",
+        "uma_authorization",
+        "DOC_ADMIN",
+        "default-roles-doc",
+        "MANAGER"
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "manage-users"
+        ],
+        "account": [
+          "manage-account",
+          "manage-account-links",
+          "view-profile"
+        ]
+      }
+    },
+    {
+      "username": "user4test",
+      "enabled": true,
+      "email": "user4test@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user4test",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "offline_access",
+        "uma_authorization",
+        "DOC_ADMIN",
+        "default-roles-doc",
+        "STAFF"
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "manage-users"
+        ],
+        "account": [
+          "manage-account",
+          "manage-account-links",
+          "view-profile"
+        ]
+      }
     }
   ],
   "id": "6c7a49c6-c4d6-4e88-a602-6ad06d02ee67",
@@ -825,6 +941,22 @@
             "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientId",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "Full Name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "aggregate.attrs": "false",
+            "userinfo.token.claim": "true",
+            "multivalued": "false",
+            "user.attribute": "fullName",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "fullName",
             "jsonType.label": "String"
           }
         }

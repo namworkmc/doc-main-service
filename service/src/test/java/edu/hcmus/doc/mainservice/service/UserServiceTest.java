@@ -265,7 +265,7 @@ class UserServiceTest extends AbstractServiceTest {
     when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
     // Then
-    userService.getCurrentUser();
+    userService.getCurrentUserFromDB();
 
     ArgumentCaptor<String> usernameCaptor = ArgumentCaptor.forClass(String.class);
     verify(userRepository).findByUsername(usernameCaptor.capture());
@@ -273,7 +273,7 @@ class UserServiceTest extends AbstractServiceTest {
     assertThat(usernameCaptor.getValue()).isEqualTo(username);
     assertThat(usernameCaptor.getValue()).isEqualTo(SecurityUtils.getCurrentName());
 
-    assertThat(userService.getCurrentUser())
+    assertThat(userService.getCurrentUserFromDB())
         .isNotNull()
         .is(new Condition<>(u -> username.equals(u.getUsername()), "User username is: " + username));
   }

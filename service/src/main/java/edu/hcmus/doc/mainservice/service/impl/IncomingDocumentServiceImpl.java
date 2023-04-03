@@ -10,8 +10,10 @@ import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWith
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.entity.Folder;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
+import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.exception.IncomingDocumentNotFoundException;
 import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
+import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
@@ -29,17 +31,44 @@ import org.springframework.transaction.annotation.Transactional;
 public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
   private final IncomingDocumentRepository incomingDocumentRepository;
+
   private final FolderService folderService;
+
   private final AttachmentService attachmentService;
 
   private final ObjectMapper objectMapper;
+
   private final IncomingDocumentMapper incomingDecoratorDocumentMapper;
+
   private final AttachmentMapperDecorator attachmentMapperDecorator;
 
+  private final ProcessingDocumentRepository processingDocumentRepository;
 
   @Override
   public long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
-    return incomingDocumentRepository.getTotalElements(searchCriteriaDto);
+    return processingDocumentRepository.getTotalElements(searchCriteriaDto);
+  }
+
+  @Override
+  public long getTotalPages(SearchCriteriaDto searchCriteriaDto, long limit) {
+    return getTotalElements(searchCriteriaDto) / limit;
+  }
+
+  @Override
+  public List<ProcessingDocument> searchIncomingDocuments(SearchCriteriaDto searchCriteria, int page, int pageSize) {
+    return processingDocumentRepository.searchByCriteria(searchCriteria, page, pageSize);
+  }
+
+  @Override
+  public List<IncomingDocument> getIncomingDocuments(String query, long offset, long limit) {
+    return incomingDocumentRepository.getIncomingDocuments(query, offset, limit);
+  }
+
+  @Override
+  public IncomingDocument findById(Long id) {
+    return incomingDocumentRepository.findById(id).orElseThrow(
+        () -> new IncomingDocumentNotFoundException(INCOMING_DOCUMENT_NOT_FOUND)
+    );
   }
 
   @SneakyThrows
@@ -60,22 +89,5 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     List<AttachmentDto> attachmentDtos = attachmentService.saveAttachmentsByIncomingDocId(
         attachmentPostDto);
     return savedIncomingDocument;
-  }
-
-  @Override
-  public long getTotalPages(SearchCriteriaDto searchCriteriaDto, long limit) {
-    return getTotalElements(searchCriteriaDto) / limit;
-  }
-
-  @Override
-  public List<IncomingDocument> getIncomingDocuments(String query, long offset, long limit) {
-    return incomingDocumentRepository.getIncomingDocuments(query, offset, limit);
-  }
-
-  @Override
-  public IncomingDocument findById(Long id) {
-    return incomingDocumentRepository.findById(id).orElseThrow(
-        () -> new IncomingDocumentNotFoundException(INCOMING_DOCUMENT_NOT_FOUND)
-    );
   }
 }

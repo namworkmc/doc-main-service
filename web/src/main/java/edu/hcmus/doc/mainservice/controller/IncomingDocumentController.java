@@ -37,13 +37,13 @@ public class IncomingDocumentController extends DocAbstractController {
       @RequestParam(required = false, defaultValue = "3") int pageSize
   ) {
     return paginationMapper.toDto(
-        processingDocumentService
-            .searchProcessingDocuments(searchCriteria, page, pageSize)
+        incomingDocumentService
+            .searchIncomingDocuments(searchCriteria, page, pageSize)
             .stream()
             .map(incomingDecoratorDocumentMapper::toDto)
             .toList(),
-        processingDocumentService.getTotalElements(searchCriteria),
-        processingDocumentService.getTotalPages(searchCriteria, pageSize));
+        incomingDocumentService.getTotalElements(searchCriteria),
+        incomingDocumentService.getTotalPages(searchCriteria, pageSize));
   }
 
   @SneakyThrows

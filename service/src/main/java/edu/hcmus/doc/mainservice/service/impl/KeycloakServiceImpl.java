@@ -2,10 +2,11 @@ package edu.hcmus.doc.mainservice.service.impl;
 
 import edu.hcmus.doc.mainservice.model.dto.TokenDto;
 import edu.hcmus.doc.mainservice.service.KeycloakService;
-import edu.hcmus.doc.mainservice.util.KeycloakProperty;
-import edu.hcmus.doc.mainservice.util.KeycloakResource;
-import lombok.AllArgsConstructor;
+import edu.hcmus.doc.mainservice.util.keycloak.KeycloakProperty;
+import edu.hcmus.doc.mainservice.util.keycloak.KeycloakResource;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,28 +14,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Throwable.class)
 public class KeycloakServiceImpl implements KeycloakService {
 
-  @AllArgsConstructor
-  enum GrantType {
-    PASSWORD("password"),
-    REFRESH_TOKEN("refresh_token");
-
-    private final String value;
-  }
-
   private final KeycloakProperty keycloakProperty;
 
-  private final KeycloakResource keycloakResource;
+  private final KeycloakResource keycloakTokenEndpoint;
 
-  public KeycloakServiceImpl(KeycloakProperty keycloakProperty,
-      ResteasyWebTarget resteasyWebTarget) {
+  private final KeycloakResource keycloakRevokeEndpoint;
+
+  public KeycloakServiceImpl(
+      KeycloakProperty keycloakProperty,
+      ResteasyWebTarget resteasyTokenTarget,
+      ResteasyWebTarget resteasyRevokeTarget
+  ) {
     this.keycloakProperty = keycloakProperty;
-    this.keycloakResource = resteasyWebTarget.proxy(KeycloakResource.class);
+    this.keycloakTokenEndpoint = resteasyTokenTarget.proxy(KeycloakResource.class);
+    this.keycloakRevokeEndpoint = resteasyRevokeTarget.proxy(KeycloakResource.class);
   }
 
   @Override
   public TokenDto getToken(String username, String password) {
-    return keycloakResource.getToken(
-        GrantType.PASSWORD.value,
+    return keycloakTokenEndpoint.getToken(
+        OAuth2ParameterNames.PASSWORD,
         username,
         password,
         keycloakProperty.getScope(),
@@ -45,12 +44,26 @@ public class KeycloakServiceImpl implements KeycloakService {
 
   @Override
   public TokenDto refreshToken(String refreshToken) {
-    return keycloakResource.refreshToken(
-        GrantType.REFRESH_TOKEN.value,
+    return keycloakTokenEndpoint.refreshToken(
+        OAuth2ParameterNames.REFRESH_TOKEN,
         refreshToken,
         keycloakProperty.getScope(),
         keycloakProperty.getClientId(),
         keycloakProperty.getClientSecret()
+    );
+  }
+
+  @Override
+  public void revokeTokens(String refreshToken) {
+    if (StringUtils.isBlank(refreshToken)) {
+      return;
+    }
+
+    keycloakRevokeEndpoint.revokeTokens(
+        keycloakProperty.getClientId(),
+        keycloakProperty.getClientSecret(),
+        refreshToken,
+        OAuth2ParameterNames.REFRESH_TOKEN
     );
   }
 }

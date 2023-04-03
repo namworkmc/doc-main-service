@@ -34,7 +34,7 @@ services:
       - doc-main-postgres
     volumes:
       - ./keycloak/realms:/opt/bitnami/keycloak/data/import
-      - ./keycloak/providers/doc-user-provider-1.0.2.jar:/opt/bitnami/keycloak/providers/doc-user-provider-1.0.2.jar
+      - ./keycloak/providers/doc-user-provider-1.0.3.jar:/opt/bitnami/keycloak/providers/doc-user-provider-1.0.3.jar
     environment:
       KEYCLOAK_ADMIN_USER: admin
       KEYCLOAK_ADMIN_PASSWORD: admin

@@ -1,4 +1,4 @@
-package edu.hcmus.doc.mainservice.util;
+package edu.hcmus.doc.mainservice.util.keycloak;
 
 import edu.hcmus.doc.mainservice.model.dto.TokenDto;
 import javax.ws.rs.Consumes;
@@ -28,5 +28,13 @@ public interface KeycloakResource {
       @FormParam("scope") String scope,
       @FormParam("client_id") String clientId,
       @FormParam("client_secret") String clientSecret
+  );
+
+  @POST
+  void revokeTokens(
+      @FormParam("client_id") String clientId,
+      @FormParam("client_secret") String clientSecret,
+      @FormParam("token") String refreshToken,
+      @FormParam("token_type_hint") String tokenTypeHint
   );
 }

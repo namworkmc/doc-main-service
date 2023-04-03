@@ -17,7 +17,7 @@ public interface UserService {
 
   boolean validateUserCredentialsByUserId(Long id, String password);
 
-  User getCurrentUser();
+  User getCurrentUserFromDB();
 
   List<User> getDirectors();
 }

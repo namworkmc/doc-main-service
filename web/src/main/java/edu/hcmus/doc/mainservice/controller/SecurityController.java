@@ -24,8 +24,14 @@ public class SecurityController {
     return ResponseEntity.ok().body(keycloakService.getToken(username, password));
   }
 
-  @PostMapping(value = "/auth/token/refresh")
+  @PostMapping("/auth/refresh-token")
   public ResponseEntity<TokenDto> refreshToken(@RequestParam String refreshToken) {
     return ResponseEntity.ok().body(keycloakService.refreshToken(refreshToken));
+  }
+
+  @PostMapping("/auth/token/revoke")
+  public ResponseEntity<Void> revokeTokens(@RequestParam(defaultValue = "") String refreshToken) {
+    keycloakService.revokeTokens(refreshToken);
+    return ResponseEntity.noContent().build();
   }
 }

@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface AttachmentService {
 
-  public List<AttachmentDto> saveAttachmentsByIncomingDocId(AttachmentPostDto attachmentPostDto);
+  List<AttachmentDto> saveAttachmentsByIncomingDocId(AttachmentPostDto attachmentPostDto);
 }

@@ -7,4 +7,6 @@ public interface KeycloakService {
   TokenDto getToken(String username, String password);
 
   TokenDto refreshToken(String refreshToken);
+
+  void revokeTokens(String refreshToken);
 }

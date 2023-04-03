@@ -21,4 +21,6 @@ public class User extends DocAbstractEntity {
 
   @Column(name = "email", nullable = false, unique = true, columnDefinition = "VARCHAR(255) NOT NULL")
   private String email;
+
+  // TODO: Add user role relationship
 }

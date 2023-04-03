@@ -2,6 +2,7 @@ package edu.hcmus.doc.mainservice.service;
 
 import edu.hcmus.doc.mainservice.repository.DistributionOrganizationRepository;
 import edu.hcmus.doc.mainservice.repository.DocumentTypeRepository;
+import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.repository.UserRoleRepository;
@@ -30,4 +31,6 @@ abstract class AbstractServiceTest {
   @Mock
   protected UserRepository userRepository;
 
+  @Mock
+  protected IncomingDocumentRepository incomingDocumentRepository;
 }

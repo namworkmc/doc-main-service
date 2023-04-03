@@ -58,9 +58,9 @@ public class CustomUserRepositoryImpl
 
   @Override
   public List<User> getDirectors() {
-    return selectFrom(QUserRole.userRole)
-        .select(QUser.user)
-        .innerJoin(QUserRole.userRole.user, QUser.user)
+    return selectFrom(QUser.user)
+        .innerJoin(QUserRole.userRole)
+        .on(QUser.user.id.eq(QUserRole.userRole.user.id))
         .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.DIRECTOR))
         .fetch()
         .stream()

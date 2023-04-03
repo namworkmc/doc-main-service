@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User getCurrentUser() {
+  public User getCurrentUserFromDB() {
     return userRepository
         .findByUsername(SecurityUtils.getCurrentName())
         .orElseThrow(() -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND));
