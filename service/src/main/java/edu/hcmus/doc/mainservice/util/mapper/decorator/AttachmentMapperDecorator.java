@@ -5,6 +5,7 @@ import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.Attachment.FileWrapper;
 import edu.hcmus.doc.mainservice.model.dto.FileDto;
 import edu.hcmus.doc.mainservice.model.entity.Attachment;
+import edu.hcmus.doc.mainservice.model.enums.FileType;
 import edu.hcmus.doc.mainservice.util.mapper.AttachmentMapper;
 import java.io.IOException;
 import java.util.List;
@@ -53,7 +54,7 @@ public abstract class AttachmentMapperDecorator implements AttachmentMapper {
     AttachmentDto attachmentDto = new AttachmentDto();
     attachmentDto.setAlfrescoFileId(fileDto.getId());
     attachmentDto.setAlfrescoFolderId(fileDto.getParentFolderId());
-    attachmentDto.setFileType(fileDto.getMimeType());
+    attachmentDto.setFileType(FileType.fromValue(fileDto.getMimeType()));
     attachmentDto.setIncomingDocId(incomingDocId);
     return attachmentDto;
   }

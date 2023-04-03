@@ -1,6 +1,5 @@
 package edu.hcmus.doc.mainservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.dto.DocPaginationDto;
 import edu.hcmus.doc.mainservice.model.dto.ElasticSearchCriteriaDto;
@@ -27,8 +26,6 @@ public class IncomingDocumentController extends DocAbstractController {
 
   private final ProcessingDocumentService processingDocumentService;
   private final IncomingDocumentService incomingDocumentService;
-
-  private final ObjectMapper objectMapper;
 
   @PostMapping("/search")
   public DocPaginationDto<IncomingDocumentDto> getIncomingDocuments(

@@ -7,4 +7,6 @@ import java.util.List;
 public interface AttachmentService {
 
   List<AttachmentDto> saveAttachmentsByIncomingDocId(AttachmentPostDto attachmentPostDto);
+
+  List<AttachmentDto> getAttachmentsByIncomingDocId(Long incomingDocId);
 }

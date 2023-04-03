@@ -40,6 +40,12 @@ public class AttachmentServiceImpl implements AttachmentService {
 
   private final AttachmentMapperDecorator attachmentMapperDecorator;
 
+  @Override
+  public List<AttachmentDto> getAttachmentsByIncomingDocId(Long incomingDocId) {
+    return attachmentRepository.getAttachmentsByIncomingDocId(incomingDocId).stream().map(
+        attachmentMapperDecorator::toDto).toList();
+  }
+
   @SneakyThrows
   @Override
   public List<AttachmentDto> saveAttachmentsByIncomingDocId(AttachmentPostDto attachmentPostDto) {
