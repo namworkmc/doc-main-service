@@ -148,6 +148,8 @@
         </configuration>
       </plugin>
     </plugins>
+
+    <finalName>doc-main-service</finalName>
   </build>
 
 </project>
