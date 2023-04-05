@@ -12,6 +12,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/doc?stringtype=unspecified
     username: admin
     password: admin
+    driver-class-name: org.postgresql.Driver
 
   security:
     oauth2:
