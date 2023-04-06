@@ -15,4 +15,6 @@ public interface CustomUserRepository {
   Optional<User> findByEmail(String email);
 
   List<User> getDirectors();
+
+  List<User> getSecretaries();
 }

@@ -66,4 +66,15 @@ public class CustomUserRepositoryImpl
         .stream()
         .toList();
   }
+
+  @Override
+  public List<User> getSecretaries() {
+    return selectFrom(QUserRole.userRole)
+        .select(QUser.user)
+        .innerJoin(QUserRole.userRole.user, QUser.user)
+        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.STAFF))
+        .fetch()
+        .stream()
+        .toList();
+  }
 }

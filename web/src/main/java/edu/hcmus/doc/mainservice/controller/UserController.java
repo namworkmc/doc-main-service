@@ -31,4 +31,9 @@ public class UserController extends DocAbstractController {
   public UserDto getCurrentName() {
     return userMapper.toDto(SecurityUtils.getCurrentUser());
   }
+
+  @GetMapping("/secretaries")
+  public List<UserDto> getSecretaries() {
+    return userMapper.toDto(userService.getSecretaries());
+  }
 }

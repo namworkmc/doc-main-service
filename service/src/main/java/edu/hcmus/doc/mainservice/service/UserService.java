@@ -20,4 +20,6 @@ public interface UserService {
   User getCurrentUserFromDB();
 
   List<User> getDirectors();
+
+  List<User> getSecretaries();
 }
