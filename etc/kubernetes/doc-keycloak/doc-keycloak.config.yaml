@@ -1,0 +1,10 @@
+apiVersion : v1
+kind : ConfigMap
+metadata:
+  name : doc-keycloak-config
+  labels:
+    deployment: local
+data:
+  doc-main-service-keycloak-url: http://host.docker.internal:8180/realms/doc-realm/protocol/openid-connect
+  doc-main-service-keycloak-scope: openid
+  doc-main-service-keycloak-client-id: doc-client

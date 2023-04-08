@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doc-rabbitmq
+spec:
+  selector:
+    matchLabels:
+      app: doc-rabbitmq
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: doc-rabbitmq
+    spec:
+      containers:
+        - name: doc-rabbitmq
+          imagePullPolicy: Never
+          image: rabbitmq:3.9.26-management-alpine
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+            - containerPort: 61613
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: doc-rabbitmq-secret
+                  key: username
+
+            - name: RABBITMQ_DEFAULT_PASS # Setting Database password from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: doc-rabbitmq-secret
+                  key: password
+
+---
+
+# Define a 'Service' To Expose mysql to Other Services
+apiVersion: v1
+kind: Service
+metadata:
+  name: doc-rabbitmq  # DNS name
+  labels:
+    app: doc-rabbitmq
+spec:
+  ports:
+    - port: 5672
+      targetPort: 5672
+      name: rabbitmq
+    - port: 61613
+      targetPort: 61613
+      name: stomp
+  selector:
+    app: doc-rabbitmq

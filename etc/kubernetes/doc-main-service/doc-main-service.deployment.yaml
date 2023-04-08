@@ -1,0 +1,152 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doc-main-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doc-main-service
+  template:
+    metadata:
+      labels:
+        app: doc-main-service
+    spec:
+      containers:
+        - name: doc-main-service
+          image: hcmusdoc/doc-main-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DOC_MAIN_SERVICE_SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-main-service-config
+                  key: doc-main-service-spring-profiles-active
+
+            - name: DOC_MAIN_SERVICE_SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-main-service-config
+                  key: doc-main-service-server-port
+
+            - name: DOC_MAIN_SERVICE_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-main-service-config
+                  key: doc-main-service-oauth2-resourceserver-jwt-issuer-uri
+
+            - name: DOC_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-main-postgres-config
+                  key: host
+
+            - name: DOC_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-main-postgres-config
+                  key: db-name
+
+            - name: DOC_MAIN_SERVICE_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: doc-main-postgres-secret
+                  key: doc-main-postgres-username
+
+            - name: DOC_MAIN_SERVICE_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: doc-main-postgres-secret
+                  key: doc-main-postgres-password
+
+            - name: DOC_MAIN_SERVICE_RABBITMQ_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-rabbitmq-config
+                  key: doc-main-service-rabbitmq-host
+
+            - name: DOC_MAIN_SERVICE_RABBITMQ_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-rabbitmq-config
+                  key: doc-main-service-rabbitmq-port
+
+            - name: DOC_MAIN_SERVICE_RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: doc-rabbitmq-secret
+                  key: username
+
+            - name: DOC_MAIN_SERVICE_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: doc-rabbitmq-secret
+                  key: password
+
+            - name: DOC_MAIN_SERVICE_RABBITMQ_TEMPLATE_EXCHANGE
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-rabbitmq-config
+                  key: doc-main-service-rabbitmq-template-exchange
+
+            - name: DOC_MAIN_SERVICE_RABBITMQ_TEMPLATE_ROUTING_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-rabbitmq-config
+                  key: doc-main-service-rabbitmq-template-routing-key
+
+            - name: DOC_MAIN_SERVICE_RABBITMQ_TEMPLATE_ATTACHMENT_ROUTING_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-rabbitmq-config
+                  key: doc-main-service-rabbitmq-template-attachment-routing-key
+
+            - name: DOC_MAIN_SERVICE_HTTP_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: doc-main-service-secret
+                  key: doc-main-service-http-auth-token
+
+            - name: DOC_MAIN_SERVICE_KEYCLOAK_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-keycloak-config
+                  key: doc-main-service-keycloak-url
+
+            - name: DOC_MAIN_SERVICE_KEYCLOAK_SCOPE
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-keycloak-config
+                  key: doc-main-service-keycloak-scope
+
+            - name: DOC_MAIN_SERVICE_KEYCLOAK_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-keycloak-config
+                  key: doc-main-service-keycloak-client-id
+
+            - name: DOC_MAIN_SERVICE_KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: doc-keycloak-secret
+                  key: doc-main-service-keycloak-client-secret
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: doc-main-service
+  labels:
+    app: doc-main-service
+spec:
+  selector:
+    app: doc-main-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+  type: NodePort

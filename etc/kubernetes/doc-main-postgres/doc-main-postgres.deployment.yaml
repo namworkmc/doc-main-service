@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pv-claim
+  labels:
+    app: doc-main-postgres
+    tier: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: doc-main-data-pv-claim
+  labels:
+    app: doc-main-postgres
+    tier: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doc-main-postgres
+  labels:
+    app: doc-main-postgres
+    tier: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doc-main-postgres
+      tier: database
+  template:
+    metadata:
+      labels:
+        app: doc-main-postgres
+        tier: database
+    spec:
+      containers:
+        - name: doc-main-postgres
+          image: hcmusdoc/doc-main-postgres
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  key: doc-main-postgres-username
+                  name: doc-main-postgres-secret
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: doc-main-postgres-password
+                  name: doc-main-postgres-secret
+
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: db-name
+                  name: doc-main-postgres-config
+
+            - name: PGDATA
+              value: /data/postgres
+          volumeMounts:
+            - name: postgres-persistent-storage
+              mountPath: /var/lib/postgresql
+            - name: doc-main-data
+              mountPath: /data/postgres
+      volumes:
+        - name: postgres-persistent-storage
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+        - name: doc-main-data
+          persistentVolumeClaim:
+            claimName: doc-main-data-pv-claim
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: doc-main-postgres # DNS
+  labels:
+    app: doc-main-postgres
+    tier: database
+spec:
+  selector:
+    app: doc-main-postgres
+    tier: database
+  ports:
+    - port: 5432
+      targetPort: 5432

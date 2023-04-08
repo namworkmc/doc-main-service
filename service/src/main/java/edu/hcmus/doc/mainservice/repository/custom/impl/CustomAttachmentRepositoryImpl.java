@@ -2,7 +2,6 @@ package edu.hcmus.doc.mainservice.repository.custom.impl;
 
 import edu.hcmus.doc.mainservice.model.entity.Attachment;
 import edu.hcmus.doc.mainservice.model.entity.QAttachment;
-import edu.hcmus.doc.mainservice.model.entity.QIncomingDocument;
 import edu.hcmus.doc.mainservice.repository.custom.CustomAttachmentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import java.util.List;
