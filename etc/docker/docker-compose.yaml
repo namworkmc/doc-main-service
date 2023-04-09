@@ -56,6 +56,8 @@ services:
 #      - "host.docker.internal:host-gateway"
 
   doc-main-service:
+    profiles:
+      - local-deployment
     container_name: doc-main-service
     image: hcmusdoc/doc-main-service:latest
     build:
