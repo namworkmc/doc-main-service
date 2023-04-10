@@ -8,4 +8,6 @@ public interface DocumentTypeService {
   List<DocumentType> findAll();
 
   DocumentType findById(Long id);
+
+  DocumentType createDocumentType(DocumentType documentType);
 }

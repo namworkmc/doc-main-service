@@ -1,5 +1,6 @@
 package edu.hcmus.doc.mainservice.model.dto;
 
+import javax.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -7,5 +8,7 @@ import lombok.Data;
  */
 @Data
 public class DocumentTypeDto extends DocAbstractDto {
+
+  @NotBlank
   private String type;
 }
