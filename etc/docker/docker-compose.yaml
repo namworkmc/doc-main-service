@@ -87,6 +87,8 @@ services:
       DOC_MAIN_SERVICE_KEYCLOAK_SCOPE: openid
       DOC_MAIN_SERVICE_KEYCLOAK_CLIENT_ID: doc-client
       DOC_MAIN_SERVICE_KEYCLOAK_CLIENT_SECRET: AW4aUnOGcPpitHX0TI6grfZeA3WLt5ru
+      DOC_DB_HOST: host.docker.internal
+      DOC_DATABASE: doc
 
 volumes:
   doc-main-data:
