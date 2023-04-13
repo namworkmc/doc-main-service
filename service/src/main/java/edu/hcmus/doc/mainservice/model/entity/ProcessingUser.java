@@ -22,7 +22,7 @@ public class ProcessingUser extends DocAbstractEntity {
   private ProcessingDocument processingDocument = new ProcessingDocument();
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "return_request_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "return_request_id", referencedColumnName = "id")
   private ReturnRequest returnRequest = new ReturnRequest();
 
   @Column(name = "step", nullable = false, columnDefinition = "INT NOT NULL")

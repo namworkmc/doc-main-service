@@ -2,6 +2,7 @@ package edu.hcmus.doc.mainservice.service;
 
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import java.util.List;
@@ -20,4 +21,6 @@ public interface IncomingDocumentService {
   IncomingDocument findById(Long id);
 
   IncomingDocument createIncomingDocument(IncomingDocumentWithAttachmentPostDto incomingDocumentWithAttachmentPostDto);
+
+  void transferDocumentsToDirector(TransferDocDto transferDocDto);
 }

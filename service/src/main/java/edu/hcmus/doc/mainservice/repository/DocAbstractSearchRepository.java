@@ -10,4 +10,5 @@ public interface DocAbstractSearchRepository<T> {
   long getTotalPages(SearchCriteriaDto searchCriteriaDto, long limit);
 
   List<T> searchByCriteria(SearchCriteriaDto criteria, long offset, long limit);
+
 }

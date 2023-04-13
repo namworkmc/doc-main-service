@@ -68,10 +68,14 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.SendingLevelDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.UserDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferDocDto</classPattern>
           </classPatterns>
           <excludeClasses>
             <class>java.io.Serializable</class>
           </excludeClasses>
+          <optionalAnnotations>
+            <annotation>org.springframework.lang.Nullable</annotation>
+          </optionalAnnotations>
           <mapEnum>asEnum</mapEnum>
           <mapDate>asString</mapDate>
           <outputKind>module</outputKind>

@@ -200,4 +200,5 @@ public class CustomProcessingDocumentRepositoryImpl
         .innerJoin(incomingDocument.distributionOrg, QDistributionOrganization.distributionOrganization)
         .where(where);
   }
+
 }

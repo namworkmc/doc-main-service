@@ -9,4 +9,6 @@ public interface CustomIncomingDocumentRepository {
   Long getTotalElements(SearchCriteriaDto searchCriteriaDto);
 
   List<IncomingDocument> getIncomingDocuments(String query, long offset, long limit);
+
+  List<IncomingDocument> getIncomingDocumentsByIds(List<Long> ids);
 }

@@ -7,6 +7,7 @@ import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.ProcessingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferDocDto;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import java.util.concurrent.ExecutionException;
@@ -66,5 +67,11 @@ public class IncomingDocumentController extends DocAbstractController {
             .toList(),
         processingDocumentSearchResultDto.getTotalElements(),
         processingDocumentSearchResultDto.getTotalPages());
+  }
+
+  // transfer document to DIRECTOR
+  @PostMapping("/transfer-to-director")
+  public void transferToDirector(@RequestBody TransferDocDto transferDocDto) {
+    incomingDocumentService.transferDocumentsToDirector(transferDocDto);
   }
 }

@@ -5,9 +5,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum ProcessingDocumentRoleEnum {
 
-  APPROVER("APPROVER"),
-  REVIEWER("REVIEWER"),
-  SUBMITTER("SUBMITTER"),
+  ASSIGNEE("ASSIGNEE"),
+  REPORTER("REPORTER"),
   COLLABORATOR("COLLABORATOR");
 
   public final String value;

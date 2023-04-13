@@ -57,4 +57,11 @@ public class CustomIncomingDocumentRepositoryImpl
         })
         .toList();
   }
+
+  @Override
+  public List<IncomingDocument> getIncomingDocumentsByIds(List<Long> ids) {
+    return selectFrom(QIncomingDocument.incomingDocument)
+        .where(QIncomingDocument.incomingDocument.id.in(ids))
+        .fetch();
+  }
 }
