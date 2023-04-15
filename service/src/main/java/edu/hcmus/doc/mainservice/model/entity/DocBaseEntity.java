@@ -3,10 +3,7 @@ package edu.hcmus.doc.mainservice.model.entity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToOne;
 import javax.persistence.Version;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,23 +32,12 @@ public abstract class DocBaseEntity {
   protected LocalDateTime createdDate;
 
   @CreatedBy
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(
-      name = "created_by",
-      referencedColumnName = "id",
-      nullable = false,
-      insertable = false,
-      updatable = false,
-      columnDefinition = "BIGINT"
-  )
-  protected User createdBy;
+  protected String createdBy;
 
   @UpdateTimestamp
   @Column(name = "updated_date", nullable = false, columnDefinition = "TIMESTAMP NOT NULL DEFAULT NOW()")
   protected LocalDateTime updatedDate;
 
   @LastModifiedBy
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "created_by", referencedColumnName = "id", columnDefinition = "BIGINT")
-  protected User updatedBy;
+  protected String updatedBy;
 }

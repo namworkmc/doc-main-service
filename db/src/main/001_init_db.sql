@@ -10,9 +10,9 @@ CREATE TABLE "doc_base_table"
 (
     "version"      BIGINT    NOT NULL DEFAULT 0,
     "created_date" TIMESTAMP NOT NULL DEFAULT NOW(),
-    "created_by"   BIGINT,
+    "created_by"   VARCHAR(255),
     "updated_date" TIMESTAMP NOT NULL DEFAULT NOW(),
-    "updated_by"   BIGINT
+    "updated_by"   VARCHAR(255)
 );
 
 CREATE TABLE "processing_document_role"
@@ -175,12 +175,6 @@ CREATE TABLE "feedback"
     CONSTRAINT "feedback_pk" PRIMARY KEY ("id")
 ) INHERITS ("doc_base_table");
 
--- base table
-ALTER TABLE "doc_base_table"
-    ADD CONSTRAINT "doc_base_table_created_by_fk" FOREIGN KEY ("created_by") REFERENCES "user" ("id");
-ALTER TABLE "doc_base_table"
-    ADD CONSTRAINT "doc_base_table_updated_by_fk" FOREIGN KEY ("updated_by") REFERENCES "user" ("id");
-
 -- user_role table
 ALTER TABLE "user_role"
     ADD CONSTRAINT "user_role_doc_system_role_fk" FOREIGN KEY ("role_id") REFERENCES "doc_system_role" ("id");
@@ -240,7 +234,5 @@ ALTER TABLE "processing_flow"
     ADD CONSTRAINT "processing_flow_document_type_fk" FOREIGN KEY ("doc_type_id") REFERENCES "document_type" ("id");
 
 -- feedback table
-ALTER TABLE "feedback"
-    ADD CONSTRAINT "feedback_user_fk" FOREIGN KEY ("created_by") REFERENCES "user" ("id");
 ALTER TABLE "feedback"
     ADD CONSTRAINT "feedback_processing_document_fk" FOREIGN KEY ("processing_doc_id") REFERENCES "processing_document" ("id");

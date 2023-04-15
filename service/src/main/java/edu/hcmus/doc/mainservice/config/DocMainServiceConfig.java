@@ -2,7 +2,6 @@ package edu.hcmus.doc.mainservice.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.util.keycloak.KeycloakProperty;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.client.ClientBuilder;
@@ -12,7 +11,6 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
@@ -49,8 +47,7 @@ public class DocMainServiceConfig {
   }
 
   @Bean
-  @Profile("dev-security")
-  public AuditorAware<User> auditorProvider() {
+  public AuditorAware<String> auditorProvider() {
     return new AuditorAwareImpl();
   }
 }
