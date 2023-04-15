@@ -1,11 +1,7 @@
 package edu.hcmus.doc.mainservice.repository.custom.impl;
 
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
-import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
-import edu.hcmus.doc.mainservice.model.entity.QDistributionOrganization;
-import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
-import edu.hcmus.doc.mainservice.model.entity.QIncomingDocument;
-import edu.hcmus.doc.mainservice.model.entity.QSendingLevel;
+import edu.hcmus.doc.mainservice.model.entity.*;
 import edu.hcmus.doc.mainservice.repository.custom.CustomIncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import java.util.List;
@@ -57,6 +53,21 @@ public class CustomIncomingDocumentRepositoryImpl
         })
         .toList();
   }
+
+    @Override
+    public IncomingDocument getIncomingDocumentById(Long id) {
+        return selectFrom(QIncomingDocument.incomingDocument)
+                .join(QIncomingDocument.incomingDocument.folder, QFolder.folder)
+                .fetchJoin()
+                .join(QIncomingDocument.incomingDocument.documentType, QDocumentType.documentType)
+                .fetchJoin()
+                .join(QIncomingDocument.incomingDocument.sendingLevel, QSendingLevel.sendingLevel)
+                .fetchJoin()
+                .join(QIncomingDocument.incomingDocument.distributionOrg, QDistributionOrganization.distributionOrganization)
+                .fetchJoin()
+                .where(QIncomingDocument.incomingDocument.id.eq(id))
+                .fetchFirst();
+    }
 
   @Override
   public List<IncomingDocument> getIncomingDocumentsByIds(List<Long> ids) {

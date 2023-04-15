@@ -1,3 +1,5 @@
+DROP SCHEMA IF EXISTS doc_main CASCADE;
+
 CREATE SCHEMA doc_main;
 SET SEARCH_PATH TO doc_main;
 
@@ -55,7 +57,7 @@ CREATE TABLE "incoming_document"
     "document_type_id"       BIGINT            NOT NULL,
     "original_symbol_number" VARCHAR(255)      NOT NULL UNIQUE,
     "distribution_org_id"    BIGINT            NOT NULL,
-    "distribution_date"      TIMESTAMP         NOT NULL,
+    "distribution_date"      DATE              NOT NULL,
     "arriving_date"          DATE              NOT NULL,
     "arriving_time"          TIME              NOT NULL,
     "comment"                VARCHAR(255)      NOT NULL,

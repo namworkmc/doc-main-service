@@ -10,5 +10,7 @@ public interface CustomIncomingDocumentRepository {
 
   List<IncomingDocument> getIncomingDocuments(String query, long offset, long limit);
 
+  IncomingDocument getIncomingDocumentById(Long id);
+
   List<IncomingDocument> getIncomingDocumentsByIds(List<Long> ids);
 }

@@ -35,7 +35,7 @@ public class IncomingDocument extends DocAbstractEntity {
   private DistributionOrganization distributionOrg = new DistributionOrganization();
 
   @Column(name = "distribution_date", nullable = false, columnDefinition = "TIMESTAMP NOT NULL")
-  private LocalDateTime distributionDate;
+  private LocalDate distributionDate;
 
   @Column(name = "arriving_date", nullable = false, columnDefinition = "DATE NOT NULL")
   private LocalDate arrivingDate;
