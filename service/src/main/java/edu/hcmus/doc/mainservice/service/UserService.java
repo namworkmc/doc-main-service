@@ -22,4 +22,8 @@ public interface UserService {
   List<User> getDirectors();
 
   List<User> getSecretaries();
+
+  List<User> getManagers();
+
+  List<User> getExperts();
 }

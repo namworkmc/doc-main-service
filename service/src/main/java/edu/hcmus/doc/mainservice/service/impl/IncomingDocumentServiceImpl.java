@@ -78,39 +78,41 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     return processingDocumentRepository.getTotalElements(searchCriteriaDto);
   }
 
-    @Override
-    public IncomingDocument updateIncomingDocument(IncomingDocument incomingDocument) {
-        IncomingDocument updatingIncomingDocument = getIncomingDocumentById(incomingDocument.getId());
-        DocObjectUtils.copyNonNullProperties(incomingDocument, updatingIncomingDocument);
-        return incomingDocumentRepository.saveAndFlush(updatingIncomingDocument);
-    }
+  @Override
+  public IncomingDocument updateIncomingDocument(IncomingDocument incomingDocument) {
+    IncomingDocument updatingIncomingDocument = getIncomingDocumentById(incomingDocument.getId());
+    DocObjectUtils.copyNonNullProperties(incomingDocument, updatingIncomingDocument);
+    return incomingDocumentRepository.saveAndFlush(updatingIncomingDocument);
+  }
 
-    @Override
-    public IncomingDocument createIncomingDocument(IncomingDocument incomingDocument) {
-        Folder folder = folderRepository.findById(incomingDocument.getFolder().getId())
-                .orElseThrow(() -> new FolderNotFoundException(FolderNotFoundException.FOLDER_NOT_FOUND));
-        folder.setNextNumber(folder.getNextNumber() + 1);
+  @Override
+  public IncomingDocument createIncomingDocument(IncomingDocument incomingDocument) {
+    Folder folder = folderRepository.findById(incomingDocument.getFolder().getId())
+        .orElseThrow(() -> new FolderNotFoundException(FolderNotFoundException.FOLDER_NOT_FOUND));
+    folder.setNextNumber(folder.getNextNumber() + 1);
 
     return incomingDocumentRepository.save(incomingDocument);
   }
 
-    @Override
-    public long getTotalPages(SearchCriteriaDto searchCriteriaDto, long limit) {
-        return getTotalElements(searchCriteriaDto) / limit;
-    }
-
-    @Override
-    public IncomingDocument getIncomingDocumentById(Long id) {
-        IncomingDocument incomingDocument = incomingDocumentRepository.getIncomingDocumentById(id);
-
-        if (ObjectUtils.isEmpty(incomingDocument)) {
-            throw new DocumentNotFoundException(DocumentNotFoundException.DOCUMENT_NOT_FOUND);
-        }
-
-        return incomingDocument;
-    }
   @Override
-  public List<ProcessingDocument> searchIncomingDocuments(SearchCriteriaDto searchCriteria, int page, int pageSize) {
+  public long getTotalPages(SearchCriteriaDto searchCriteriaDto, long limit) {
+    return getTotalElements(searchCriteriaDto) / limit;
+  }
+
+  @Override
+  public IncomingDocument getIncomingDocumentById(Long id) {
+    IncomingDocument incomingDocument = incomingDocumentRepository.getIncomingDocumentById(id);
+
+    if (ObjectUtils.isEmpty(incomingDocument)) {
+      throw new DocumentNotFoundException(DocumentNotFoundException.DOCUMENT_NOT_FOUND);
+    }
+
+    return incomingDocument;
+  }
+
+  @Override
+  public List<ProcessingDocument> searchIncomingDocuments(SearchCriteriaDto searchCriteria,
+      int page, int pageSize) {
     return processingDocumentRepository.searchByCriteria(searchCriteria, page, pageSize);
   }
 
@@ -150,15 +152,8 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
   @Override
   public void transferDocumentsToDirector(TransferDocDto transferDocDto) {
-    User reporter = userRepository.findById(Objects.requireNonNull(transferDocDto.getReporterId()))
-        .orElseThrow(
-            () -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND)
-        );
-
-    User assignee = userRepository.findById(Objects.requireNonNull(transferDocDto.getAssigneeId()))
-        .orElseThrow(
-            () -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND)
-        );
+    User reporter = getUserByIdOrThrow(transferDocDto.getReporterId());
+    User assignee = getUserByIdOrThrow(transferDocDto.getAssigneeId());
 
     List<User> collaborators = userRepository.findAllById(
         Objects.requireNonNull(transferDocDto.getCollaboratorIds()));
@@ -173,56 +168,119 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     // TODO: validate incomingDocuments to make sure they are not processed yet.
     // save processing documents with status IN_PROGRESS
     incomingDocuments.forEach(incomingDocument -> {
-      ProcessingDocument processingDocument = new ProcessingDocument();
-      processingDocument.setIncomingDoc(incomingDocument);
-      processingDocument.setStatus(ProcessingStatus.IN_PROGRESS);
-      processingDocument.setOpened(true);
-      processingDocument.setProcessingRequest("processing_request");
+      ProcessingDocument processingDocument = createProcessingDocument(incomingDocument,
+          ProcessingStatus.IN_PROGRESS);
 
       ProcessingDocument savedProcessingDocument = processingDocumentRepository.save(
           processingDocument);
 
       collaborators.forEach(collaborator -> {
-        ProcessingUser processingUser1 = new ProcessingUser();
-        processingUser1.setProcessingDocument(savedProcessingDocument);
-        processingUser1.setUser(collaborator);
-        processingUser1.setStep(1);
-        processingUser1.setReturnRequest(returnRequest);
-
+        ProcessingUser processingUser1 = createProcessingUser(savedProcessingDocument, collaborator,
+            1, returnRequest);
         ProcessingUser savedProcessingUser1 = processingUserRepository.save(processingUser1);
-
-        ProcessingUserRole processingUserRole1 = new ProcessingUserRole();
-        processingUserRole1.setProcessingUser(savedProcessingUser1);
-        processingUserRole1.setRole(ProcessingDocumentRoleEnum.COLLABORATOR);
+        ProcessingUserRole processingUserRole1 = createProcessingUserRole(savedProcessingUser1,
+            ProcessingDocumentRoleEnum.COLLABORATOR);
 
         processingUserRoleRepository.save(processingUserRole1);
       });
 
-      ProcessingUser processingUser2 = new ProcessingUser();
-      processingUser2.setProcessingDocument(savedProcessingDocument);
-      processingUser2.setUser(assignee);
-      processingUser2.setStep(1);
-      processingUser2.setReturnRequest(returnRequest);
-
-      ProcessingUser processingUser3 = new ProcessingUser();
-      processingUser3.setProcessingDocument(savedProcessingDocument);
-      processingUser3.setUser(reporter);
-      processingUser3.setStep(1);
-      processingUser3.setReturnRequest(returnRequest);
+      ProcessingUser processingUser2 = createProcessingUser(savedProcessingDocument, assignee, 1,
+          returnRequest);
+      ProcessingUser processingUser3 = createProcessingUser(savedProcessingDocument, reporter, 1,
+          returnRequest);
 
       ProcessingUser savedProcessingUser2 = processingUserRepository.save(processingUser2);
       ProcessingUser savedProcessingUser3 = processingUserRepository.save(processingUser3);
 
-      ProcessingUserRole processingUserRole2 = new ProcessingUserRole();
-      processingUserRole2.setProcessingUser(savedProcessingUser2);
-      processingUserRole2.setRole(ProcessingDocumentRoleEnum.ASSIGNEE);
-
-      ProcessingUserRole processingUserRole3 = new ProcessingUserRole();
-      processingUserRole3.setProcessingUser(savedProcessingUser3);
-      processingUserRole3.setRole(ProcessingDocumentRoleEnum.REPORTER);
+      ProcessingUserRole processingUserRole2 = createProcessingUserRole(savedProcessingUser2,
+          ProcessingDocumentRoleEnum.ASSIGNEE);
+      ProcessingUserRole processingUserRole3 = createProcessingUserRole(savedProcessingUser3,
+          ProcessingDocumentRoleEnum.REPORTER);
 
       processingUserRoleRepository.save(processingUserRole2);
       processingUserRoleRepository.save(processingUserRole3);
     });
   }
+
+  @Override
+  public void transferDocumentsToManager(TransferDocDto transferDocDto) {
+    User reporter = getUserByIdOrThrow(transferDocDto.getReporterId());
+    User assignee = getUserByIdOrThrow(transferDocDto.getAssigneeId());
+
+    List<User> collaborators = userRepository.findAllById(
+        Objects.requireNonNull(transferDocDto.getCollaboratorIds()));
+
+    List<ProcessingDocument> processingDocuments = processingDocumentRepository.findAllByIds(
+        transferDocDto.getDocumentIds());
+
+    ReturnRequest returnRequest = returnRequestRepository.findById(1L).orElseThrow(
+        () -> new RuntimeException("Return request not found")
+    );
+
+    processingDocuments.forEach(processingDocument -> {
+      collaborators.forEach(collaborator -> {
+        // check if collaborator is already assigned to this document
+
+        ProcessingUser processingUser1 = createProcessingUser(processingDocument, collaborator, 2,
+            returnRequest);
+        ProcessingUser savedProcessingUser1 = processingUserRepository.save(processingUser1);
+
+        ProcessingUserRole processingUserRole1 = createProcessingUserRole(savedProcessingUser1,
+            ProcessingDocumentRoleEnum.COLLABORATOR);
+        processingUserRoleRepository.save(processingUserRole1);
+      });
+
+      ProcessingUser processingUser2 = createProcessingUser(processingDocument, assignee, 2,
+          returnRequest);
+      ProcessingUser processingUser3 = createProcessingUser(processingDocument, reporter, 2,
+          returnRequest);
+
+      ProcessingUser savedProcessingUser2 = processingUserRepository.save(processingUser2);
+      ProcessingUser savedProcessingUser3 = processingUserRepository.save(processingUser3);
+
+      ProcessingUserRole processingUserRole2 = createProcessingUserRole(savedProcessingUser2,
+          ProcessingDocumentRoleEnum.ASSIGNEE);
+      ProcessingUserRole processingUserRole3 = createProcessingUserRole(savedProcessingUser3,
+          ProcessingDocumentRoleEnum.REPORTER);
+
+      processingUserRoleRepository.save(processingUserRole2);
+      processingUserRoleRepository.save(processingUserRole3);
+    });
+
+  }
+
+  private User getUserByIdOrThrow(Long userId) {
+    return userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND));
+  }
+
+  private ProcessingDocument createProcessingDocument(IncomingDocument incomingDocument,
+      ProcessingStatus processingStatus) {
+    ProcessingDocument processingDocument = new ProcessingDocument();
+    processingDocument.setIncomingDoc(incomingDocument);
+    processingDocument.setStatus(processingStatus);
+    processingDocument.setOpened(true);
+    processingDocument.setProcessingRequest("processing_request");
+    return processingDocument;
+  }
+
+  private ProcessingUser createProcessingUser(ProcessingDocument processingDocument, User user,
+      Integer step, ReturnRequest returnRequest) {
+    ProcessingUser processingUser = new ProcessingUser();
+    processingUser.setProcessingDocument(processingDocument);
+    processingUser.setUser(user);
+    processingUser.setStep(step);
+    processingUser.setReturnRequest(returnRequest);
+    return processingUser;
+  }
+
+  private ProcessingUserRole createProcessingUserRole(ProcessingUser processingUser,
+      ProcessingDocumentRoleEnum role) {
+    ProcessingUserRole processingUserRole = new ProcessingUserRole();
+    processingUserRole.setProcessingUser(processingUser);
+    processingUserRole.setRole(role);
+
+    return processingUserRole;
+  }
+
 }

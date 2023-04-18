@@ -86,7 +86,7 @@
         "uma_authorization",
         "DOC_ADMIN",
         "default-roles-doc",
-        "DIRECTOR"
+        "GIAM_DOC"
       ],
       "clientRoles": {
         "realm-management": [
@@ -115,7 +115,7 @@
         "uma_authorization",
         "DOC_ADMIN",
         "default-roles-doc",
-        "EXPERT"
+        "CHUYEN_VIEN"
       ],
       "clientRoles": {
         "realm-management": [
@@ -144,7 +144,7 @@
         "uma_authorization",
         "DOC_ADMIN",
         "default-roles-doc",
-        "MANAGER"
+        "TRUONG_PHONG"
       ],
       "clientRoles": {
         "realm-management": [
@@ -173,7 +173,7 @@
         "uma_authorization",
         "DOC_ADMIN",
         "default-roles-doc",
-        "STAFF"
+        "VAN_THU"
       ],
       "clientRoles": {
         "realm-management": [

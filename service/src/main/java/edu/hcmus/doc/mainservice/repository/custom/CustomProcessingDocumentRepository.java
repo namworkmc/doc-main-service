@@ -12,4 +12,5 @@ public interface CustomProcessingDocumentRepository
       List<IncomingDocumentSearchResultDto> incomingDocumentSearchResultDtoList, long offset,
       long limit);
 
+  List<ProcessingDocument> findAllByIds(List<Long> ids);
 }

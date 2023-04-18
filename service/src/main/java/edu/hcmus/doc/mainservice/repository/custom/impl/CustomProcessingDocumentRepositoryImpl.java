@@ -201,4 +201,11 @@ public class CustomProcessingDocumentRepositoryImpl
         .where(where);
   }
 
+  @Override
+  public List<ProcessingDocument> findAllByIds(List<Long> ids) {
+    return selectFrom(processingDocument)
+        .from(processingDocument)
+        .where(processingDocument.incomingDoc.id.in(ids))
+        .fetch();
+  }
 }

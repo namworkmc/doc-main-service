@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum DocSystemRoleEnum {
-  DIRECTOR("DIRECTOR"),
-  EXPERT("EXPERT"),
-  MANAGER("MANAGER"),
-  STAFF("STAFF");
+  GIAM_DOC("GIAM_DOC"),
+  CHUYEN_VIEN("CHUYEN_VIEN"),
+  TRUONG_PHONG("TRUONG_PHONG"),
+  VAN_THU("VAN_THU");
 
   public final String value;
 }

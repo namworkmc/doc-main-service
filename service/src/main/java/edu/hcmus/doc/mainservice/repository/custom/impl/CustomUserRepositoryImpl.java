@@ -61,7 +61,7 @@ public class CustomUserRepositoryImpl
     return selectFrom(QUser.user)
         .innerJoin(QUserRole.userRole)
         .on(QUser.user.id.eq(QUserRole.userRole.user.id))
-        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.DIRECTOR))
+        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.GIAM_DOC))
         .fetch()
         .stream()
         .toList();
@@ -72,7 +72,29 @@ public class CustomUserRepositoryImpl
     return selectFrom(QUserRole.userRole)
         .select(QUser.user)
         .innerJoin(QUserRole.userRole.user, QUser.user)
-        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.STAFF))
+        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.VAN_THU))
+        .fetch()
+        .stream()
+        .toList();
+  }
+
+  @Override
+  public List<User> getExperts() {
+    return selectFrom(QUserRole.userRole)
+        .select(QUser.user)
+        .innerJoin(QUserRole.userRole.user, QUser.user)
+        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.CHUYEN_VIEN))
+        .fetch()
+        .stream()
+        .toList();
+  }
+
+  @Override
+  public List<User> getManagers() {
+    return selectFrom(QUserRole.userRole)
+        .select(QUser.user)
+        .innerJoin(QUserRole.userRole.user, QUser.user)
+        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.TRUONG_PHONG))
         .fetch()
         .stream()
         .toList();

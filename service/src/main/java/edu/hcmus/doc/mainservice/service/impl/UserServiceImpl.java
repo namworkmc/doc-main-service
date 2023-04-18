@@ -71,4 +71,14 @@ public class UserServiceImpl implements UserService {
   public List<User> getSecretaries() {
     return userRepository.getSecretaries();
   }
+
+  @Override
+  public List<User> getExperts() {
+    return userRepository.getExperts();
+  }
+
+  @Override
+  public List<User> getManagers() {
+    return userRepository.getManagers();
+  }
 }

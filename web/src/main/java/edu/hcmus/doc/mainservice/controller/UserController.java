@@ -36,4 +36,14 @@ public class UserController extends DocAbstractController {
   public List<UserDto> getSecretaries() {
     return userMapper.toDto(userService.getSecretaries());
   }
+
+  @GetMapping("/experts")
+  public List<UserDto> getExperts() {
+    return userMapper.toDto(userService.getExperts());
+  }
+
+  @GetMapping("/managers")
+  public List<UserDto> getManagers() {
+    return userMapper.toDto(userService.getManagers());
+  }
 }

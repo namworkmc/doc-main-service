@@ -24,7 +24,7 @@ class UserRoleRepositoryTest extends DocAbstractRepositoryTest {
     user.setPassword(passwordEncoder.encode("test"));
     userRepository.save(user);
 
-    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
+    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
 
     UserRole userRole = new UserRole();
     userRole.setUser(user);

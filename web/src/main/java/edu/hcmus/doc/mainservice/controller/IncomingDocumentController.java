@@ -33,11 +33,11 @@ public class IncomingDocumentController extends DocAbstractController {
   private final ProcessingDocumentService processingDocumentService;
   private final IncomingDocumentService incomingDocumentService;
 
-    @GetMapping("/{id}")
-    public IncomingDocumentDto getIncomingDocument(@PathVariable Long id) {
-        return incomingDecoratorDocumentMapper
-            .toDto(incomingDocumentService.getIncomingDocumentById(id));
-    }
+  @GetMapping("/{id}")
+  public IncomingDocumentDto getIncomingDocument(@PathVariable Long id) {
+    return incomingDecoratorDocumentMapper
+        .toDto(incomingDocumentService.getIncomingDocumentById(id));
+  }
 
   @PostMapping("/search")
   public DocPaginationDto<IncomingDocumentDto> getIncomingDocuments(
@@ -80,15 +80,22 @@ public class IncomingDocumentController extends DocAbstractController {
         processingDocumentSearchResultDto.getTotalPages());
   }
 
-  // transfer document to DIRECTOR
   @PostMapping("/transfer-to-director")
   public void transferToDirector(@RequestBody TransferDocDto transferDocDto) {
     incomingDocumentService.transferDocumentsToDirector(transferDocDto);
   }
 
-    @PutMapping("/update")
-    public IncomingDocumentDto createIncomingDocument(@RequestBody IncomingDocumentPutDto incomingDocumentPutDto) {
-        IncomingDocument incomingDocument = incomingDecoratorDocumentMapper.toEntity(incomingDocumentPutDto);
-        return incomingDecoratorDocumentMapper.toDto(incomingDocumentService.updateIncomingDocument(incomingDocument));
-    }
+  @PostMapping("/transfer-to-manager")
+  public void transferToManager(@RequestBody TransferDocDto transferDocDto) {
+    incomingDocumentService.transferDocumentsToManager(transferDocDto);
+  }
+
+  @PutMapping("/update")
+  public IncomingDocumentDto createIncomingDocument(
+      @RequestBody IncomingDocumentPutDto incomingDocumentPutDto) {
+    IncomingDocument incomingDocument = incomingDecoratorDocumentMapper.toEntity(
+        incomingDocumentPutDto);
+    return incomingDecoratorDocumentMapper.toDto(
+        incomingDocumentService.updateIncomingDocument(incomingDocument));
+  }
 }

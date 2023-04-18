@@ -24,7 +24,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setPassword(passwordEncoder.encode("test"));
     userRepository.save(user);
 
-    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
+    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
 
     UserRole userRole = new UserRole();
     userRole.setUser(user);
@@ -50,7 +50,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setPassword(passwordEncoder.encode("test"));
     userRepository.save(user);
 
-    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
+    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
 
     UserRole userRole = new UserRole();
     userRole.setUser(user);
@@ -88,7 +88,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setPassword(passwordEncoder.encode(username));
     userRepository.save(user);
 
-    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
+    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
 
     UserRole userRole = new UserRole();
     userRole.setUser(user);
@@ -114,7 +114,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setPassword(passwordEncoder.encode(email));
     userRepository.save(user);
 
-    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.DIRECTOR;
+    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
 
     UserRole userRole = new UserRole();
     userRole.setUser(user);

@@ -17,4 +17,8 @@ public interface CustomUserRepository {
   List<User> getDirectors();
 
   List<User> getSecretaries();
+
+  List<User> getExperts();
+
+  List<User> getManagers();
 }
