@@ -2,7 +2,6 @@ package edu.hcmus.doc.mainservice.repository.custom.impl;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import edu.hcmus.doc.mainservice.model.entity.QUser;
-import edu.hcmus.doc.mainservice.model.entity.QUserRole;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.repository.custom.CustomUserRepository;
@@ -57,46 +56,9 @@ public class CustomUserRepositoryImpl
   }
 
   @Override
-  public List<User> getDirectors() {
+  public List<User> getUsersByRole(DocSystemRoleEnum role) {
     return selectFrom(QUser.user)
-        .innerJoin(QUserRole.userRole)
-        .on(QUser.user.id.eq(QUserRole.userRole.user.id))
-        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.GIAM_DOC))
-        .fetch()
-        .stream()
-        .toList();
-  }
-
-  @Override
-  public List<User> getSecretaries() {
-    return selectFrom(QUserRole.userRole)
-        .select(QUser.user)
-        .innerJoin(QUserRole.userRole.user, QUser.user)
-        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.VAN_THU))
-        .fetch()
-        .stream()
-        .toList();
-  }
-
-  @Override
-  public List<User> getExperts() {
-    return selectFrom(QUserRole.userRole)
-        .select(QUser.user)
-        .innerJoin(QUserRole.userRole.user, QUser.user)
-        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.CHUYEN_VIEN))
-        .fetch()
-        .stream()
-        .toList();
-  }
-
-  @Override
-  public List<User> getManagers() {
-    return selectFrom(QUserRole.userRole)
-        .select(QUser.user)
-        .innerJoin(QUserRole.userRole.user, QUser.user)
-        .where(QUserRole.userRole.role.eq(DocSystemRoleEnum.TRUONG_PHONG))
-        .fetch()
-        .stream()
-        .toList();
+        .where(QUser.user.role.eq(role))
+        .fetch();
   }
 }

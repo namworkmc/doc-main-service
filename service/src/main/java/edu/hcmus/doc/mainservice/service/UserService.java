@@ -1,6 +1,7 @@
 package edu.hcmus.doc.mainservice.service;
 
 import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import java.util.List;
 
 public interface UserService {
@@ -19,11 +20,5 @@ public interface UserService {
 
   User getCurrentUserFromDB();
 
-  List<User> getDirectors();
-
-  List<User> getSecretaries();
-
-  List<User> getManagers();
-
-  List<User> getExperts();
+  List<User> getUsersByRole(DocSystemRoleEnum role);
 }
