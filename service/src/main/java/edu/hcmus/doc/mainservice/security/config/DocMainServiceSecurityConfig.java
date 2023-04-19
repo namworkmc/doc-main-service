@@ -3,6 +3,7 @@ package edu.hcmus.doc.mainservice.security.config;
 import static java.util.Arrays.asList;
 
 import edu.hcmus.doc.mainservice.DocURL;
+import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,7 @@ public class DocMainServiceSecurityConfig {
       Map<String, Collection<String>> realmAccess = jwt.getClaim(REALM_ACCESS);
       Collection<String> roles = realmAccess.get(ROLES);
       return roles.stream()
+          .filter(DocSystemRoleEnum.ALL_ROLES_AS_STRING::contains)
           .map(SimpleGrantedAuthority::new)
           .collect(Collectors.toSet());
     };

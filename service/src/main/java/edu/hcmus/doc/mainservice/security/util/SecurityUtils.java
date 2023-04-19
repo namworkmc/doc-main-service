@@ -1,19 +1,21 @@
 package edu.hcmus.doc.mainservice.security.util;
 
 import edu.hcmus.doc.mainservice.model.entity.User;
-import lombok.experimental.UtilityClass;
+import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-@UtilityClass
-public class SecurityUtils {
+public final class SecurityUtils {
 
-  public String getCurrentName() {
+  private SecurityUtils() {
+  }
+
+  public static String getCurrentName() {
     return getSecurityAuthentication().getName();
   }
 
-  public User getCurrentUser() {
+  public static User getCurrentUser() {
     Jwt jwt = (Jwt) getSecurityAuthentication().getPrincipal();
 
     User currentUser = new User();
@@ -21,14 +23,17 @@ public class SecurityUtils {
     currentUser.setUsername(jwt.getClaimAsString("username"));
     currentUser.setEmail(jwt.getClaimAsString("email"));
     currentUser.setFullName(jwt.getClaimAsString("fullName"));
+
+    getSecurityAuthentication().getAuthorities().forEach(authority -> currentUser.setRole(DocSystemRoleEnum.valueOf(authority.getAuthority())));
+
     return currentUser;
   }
 
-  private Authentication getSecurityAuthentication() {
+  private static Authentication getSecurityAuthentication() {
     return SecurityContextHolder.getContext().getAuthentication();
   }
 
-  private Long getExternalId(String keycloakId) {
+  private static Long getExternalId(String keycloakId) {
     return Long.parseLong(keycloakId.substring(keycloakId.lastIndexOf(":") + 1));
   }
 }
