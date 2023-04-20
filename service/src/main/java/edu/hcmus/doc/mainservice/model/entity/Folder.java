@@ -9,7 +9,7 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Table(name = "folder", schema = "doc_main", catalog = "doc")
-public class Folder extends DocAbstractEntity {
+public class Folder extends DocAbstractIdEntity {
 
   @Column(name = "folder_name", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
   private String folderName;

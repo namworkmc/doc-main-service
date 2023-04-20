@@ -1,9 +1,7 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
-import edu.hcmus.doc.mainservice.model.custom.FileTypeConverter;
 import edu.hcmus.doc.mainservice.model.enums.FileType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -16,7 +14,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "attachment", schema = "doc_main", catalog = "doc")
-public class Attachment extends DocAbstractEntity {
+public class Attachment extends DocAbstractIdEntity {
 
   @Column(name = "alfresco_file_id", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
   private String alfrescoFileId;
@@ -25,6 +23,7 @@ public class Attachment extends DocAbstractEntity {
   private String alfrescoFolderId;
 
   @Column(name = "file_type", nullable = false)
+  @Enumerated(EnumType.STRING)
   private FileType fileType;
 
   @ManyToOne(fetch = FetchType.LAZY)

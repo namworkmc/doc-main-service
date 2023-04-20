@@ -1,17 +1,12 @@
 package edu.hcmus.doc.mainservice.repository;
 
-import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
-@Repository
-public interface DocAbstractSearchRepository<T> {
+public interface DocAbstractSearchRepository<T, C> {
 
-  long getTotalElements(SearchCriteriaDto criteria);
+  long getTotalElements(C criteria);
 
-  long getTotalPages(SearchCriteriaDto searchCriteriaDto, long limit);
+  long getTotalPages(C criteria, long limit);
 
-  List<T> searchByCriteria(SearchCriteriaDto criteria, long offset, long limit);
-
+  List<T> searchByCriteria(C criteria, long offset, long limit);
 }

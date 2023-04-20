@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "processed_document", schema = "doc_main", catalog = "doc")
-public class ProcessedDocument extends DocAbstractEntity {
+public class ProcessedDocument extends DocAbstractIdEntity {
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id", nullable = false)

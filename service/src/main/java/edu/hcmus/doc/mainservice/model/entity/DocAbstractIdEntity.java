@@ -8,7 +8,7 @@ import org.hibernate.Hibernate;
 
 @Data
 @MappedSuperclass
-public abstract class DocAbstractEntity extends DocBaseEntity {
+public abstract class DocAbstractIdEntity extends DocAbstractVersionEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public abstract class DocAbstractEntity extends DocBaseEntity {
     if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
       return false;
     }
-    DocAbstractEntity that = (DocAbstractEntity) o;
+    DocAbstractIdEntity that = (DocAbstractIdEntity) o;
     return id != null && Objects.equals(id, that.id);
   }
 

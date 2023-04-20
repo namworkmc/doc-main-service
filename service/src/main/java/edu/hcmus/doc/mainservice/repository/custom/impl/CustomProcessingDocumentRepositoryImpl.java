@@ -9,6 +9,7 @@ import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
+import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.QDistributionOrganization;
 import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
@@ -157,7 +158,7 @@ public class CustomProcessingDocumentRepositoryImpl
         .toList();
   }
 
-  private JPAQuery<ProcessingDocument> searchQueryByCriteria(SearchCriteriaDto searchCriteriaDto) {
+  private JPAQuery<IncomingDocument> searchQueryByCriteria(SearchCriteriaDto searchCriteriaDto) {
     BooleanBuilder where = new BooleanBuilder();
 
     if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getIncomingNumber())) {
@@ -193,8 +194,9 @@ public class CustomProcessingDocumentRepositoryImpl
       where.and(incomingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
     }
 
-    return selectFrom(processingDocument)
-        .rightJoin(processingDocument.incomingDoc, incomingDocument)
+    return selectFrom(incomingDocument)
+        .leftJoin(processingDocument)
+        .on(incomingDocument.id.eq(processingDocument.incomingDoc.id))
         .innerJoin(incomingDocument.sendingLevel, QSendingLevel.sendingLevel)
         .innerJoin(incomingDocument.documentType, QDocumentType.documentType)
         .innerJoin(incomingDocument.distributionOrg, QDistributionOrganization.distributionOrganization)

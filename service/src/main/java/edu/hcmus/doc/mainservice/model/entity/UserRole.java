@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "user_role", schema = "doc_main", catalog = "doc")
-public class UserRole extends DocAbstractEntity {
+public class UserRole extends DocAbstractIdEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "role_name", nullable = false, columnDefinition = "VARCHAR(20) NOT NULL")

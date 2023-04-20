@@ -5,6 +5,6 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "outgoing_document", schema = "doc_main", catalog = "doc")
-public class OutgoingDocument extends DocAbstractEntity {
+public class OutgoingDocument extends DocAbstractIdEntity {
 
 }

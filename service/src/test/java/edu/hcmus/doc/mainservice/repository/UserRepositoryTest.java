@@ -9,7 +9,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 
+@WithMockUser(username = "test", password = "test")
 class UserRepositoryTest extends DocAbstractRepositoryTest {
 
   @Autowired
@@ -22,6 +24,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setUsername("test");
     user.setEmail("test");
     user.setPassword(passwordEncoder.encode("test"));
+    user.setRole(DocSystemRoleEnum.GIAM_DOC);
     userRepository.save(user);
 
     DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
@@ -48,6 +51,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setUsername("test");
     user.setEmail("test");
     user.setPassword(passwordEncoder.encode("test"));
+    user.setRole(DocSystemRoleEnum.GIAM_DOC);
     userRepository.save(user);
 
     DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
@@ -86,6 +90,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setUsername(username);
     user.setEmail(username);
     user.setPassword(passwordEncoder.encode(username));
+    user.setRole(DocSystemRoleEnum.GIAM_DOC);
     userRepository.save(user);
 
     DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
@@ -112,6 +117,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setUsername(email);
     user.setEmail(email);
     user.setPassword(passwordEncoder.encode(email));
+    user.setRole(DocSystemRoleEnum.GIAM_DOC);
     userRepository.save(user);
 
     DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;

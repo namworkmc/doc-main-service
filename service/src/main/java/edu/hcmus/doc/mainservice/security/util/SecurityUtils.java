@@ -29,6 +29,14 @@ public final class SecurityUtils {
     return currentUser;
   }
 
+  public static Long getCurrentUserId() {
+    if (getSecurityAuthentication().getPrincipal() instanceof Jwt jwt) {
+      return getExternalId(jwt.getSubject());
+    }
+
+    return 1L;
+  }
+
   private static Authentication getSecurityAuthentication() {
     return SecurityContextHolder.getContext().getAuthentication();
   }

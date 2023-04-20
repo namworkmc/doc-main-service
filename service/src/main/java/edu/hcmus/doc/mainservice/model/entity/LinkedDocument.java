@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "linked_document", schema = "doc_main", catalog = "doc")
-public class LinkedDocument extends DocAbstractEntity {
+public class LinkedDocument extends DocAbstractIdEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id", nullable = false)

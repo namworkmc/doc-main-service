@@ -70,6 +70,7 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.UserDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferDocDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.DocumentReminderDetailsDto</classPattern>
           </classPatterns>
           <excludeClasses>
             <class>java.io.Serializable</class>

@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "work_folder", schema = "doc_main", catalog = "doc")
-public class WorkFolder extends DocAbstractEntity {
+public class WorkFolder extends DocAbstractIdEntity {
   @Column(name = "work_folder_number", nullable = false)
   private Long workFolderNumber;
 

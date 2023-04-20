@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "extension_request", schema = "doc_main", catalog = "doc")
-public class ExtensionRequest extends DocAbstractEntity {
+public class ExtensionRequest extends DocAbstractIdEntity {
 
   @OneToOne
   @JoinColumn(name = "processing_doc_id", referencedColumnName = "id", nullable = false)

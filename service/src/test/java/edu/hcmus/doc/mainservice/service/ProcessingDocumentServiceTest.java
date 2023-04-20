@@ -12,18 +12,22 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 
 class ProcessingDocumentServiceTest extends AbstractServiceTest {
 
   private ProcessingDocumentService processingDocumentService;
 
+  @Mock
   private AsyncRabbitTemplate asyncRabbitTemplate;
-
 
   @BeforeEach
   void setUp() {
-    this.processingDocumentService = new ProcessingDocumentServiceImpl(processingDocumentRepository,asyncRabbitTemplate);
+    this.processingDocumentService = new ProcessingDocumentServiceImpl(
+        processingDocumentRepository,
+        asyncRabbitTemplate
+    );
   }
 
   @Test
@@ -36,8 +40,10 @@ class ProcessingDocumentServiceTest extends AbstractServiceTest {
     long actual = processingDocumentService.getTotalElements(searchCriteriaDto);
 
     // Then
-    ArgumentCaptor<SearchCriteriaDto> searchCriteriaDtoArgumentCaptor = ArgumentCaptor.forClass(SearchCriteriaDto.class);
-    verify(processingDocumentRepository).getTotalElements(searchCriteriaDtoArgumentCaptor.capture());
+    ArgumentCaptor<SearchCriteriaDto> searchCriteriaDtoArgumentCaptor = ArgumentCaptor.forClass(
+        SearchCriteriaDto.class);
+    verify(processingDocumentRepository).getTotalElements(
+        searchCriteriaDtoArgumentCaptor.capture());
 
     assertThat(searchCriteriaDtoArgumentCaptor.getValue()).isEqualTo(searchCriteriaDto);
     assertThat(actual).isEqualTo(12L);
@@ -54,9 +60,11 @@ class ProcessingDocumentServiceTest extends AbstractServiceTest {
     long actual = processingDocumentService.getTotalPages(searchCriteriaDto, pageSize);
 
     // Then
-    ArgumentCaptor<SearchCriteriaDto> searchCriteriaDtoArgumentCaptor = ArgumentCaptor.forClass(SearchCriteriaDto.class);
+    ArgumentCaptor<SearchCriteriaDto> searchCriteriaDtoArgumentCaptor = ArgumentCaptor.forClass(
+        SearchCriteriaDto.class);
     ArgumentCaptor<Integer> pageSizeArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
-    verify(processingDocumentRepository).getTotalPages(searchCriteriaDtoArgumentCaptor.capture(), pageSizeArgumentCaptor.capture());
+    verify(processingDocumentRepository).getTotalPages(searchCriteriaDtoArgumentCaptor.capture(),
+        pageSizeArgumentCaptor.capture());
 
     assertThat(searchCriteriaDtoArgumentCaptor.getValue()).isEqualTo(searchCriteriaDto);
     assertThat(actual).isEqualTo(4L);

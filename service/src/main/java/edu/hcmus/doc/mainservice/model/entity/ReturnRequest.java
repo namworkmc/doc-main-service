@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "return_request", schema = "doc_main", catalog = "doc")
-public class ReturnRequest extends DocAbstractEntity {
+public class ReturnRequest extends DocAbstractIdEntity {
 
   @Column(name = "reason", nullable = false, length = 200, columnDefinition = "VARCHAR(200) NOT NULL")
   private String reason;

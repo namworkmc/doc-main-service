@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "distribution_organization", schema = "doc_main", catalog = "doc")
-public class DistributionOrganization extends DocAbstractEntity {
+public class DistributionOrganization extends DocAbstractIdEntity {
 
   @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
   private String name;

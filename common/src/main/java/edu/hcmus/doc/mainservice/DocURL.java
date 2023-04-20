@@ -1,6 +1,6 @@
 package edu.hcmus.doc.mainservice;
 
-public class DocURL {
+public final class DocURL {
 
   private DocURL() {
   }

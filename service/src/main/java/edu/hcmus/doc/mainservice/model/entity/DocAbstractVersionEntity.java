@@ -1,5 +1,7 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
+import static edu.hcmus.doc.mainservice.model.entity.DocAbstractVersionEntity.IS_DELETED_PARAM;
+
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
@@ -9,7 +11,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.ToString.Exclude;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -21,7 +27,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @RequiredArgsConstructor
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class DocBaseEntity {
+@FilterDef(
+    name = DocAbstractVersionEntity.DELETED_FILTER,
+    parameters = @ParamDef(name = IS_DELETED_PARAM, type = "boolean")
+)
+@Filter(name = DocAbstractVersionEntity.DELETED_FILTER, condition = "is_deleted = :isDeleted")
+public abstract class DocAbstractVersionEntity {
 
   @Version
   @Column(name = "version", nullable = false, columnDefinition = "INT DEFAULT 0")
@@ -40,4 +51,11 @@ public abstract class DocBaseEntity {
 
   @LastModifiedBy
   protected String updatedBy;
+
+  @Column(name = "is_deleted", nullable = false, columnDefinition = "BOOL NOT NULL DEFAULT FALSE")
+  protected boolean isDeleted;
+
+  public static final String DELETED_FILTER = "deletedFilter";
+
+  public static final String IS_DELETED_PARAM = "isDeleted";
 }

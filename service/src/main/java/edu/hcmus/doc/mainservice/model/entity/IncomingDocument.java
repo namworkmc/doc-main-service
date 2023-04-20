@@ -18,7 +18,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "incoming_document", schema = "doc_main", catalog = "doc")
-public class IncomingDocument extends DocAbstractEntity {
+public class IncomingDocument extends DocAbstractIdEntity {
 
   @Column(name = "incoming_number", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
   private String incomingNumber;
@@ -61,7 +61,4 @@ public class IncomingDocument extends DocAbstractEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "sending_level_id", referencedColumnName = "id")
   private SendingLevel sendingLevel = new SendingLevel();
-
-  @Column(name = "is_deleted")
-  private boolean isDeleted;
 }

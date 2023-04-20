@@ -12,7 +12,7 @@ import org.hibernate.annotations.Type;
 @Data
 @Entity
 @Table(name = "processing_flow", schema = "doc_main", catalog = "doc")
-public class ProcessingFlow extends DocAbstractEntity {
+public class ProcessingFlow extends DocAbstractIdEntity {
 
   @Column(name = "flow_version", nullable = false, columnDefinition = "BIGINT NOT NULL CHECK (flow_version > 0)")
   private Long flowVersion;

@@ -6,7 +6,8 @@ import edu.hcmus.doc.mainservice.repository.custom.CustomAttachmentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import java.util.List;
 
-public class CustomAttachmentRepositoryImpl extends DocAbstractCustomRepository<Attachment>
+public class CustomAttachmentRepositoryImpl
+    extends DocAbstractCustomRepository<Attachment>
     implements CustomAttachmentRepository {
 
   @Override

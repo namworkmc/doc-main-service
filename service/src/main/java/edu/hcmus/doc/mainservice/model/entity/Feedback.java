@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "feedback", schema = "doc_main", catalog = "doc")
-public class Feedback extends DocAbstractEntity {
+public class Feedback extends DocAbstractIdEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "processing_doc_id", referencedColumnName = "id", nullable = false)
