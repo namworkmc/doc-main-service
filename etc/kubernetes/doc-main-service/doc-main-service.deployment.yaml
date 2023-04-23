@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: doc-main-service
+  labels:
+    app: doc-main-service
+    tier: service
 spec:
   replicas: 1
   selector:
@@ -11,6 +14,7 @@ spec:
     metadata:
       labels:
         app: doc-main-service
+        tier: service
     spec:
       containers:
         - name: doc-main-service
@@ -141,6 +145,7 @@ metadata:
   name: doc-main-service
   labels:
     app: doc-main-service
+    tier: service
 spec:
   selector:
     app: doc-main-service

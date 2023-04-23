@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: doc-rabbitmq
+  labels:
+    app: doc-rabbitmq
+    tier: service
 spec:
   selector:
     matchLabels:
@@ -11,6 +14,7 @@ spec:
     metadata:
       labels:
         app: doc-rabbitmq
+        tier: service
     spec:
       containers:
         - name: doc-rabbitmq
@@ -42,6 +46,7 @@ metadata:
   name: doc-rabbitmq  # DNS name
   labels:
     app: doc-rabbitmq
+    tier: service
 spec:
   ports:
     - port: 5672
