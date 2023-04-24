@@ -1,5 +1,6 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
+import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
@@ -66,5 +67,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<User> getUsersByRole(DocSystemRoleEnum role) {
     return userRepository.getUsersByRole(role);
+  }
+
+  @Override
+  public List<UserDepartmentDto> getUsersByRoleWithDepartment(DocSystemRoleEnum role) {
+    return userRepository.getUsersByRoleWithDepartment(role);
   }
 }

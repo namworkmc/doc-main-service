@@ -1,6 +1,7 @@
 package edu.hcmus.doc.mainservice.controller;
 
 import edu.hcmus.doc.mainservice.DocURL;
+import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
 import edu.hcmus.doc.mainservice.model.dto.UserDto;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
@@ -27,6 +28,11 @@ public class UserController extends DocAbstractController {
   @GetMapping("/role/{role}")
   public List<UserDto> getUsersByRole(@PathVariable DocSystemRoleEnum role) {
     return userMapper.toDto(userService.getUsersByRole(role));
+  }
+
+  @GetMapping("/role/department/{role}")
+  public List<UserDepartmentDto> getUsersByRoleWithDepartment(@PathVariable DocSystemRoleEnum role) {
+    return userService.getUsersByRoleWithDepartment(role);
   }
 
   @GetMapping("/current-principal")

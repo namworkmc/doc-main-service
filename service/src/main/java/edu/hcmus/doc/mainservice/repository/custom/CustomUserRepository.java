@@ -1,5 +1,6 @@
 package edu.hcmus.doc.mainservice.repository.custom;
 
+import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import java.util.List;
@@ -16,4 +17,7 @@ public interface CustomUserRepository {
   Optional<User> findByEmail(String email);
 
   List<User> getUsersByRole(DocSystemRoleEnum role);
+
+  List<UserDepartmentDto> getUsersByRoleWithDepartment(DocSystemRoleEnum role);
+
 }

@@ -6,6 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +37,10 @@ public class User extends DocAbstractIdEntity {
   @Column(name = "role", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
   @Enumerated(EnumType.STRING)
   private DocSystemRoleEnum role;
+
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "department_id", referencedColumnName = "id", columnDefinition = "BIGINT")
+  private Department department;
 
   @Override
   public boolean equals(Object o) {

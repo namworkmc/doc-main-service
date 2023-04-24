@@ -1,6 +1,8 @@
 package edu.hcmus.doc.mainservice.repository.custom.impl;
 
 import com.querydsl.jpa.impl.JPAQuery;
+import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
+import edu.hcmus.doc.mainservice.model.entity.QDepartment;
 import edu.hcmus.doc.mainservice.model.entity.QUser;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
@@ -60,5 +62,26 @@ public class CustomUserRepositoryImpl
     return selectFrom(QUser.user)
         .where(QUser.user.role.eq(role))
         .fetch();
+  }
+  @Override
+  public List<UserDepartmentDto> getUsersByRoleWithDepartment(DocSystemRoleEnum role) {
+    return selectFrom(QUser.user)
+        .leftJoin(QUser.user.department, QDepartment.department)
+        .where(QUser.user.role.eq(role))
+        .select(QUser.user.id, QUser.user.version, QUser.user.username, QUser.user.email, QUser.user.fullName, QUser.user.role, QDepartment.department.departmentName)
+        .fetch()
+        .stream()
+        .map(tuple -> {
+          UserDepartmentDto userDepartmentDto = new UserDepartmentDto();
+          userDepartmentDto.setId(tuple.get(QUser.user.id));
+          userDepartmentDto.setVersion(tuple.get(QUser.user.version));
+          userDepartmentDto.setUsername(tuple.get(QUser.user.username));
+          userDepartmentDto.setEmail(tuple.get(QUser.user.email));
+          userDepartmentDto.setFullName(tuple.get(QUser.user.fullName));
+          userDepartmentDto.setRole(tuple.get(QUser.user.role));
+          userDepartmentDto.setDepartmentName(tuple.get(QDepartment.department.departmentName));
+          return userDepartmentDto;
+        })
+        .toList();
   }
 }
