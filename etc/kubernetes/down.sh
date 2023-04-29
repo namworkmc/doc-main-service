@@ -1,7 +1,12 @@
 #! /bin/bash
 
+# ingress
+kubectl delete -f ./ingress/doc-kong.yaml
+kubectl delete -f ./ingress/doc-ingress.yaml
+
 # doc-keycloak
 kubectl delete -f ./doc-keycloak/doc-keycloak.config.yaml
+kubectl delete -f ./doc-keycloak/doc-keycloak.deployment.yaml
 kubectl delete -f ./doc-keycloak/doc-keycloak.secret.yaml
 
 # doc-main-postgres

@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doc-keycloak
+  labels:
+    app: doc-keycloak
+    tier: service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doc-keycloak
+  template:
+    metadata:
+      labels:
+        app: doc-keycloak
+        tier: service
+    spec:
+      containers:
+        - name: doc-keycloak-service
+          image: hcmusdoc/doc-keycloak:bitnami-20.0.3
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8180
+          env:
+            - name: KEYCLOAK_ADMIN_USER
+              value: admin
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: doc-keycloak-secret
+                  key: keycloak-admin-password
+            - name: KEYCLOAK_HTTP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-keycloak-config
+                  key: keycloak-http-port
+            - name: KEYCLOAK_DATABASE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-keycloak-config
+                  key: keycloak-database-host
+            - name: KEYCLOAK_DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-keycloak-config
+                  key: keycloak-database-port
+            - name: KEYCLOAK_DATABASE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-keycloak-config
+                  key: keycloak-database-name
+            - name: KEYCLOAK_DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: doc-keycloak-secret
+                  key: keycloak-database-user
+            - name: KEYCLOAK_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: doc-keycloak-secret
+                  key: keycloak-database-password
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: doc-keycloak
+  labels:
+    app: doc-keycloak
+    tier: service
+spec:
+  selector:
+    app: doc-keycloak
+    tier: service
+  ports:
+    - port: 8180
+      targetPort: 8180

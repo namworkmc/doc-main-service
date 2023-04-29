@@ -48,7 +48,7 @@ public class DocMainServiceSecurityConfig {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-        .antMatchers(DocURL.API_V1 + "/security/auth/**")
+        .antMatchers(DocURL.API_V1 + "/security/auth/**", "/actuator/**")
         .permitAll()
         .anyRequest()
         .permitAll()

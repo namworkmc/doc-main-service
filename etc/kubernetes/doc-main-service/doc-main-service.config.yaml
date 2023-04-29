@@ -5,4 +5,4 @@ metadata:
 data:
   doc-main-service-spring-profiles-active: local-deployment
   doc-main-service-server-port: "8080"
-  doc-main-service-oauth2-resourceserver-jwt-issuer-uri: http://host.docker.internal:8180/realms/doc-realm
+  doc-main-service-oauth2-resourceserver-jwt-issuer-uri: http://doc-keycloak:8180/realms/doc-realm

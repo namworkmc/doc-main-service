@@ -30,7 +30,6 @@ spring:
       routing-key: doc.routingkey
       attachment-routing-key: doc.attachment-routing-key
 
-
 logging:
   level:
     sql: debug
@@ -45,3 +44,9 @@ keycloak:
   scope: openid
   client-id: doc-client
   client-secret: AW4aUnOGcPpitHX0TI6grfZeA3WLt5ru
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
