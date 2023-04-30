@@ -62,6 +62,7 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.enums.Urgency</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.enums.Confidentiality</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.enums.ProcessMethod</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.FolderDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocAbstractDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocPaginationDto</classPattern>
@@ -71,6 +72,7 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferDocDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocumentReminderDetailsDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto</classPattern>
           </classPatterns>
           <excludeClasses>
             <class>java.io.Serializable</class>

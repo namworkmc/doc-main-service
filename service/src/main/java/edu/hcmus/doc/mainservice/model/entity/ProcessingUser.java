@@ -1,6 +1,9 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
+import edu.hcmus.doc.mainservice.model.custom.ProcessMethodConverter;
+import edu.hcmus.doc.mainservice.model.enums.ProcessMethod;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -27,4 +30,8 @@ public class ProcessingUser extends DocAbstractIdEntity {
 
   @Column(name = "step", nullable = false, columnDefinition = "INT NOT NULL")
   private Integer step;
+
+  @Column(name = "process_method", nullable = false)
+  @Convert(converter = ProcessMethodConverter.class)
+  private ProcessMethod processMethod;
 }

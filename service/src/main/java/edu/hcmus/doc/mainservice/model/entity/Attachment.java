@@ -1,10 +1,10 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
+import edu.hcmus.doc.mainservice.model.custom.FileTypeConverter;
 import edu.hcmus.doc.mainservice.model.enums.FileType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,7 +23,7 @@ public class Attachment extends DocAbstractIdEntity {
   private String alfrescoFolderId;
 
   @Column(name = "file_type", nullable = false)
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = FileTypeConverter.class)
   private FileType fileType;
 
   @ManyToOne(fetch = FetchType.LAZY)

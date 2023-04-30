@@ -15,12 +15,13 @@ import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUserRole;
 import edu.hcmus.doc.mainservice.model.entity.ReturnRequest;
 import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.ProcessMethod;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
-import edu.hcmus.doc.mainservice.model.exception.IncomingDocumentNotFoundException;
-import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.FolderNotFoundException;
+import edu.hcmus.doc.mainservice.model.exception.IncomingDocumentNotFoundException;
+import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.repository.FolderRepository;
 import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
@@ -31,16 +32,16 @@ import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
-
+import edu.hcmus.doc.mainservice.util.DocObjectUtils;
 import edu.hcmus.doc.mainservice.util.mapper.IncomingDocumentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-
 import java.util.Objects;
-import edu.hcmus.doc.mainservice.util.DocObjectUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -176,7 +177,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
       collaborators.forEach(collaborator -> {
         ProcessingUser processingUser1 = createProcessingUser(savedProcessingDocument, collaborator,
-            1, returnRequest);
+            1, returnRequest, transferDocDto.getProcessMethod());
         ProcessingUser savedProcessingUser1 = processingUserRepository.save(processingUser1);
         ProcessingUserRole processingUserRole1 = createProcessingUserRole(savedProcessingUser1,
             ProcessingDocumentRoleEnum.COLLABORATOR);
@@ -185,9 +186,9 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
       });
 
       ProcessingUser processingUser2 = createProcessingUser(savedProcessingDocument, assignee, 1,
-          returnRequest);
+          returnRequest, transferDocDto.getProcessMethod());
       ProcessingUser processingUser3 = createProcessingUser(savedProcessingDocument, reporter, 1,
-          returnRequest);
+          returnRequest, transferDocDto.getProcessMethod());
 
       ProcessingUser savedProcessingUser2 = processingUserRepository.save(processingUser2);
       ProcessingUser savedProcessingUser3 = processingUserRepository.save(processingUser3);
@@ -222,7 +223,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
         // check if collaborator is already assigned to this document
 
         ProcessingUser processingUser1 = createProcessingUser(processingDocument, collaborator, 2,
-            returnRequest);
+            returnRequest, transferDocDto.getProcessMethod());
         ProcessingUser savedProcessingUser1 = processingUserRepository.save(processingUser1);
 
         ProcessingUserRole processingUserRole1 = createProcessingUserRole(savedProcessingUser1,
@@ -231,9 +232,9 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
       });
 
       ProcessingUser processingUser2 = createProcessingUser(processingDocument, assignee, 2,
-          returnRequest);
+          returnRequest, transferDocDto.getProcessMethod());
       ProcessingUser processingUser3 = createProcessingUser(processingDocument, reporter, 2,
-          returnRequest);
+          returnRequest, transferDocDto.getProcessMethod());
 
       ProcessingUser savedProcessingUser2 = processingUserRepository.save(processingUser2);
       ProcessingUser savedProcessingUser3 = processingUserRepository.save(processingUser3);
@@ -245,6 +246,12 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
       processingUserRoleRepository.save(processingUserRole2);
       processingUserRoleRepository.save(processingUserRole3);
+
+      // update processing document duration if time is not infinite
+      if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
+        processingDocument.setProcessingDuration(LocalDate.parse(transferDocDto.getProcessingTime(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        processingDocumentRepository.save(processingDocument);
+      }
     });
 
   }
@@ -265,12 +272,14 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   }
 
   private ProcessingUser createProcessingUser(ProcessingDocument processingDocument, User user,
-      Integer step, ReturnRequest returnRequest) {
+      Integer step, ReturnRequest returnRequest, ProcessMethod processMethod) {
     ProcessingUser processingUser = new ProcessingUser();
     processingUser.setProcessingDocument(processingDocument);
     processingUser.setUser(user);
     processingUser.setStep(step);
     processingUser.setReturnRequest(returnRequest);
+    processingUser.setProcessMethod(processMethod);
+
     return processingUser;
   }
 
