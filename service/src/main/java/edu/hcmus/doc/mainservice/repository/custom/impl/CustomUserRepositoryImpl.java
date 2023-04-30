@@ -43,6 +43,8 @@ public class CustomUserRepositoryImpl
   public Optional<User> findByUsername(String username) {
     return Optional.ofNullable(
         selectFrom(QUser.user)
+            .innerJoin(QUser.user.department, QDepartment.department)
+            .fetchJoin()
             .where(QUser.user.username.eq(username))
             .fetchOne()
     );

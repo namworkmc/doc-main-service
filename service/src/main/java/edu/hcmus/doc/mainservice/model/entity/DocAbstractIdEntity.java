@@ -1,8 +1,11 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
 import java.util.Objects;
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import lombok.Data;
 import org.hibernate.Hibernate;
 

@@ -4,6 +4,7 @@ import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
+import edu.hcmus.doc.mainservice.model.exception.UserPasswordIncorrectException;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.UserService;
@@ -72,5 +73,21 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<UserDepartmentDto> getUsersByRoleWithDepartment(DocSystemRoleEnum role) {
     return userRepository.getUsersByRoleWithDepartment(role);
+  }
+
+  @Override
+  public Long updateCurrentUser(User user) {
+    return userRepository.save(user).getId();
+  }
+
+  @Override
+  public Long updateCurrentUserPassword(String oldPassword, String newPassword) {
+    User user = getCurrentUserFromDB();
+    if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+      throw new UserPasswordIncorrectException();
+    }
+
+    user.setPassword(passwordEncoder.encode(newPassword));
+    return userRepository.save(user).getId();
   }
 }

@@ -10,4 +10,5 @@ public class UserDto extends DocAbstractDto {
   private String email;
   private String fullName;
   private DocSystemRoleEnum role;
+  private DepartmentDto department;
 }

@@ -83,22 +83,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
   @Test
   void testFindByUsername() {
     // Given
-    String username = "username";
-
-    // Given
-    User user = new User();
-    user.setUsername(username);
-    user.setEmail(username);
-    user.setPassword(passwordEncoder.encode(username));
-    user.setRole(DocSystemRoleEnum.GIAM_DOC);
-    userRepository.save(user);
-
-    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
-
-    UserRole userRole = new UserRole();
-    userRole.setUser(user);
-    userRole.setRole(docSystemRole);
-    userRoleRepository.save(userRole);
+    String username = "user1";
 
     // When
     User actual = userRepository.findByUsername(username).orElse(null);
