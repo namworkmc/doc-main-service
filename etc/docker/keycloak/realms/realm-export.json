@@ -71,118 +71,6 @@
       }
     },
     {
-      "username": "user1",
-      "enabled": true,
-      "email": "user1",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "user1",
-          "temporary": false
-        }
-      ],
-      "realmRoles": [
-        "offline_access",
-        "uma_authorization",
-        "default-roles-doc",
-        "GIAM_DOC"
-      ],
-      "clientRoles": {
-        "realm-management": [
-          "manage-users"
-        ],
-        "account": [
-          "manage-account",
-          "manage-account-links",
-          "view-profile"
-        ]
-      }
-    },
-    {
-      "username": "user2",
-      "enabled": true,
-      "email": "user2",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "user2",
-          "temporary": false
-        }
-      ],
-      "realmRoles": [
-        "offline_access",
-        "uma_authorization",
-        "default-roles-doc",
-        "CHUYEN_VIEN"
-      ],
-      "clientRoles": {
-        "realm-management": [
-          "manage-users"
-        ],
-        "account": [
-          "manage-account",
-          "manage-account-links",
-          "view-profile"
-        ]
-      }
-    },
-    {
-      "username": "user3",
-      "enabled": true,
-      "email": "user3",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "user3",
-          "temporary": false
-        }
-      ],
-      "realmRoles": [
-        "offline_access",
-        "uma_authorization",
-        "default-roles-doc",
-        "TRUONG_PHONG"
-      ],
-      "clientRoles": {
-        "realm-management": [
-          "manage-users"
-        ],
-        "account": [
-          "manage-account",
-          "manage-account-links",
-          "view-profile"
-        ]
-      }
-    },
-    {
-      "username": "user4",
-      "enabled": true,
-      "email": "user4",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "user4",
-          "temporary": false
-        }
-      ],
-      "realmRoles": [
-        "offline_access",
-        "uma_authorization",
-        "default-roles-doc",
-        "VAN_THU"
-      ],
-      "clientRoles": {
-        "realm-management": [
-          "manage-users"
-        ],
-        "account": [
-          "manage-account",
-          "manage-account-links",
-          "view-profile"
-        ]
-      }
-    },
-    {
       "username": "user1test",
       "enabled": true,
       "email": "user1test@gmail.com",
@@ -1959,7 +1847,7 @@
         "subComponents": {},
         "config": {
           "base-url": [
-            "http://doc-main-service:8080/api/v1/keycloak/users"
+            "http://host.docker.internal:8080/api/v1/keycloak/users"
           ],
           "secret-key": [
             "secret"
