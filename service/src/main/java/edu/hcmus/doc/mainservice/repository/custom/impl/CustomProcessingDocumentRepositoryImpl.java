@@ -2,6 +2,7 @@ package edu.hcmus.doc.mainservice.repository.custom.impl;
 
 import static edu.hcmus.doc.mainservice.model.entity.QIncomingDocument.incomingDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.Expressions;
@@ -15,9 +16,12 @@ import edu.hcmus.doc.mainservice.model.entity.QDistributionOrganization;
 import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.QSendingLevel;
+import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
+import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
@@ -194,12 +198,21 @@ public class CustomProcessingDocumentRepositoryImpl
       where.and(incomingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
     }
 
+    BooleanBuilder filter = new BooleanBuilder();
+    User currUser = SecurityUtils.getCurrentUser();
+    if (currUser.getRole() != DocSystemRoleEnum.VAN_THU) {
+      filter.and(processingUser.user.id.eq(currUser.getId()));
+    }
+
     return selectFrom(incomingDocument)
         .leftJoin(processingDocument)
         .on(incomingDocument.id.eq(processingDocument.incomingDoc.id))
+        .innerJoin(processingUser)
+        .on(processingUser.processingDocument.id.eq(processingDocument.id).and(filter))
         .innerJoin(incomingDocument.sendingLevel, QSendingLevel.sendingLevel)
         .innerJoin(incomingDocument.documentType, QDocumentType.documentType)
         .innerJoin(incomingDocument.distributionOrg, QDistributionOrganization.distributionOrganization)
+        .distinct()
         .where(where);
   }
 

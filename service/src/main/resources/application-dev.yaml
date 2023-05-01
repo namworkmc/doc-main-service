@@ -33,6 +33,7 @@ spring:
 logging:
   level:
     sql: debug
+    web: debug
 
 doc:
   http:
