@@ -28,7 +28,5 @@ public interface IncomingDocumentService {
 
   IncomingDocument updateIncomingDocument(IncomingDocument incomingDocument);
 
-  void transferDocumentsToDirector(TransferDocDto transferDocDto);
-
-  void transferDocumentsToManager(TransferDocDto transferDocDto);
+  void transferDocuments(TransferDocDto transferDocDto);
 }

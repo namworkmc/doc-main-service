@@ -1,6 +1,7 @@
 package edu.hcmus.doc.mainservice.model.dto;
 
 import edu.hcmus.doc.mainservice.model.enums.ProcessMethod;
+import edu.hcmus.doc.mainservice.model.enums.TransferDocumentType;
 import java.util.List;
 import lombok.Data;
 import org.springframework.lang.Nullable;
@@ -23,4 +24,5 @@ public class TransferDocDto {
   private Boolean isInfiniteProcessingTime;
   @Nullable
   private ProcessMethod processMethod;
+  private TransferDocumentType transferDocumentType;
 }

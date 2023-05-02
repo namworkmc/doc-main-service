@@ -204,16 +204,21 @@ public class CustomProcessingDocumentRepositoryImpl
       filter.and(processingUser.user.id.eq(currUser.getId()));
     }
 
-    return selectFrom(incomingDocument)
+    JPAQuery<IncomingDocument> query = selectFrom(incomingDocument)
         .leftJoin(processingDocument)
         .on(incomingDocument.id.eq(processingDocument.incomingDoc.id))
-        .innerJoin(processingUser)
-        .on(processingUser.processingDocument.id.eq(processingDocument.id).and(filter))
         .innerJoin(incomingDocument.sendingLevel, QSendingLevel.sendingLevel)
         .innerJoin(incomingDocument.documentType, QDocumentType.documentType)
         .innerJoin(incomingDocument.distributionOrg, QDistributionOrganization.distributionOrganization)
         .distinct()
         .where(where);
+
+    if (currUser.getRole() != DocSystemRoleEnum.VAN_THU) {
+      query.innerJoin(processingUser)
+          .on(processingUser.processingDocument.id.eq(processingDocument.id).and(processingUser.user.id.eq(currUser.getId())));
+    }
+
+    return query;
   }
 
   @Override

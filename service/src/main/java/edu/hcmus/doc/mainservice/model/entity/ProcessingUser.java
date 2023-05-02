@@ -2,6 +2,7 @@ package edu.hcmus.doc.mainservice.model.entity;
 
 import edu.hcmus.doc.mainservice.model.custom.ProcessMethodConverter;
 import edu.hcmus.doc.mainservice.model.enums.ProcessMethod;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -34,4 +35,7 @@ public class ProcessingUser extends DocAbstractIdEntity {
   @Column(name = "process_method", nullable = false)
   @Convert(converter = ProcessMethodConverter.class)
   private ProcessMethod processMethod;
+
+  @Column(name = "processing_duration", columnDefinition = "DATE")
+  private LocalDate processingDuration;
 }

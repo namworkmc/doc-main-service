@@ -80,15 +80,12 @@ public class IncomingDocumentController extends DocAbstractController {
         processingDocumentSearchResultDto.getTotalPages());
   }
 
-  @PostMapping("/transfer-to-director")
-  public void transferToDirector(@RequestBody TransferDocDto transferDocDto) {
-    incomingDocumentService.transferDocumentsToDirector(transferDocDto);
+  @PostMapping("/transfer-documents")
+  public void transferDocuments(@RequestBody TransferDocDto transferDocDto) {
+    incomingDocumentService.transferDocuments(transferDocDto);
   }
 
-  @PostMapping("/transfer-to-manager")
-  public void transferToManager(@RequestBody TransferDocDto transferDocDto) {
-    incomingDocumentService.transferDocumentsToManager(transferDocDto);
-  }
+
 
   @PutMapping("/update")
   public IncomingDocumentDto createIncomingDocument(

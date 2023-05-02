@@ -8,6 +8,7 @@ import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.repository.custom.CustomUserRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
+import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
@@ -62,14 +63,19 @@ public class CustomUserRepositoryImpl
   @Override
   public List<User> getUsersByRole(DocSystemRoleEnum role) {
     return selectFrom(QUser.user)
+        .innerJoin(QUser.user.department, QDepartment.department)
+        .fetchJoin()
         .where(QUser.user.role.eq(role))
         .fetch();
   }
   @Override
   public List<UserDepartmentDto> getUsersByRoleWithDepartment(DocSystemRoleEnum role) {
+    User currentUser = SecurityUtils.getCurrentUser();
+
     return selectFrom(QUser.user)
         .leftJoin(QUser.user.department, QDepartment.department)
-        .where(QUser.user.role.eq(role))
+        .where(QUser.user.role.eq(role)
+            .and(QUser.user.id.ne(currentUser.getId()))) // exclude current user
         .select(QUser.user.id, QUser.user.version, QUser.user.username, QUser.user.email, QUser.user.fullName, QUser.user.role, QDepartment.department.departmentName)
         .fetch()
         .stream()
