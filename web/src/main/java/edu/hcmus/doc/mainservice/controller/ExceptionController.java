@@ -4,9 +4,12 @@ import edu.hcmus.doc.mainservice.model.dto.ExceptionDto;
 import edu.hcmus.doc.mainservice.model.dto.KeycloakErrorDto;
 import edu.hcmus.doc.mainservice.model.exception.DocAuthorizedException;
 import edu.hcmus.doc.mainservice.model.exception.DocNotFoundException;
+import java.util.Objects;
 import javax.ws.rs.ClientErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -36,6 +39,15 @@ public class ExceptionController {
     }
 
     return res;
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ExceptionDto> handleMethodArgumentNotValidException(
+      MethodArgumentNotValidException exception) {
+    FieldError errorField = exception.getFieldError();
+    return ResponseEntity
+        .badRequest()
+        .body(new ExceptionDto(Objects.requireNonNull(errorField).getField() + ": " + errorField.getDefaultMessage()));
   }
 
   @ExceptionHandler(Throwable.class)

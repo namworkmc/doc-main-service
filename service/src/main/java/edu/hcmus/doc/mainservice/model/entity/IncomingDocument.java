@@ -3,7 +3,6 @@ package edu.hcmus.doc.mainservice.model.entity;
 import edu.hcmus.doc.mainservice.model.enums.Confidentiality;
 import edu.hcmus.doc.mainservice.model.enums.Urgency;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;

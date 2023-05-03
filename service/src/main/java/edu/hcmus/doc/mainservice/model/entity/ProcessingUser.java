@@ -19,15 +19,15 @@ public class ProcessingUser extends DocAbstractIdEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-  private User user = new User();
+  private User user;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "processing_doc_id", referencedColumnName = "id", nullable = false)
-  private ProcessingDocument processingDocument = new ProcessingDocument();
+  private ProcessingDocument processingDocument;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "return_request_id", referencedColumnName = "id")
-  private ReturnRequest returnRequest = new ReturnRequest();
+  private ReturnRequest returnRequest;
 
   @Column(name = "step", nullable = false, columnDefinition = "INT NOT NULL")
   private Integer step;

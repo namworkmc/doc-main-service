@@ -89,20 +89,6 @@ VALUES (1, 1, 1, 1),
        (9, 5, 1, 1),
        (11, 6, 1, 1);
 
-INSERT INTO "extension_request" (processing_doc_id, reason, extended_until, status, created_by, updated_by)
-VALUES (1, 'reason', '2023-12-01', 'PENDING', 1, 1),
-       (2, 'reason', '2023-12-01', 'PENDING', 1, 1),
-       (3, 'reason', '2023-12-01', 'PENDING', 1, 1),
-       (4, 'reason', '2023-12-01', 'PENDING', 1, 1),
-       (5, 'reason', '2023-12-01', 'APPROVED', 1, 1),
-       (6, 'reason', '2023-12-01', 'APPROVED', 1, 1),
-       (7, 'reason', '2023-12-01', 'APPROVED', 1, 1),
-       (8, 'reason', '2023-12-01', 'APPROVED', 1, 1),
-       (9, 'reason', '2023-12-01', 'REJECTED', 1, 1),
-       (10, 'reason', '2023-12-01', 'REJECTED', 1, 1),
-       (11, 'reason', '2023-12-01', 'REJECTED', 1, 1),
-       (12, 'reason', '2023-12-01', 'REJECTED', 1, 1);
-
 INSERT INTO "feedback" (processing_doc_id, content, created_by, updated_by)
 VALUES (1, 'content', 1, 1),
        (2, 'content', 1, 1),

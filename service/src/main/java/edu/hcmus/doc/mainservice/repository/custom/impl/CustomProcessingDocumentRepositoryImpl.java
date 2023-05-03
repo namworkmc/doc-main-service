@@ -58,7 +58,6 @@ public class CustomProcessingDocumentRepositoryImpl
             .select(
                 processingDocument.id,
                 processingStatusCases,
-                processingDocument.processingDuration,
                 incomingDocument.id,
                 incomingDocument.incomingNumber,
                 incomingDocument.originalSymbolNumber,
@@ -79,7 +78,6 @@ public class CustomProcessingDocumentRepositoryImpl
               ProcessingDocument processingDocument = new ProcessingDocument();
               processingDocument.setId(tuple.get(QProcessingDocument.processingDocument.id));
               processingDocument.setStatus(ProcessingStatus.valueOf(tuple.get(processingStatusCases)));
-              processingDocument.setProcessingDuration(tuple.get(QProcessingDocument.processingDocument.processingDuration));
               processingDocument.getIncomingDoc().setId(tuple.get(incomingDocument.id));
               processingDocument.getIncomingDoc().setIncomingNumber(tuple.get(incomingDocument.incomingNumber));
               processingDocument.getIncomingDoc().setOriginalSymbolNumber(tuple.get(incomingDocument.originalSymbolNumber));
@@ -114,7 +112,6 @@ public class CustomProcessingDocumentRepositoryImpl
         .select(
             processingDocument.id,
             processingStatusCases,
-            processingDocument.processingDuration,
             incomingDocument.id,
             incomingDocument.incomingNumber,
             incomingDocument.originalSymbolNumber,
@@ -135,8 +132,6 @@ public class CustomProcessingDocumentRepositoryImpl
           ProcessingDocument processingDocument = new ProcessingDocument();
           processingDocument.setId(tuple.get(QProcessingDocument.processingDocument.id));
           processingDocument.setStatus(ProcessingStatus.valueOf(tuple.get(processingStatusCases)));
-          processingDocument.setProcessingDuration(
-              tuple.get(QProcessingDocument.processingDocument.processingDuration));
           processingDocument.getIncomingDoc().setId(tuple.get(incomingDocument.id));
           processingDocument.getIncomingDoc()
               .setIncomingNumber(tuple.get(incomingDocument.incomingNumber));

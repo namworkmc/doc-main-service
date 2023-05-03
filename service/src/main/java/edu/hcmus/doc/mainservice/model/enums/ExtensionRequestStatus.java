@@ -3,7 +3,7 @@ package edu.hcmus.doc.mainservice.model.enums;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum RequestStatus {
+public enum ExtensionRequestStatus {
 
   PENDING("PENDING"),
 

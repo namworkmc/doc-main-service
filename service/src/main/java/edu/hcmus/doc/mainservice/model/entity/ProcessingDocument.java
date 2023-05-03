@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.Data;
 
 @Data
@@ -27,9 +28,9 @@ public class ProcessingDocument extends DocAbstractIdEntity {
   @Column(name = "is_opened", nullable = false, columnDefinition = "BOOL DEFAULT FALSE")
   private boolean isOpened;
 
-  @Column(name = "processing_duration", columnDefinition = "DATE")
-  private LocalDate processingDuration;
-
   @Column(name = "processing_request", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
   private String processingRequest;
+
+  @Transient
+  private LocalDate processingDuration;
 }

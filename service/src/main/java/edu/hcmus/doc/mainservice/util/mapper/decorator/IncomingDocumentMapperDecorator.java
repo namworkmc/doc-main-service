@@ -45,7 +45,6 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
 
     IncomingDocumentDto dto = delegate.toDto(processingDocument.getIncomingDoc());
     dto.setStatus(processingDocument.getStatus());
-    dto.setProcessingDuration(processingDocument.getProcessingDuration());
     dto.setAttachments(attachments);
 
     return dto;

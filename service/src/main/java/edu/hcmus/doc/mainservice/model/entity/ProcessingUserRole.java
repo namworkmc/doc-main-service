@@ -24,5 +24,5 @@ public class ProcessingUserRole extends DocAbstractIdEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "processing_user_id", referencedColumnName = "id", nullable = false)
-  private ProcessingUser processingUser = new ProcessingUser();
+  private ProcessingUser processingUser;
 }
