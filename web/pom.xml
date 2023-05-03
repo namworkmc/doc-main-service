@@ -74,6 +74,7 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferDocDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocumentReminderDetailsDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.CommentDto</classPattern>
           </classPatterns>
           <excludeClasses>
             <class>java.io.Serializable</class>

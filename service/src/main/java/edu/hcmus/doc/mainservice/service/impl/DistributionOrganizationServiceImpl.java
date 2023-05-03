@@ -3,19 +3,18 @@ package edu.hcmus.doc.mainservice.service.impl;
 import edu.hcmus.doc.mainservice.model.entity.DistributionOrganization;
 import edu.hcmus.doc.mainservice.repository.DistributionOrganizationRepository;
 import edu.hcmus.doc.mainservice.service.DistributionOrganizationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
-@Transactional
+@Transactional(rollbackFor = Throwable.class)
 public class DistributionOrganizationServiceImpl implements DistributionOrganizationService {
-    private final DistributionOrganizationRepository distributionOrganizationRepository;
 
-    public DistributionOrganizationServiceImpl(DistributionOrganizationRepository distributionOrganizationRepository) {
-        this.distributionOrganizationRepository = distributionOrganizationRepository;
-    }
+    private final DistributionOrganizationRepository distributionOrganizationRepository;
 
     @Override
     public List<DistributionOrganization> findAll() {
