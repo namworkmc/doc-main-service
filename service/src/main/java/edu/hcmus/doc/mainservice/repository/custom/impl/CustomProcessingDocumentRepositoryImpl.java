@@ -78,15 +78,19 @@ public class CustomProcessingDocumentRepositoryImpl
               ProcessingDocument processingDocument = new ProcessingDocument();
               processingDocument.setId(tuple.get(QProcessingDocument.processingDocument.id));
               processingDocument.setStatus(ProcessingStatus.valueOf(tuple.get(processingStatusCases)));
+              processingDocument.initIncomingDocument();
               processingDocument.getIncomingDoc().setId(tuple.get(incomingDocument.id));
               processingDocument.getIncomingDoc().setIncomingNumber(tuple.get(incomingDocument.incomingNumber));
               processingDocument.getIncomingDoc().setOriginalSymbolNumber(tuple.get(incomingDocument.originalSymbolNumber));
               processingDocument.getIncomingDoc().setArrivingDate(tuple.get(incomingDocument.arrivingDate));
               processingDocument.getIncomingDoc().setSummary(tuple.get(incomingDocument.summary));
+              processingDocument.getIncomingDoc().initSendingLevel();
               processingDocument.getIncomingDoc().getSendingLevel().setId(tuple.get(incomingDocument.sendingLevel.id));
               processingDocument.getIncomingDoc().getSendingLevel().setLevel(tuple.get(incomingDocument.sendingLevel.level));
+              processingDocument.getIncomingDoc().initDocumentType();
               processingDocument.getIncomingDoc().getDocumentType().setId(tuple.get(incomingDocument.documentType.id));
               processingDocument.getIncomingDoc().getDocumentType().setType(tuple.get(incomingDocument.documentType.type));
+              processingDocument.getIncomingDoc().initDistributionOrg();
               processingDocument.getIncomingDoc().getDistributionOrg().setId(tuple.get(incomingDocument.distributionOrg.id));
               processingDocument.getIncomingDoc().getDistributionOrg().setName(tuple.get(incomingDocument.distributionOrg.name));
               return processingDocument;
@@ -132,26 +136,21 @@ public class CustomProcessingDocumentRepositoryImpl
           ProcessingDocument processingDocument = new ProcessingDocument();
           processingDocument.setId(tuple.get(QProcessingDocument.processingDocument.id));
           processingDocument.setStatus(ProcessingStatus.valueOf(tuple.get(processingStatusCases)));
+          processingDocument.initIncomingDocument();
           processingDocument.getIncomingDoc().setId(tuple.get(incomingDocument.id));
-          processingDocument.getIncomingDoc()
-              .setIncomingNumber(tuple.get(incomingDocument.incomingNumber));
-          processingDocument.getIncomingDoc()
-              .setOriginalSymbolNumber(tuple.get(incomingDocument.originalSymbolNumber));
-          processingDocument.getIncomingDoc()
-              .setArrivingDate(tuple.get(incomingDocument.arrivingDate));
+          processingDocument.getIncomingDoc().setIncomingNumber(tuple.get(incomingDocument.incomingNumber));
+          processingDocument.getIncomingDoc().setOriginalSymbolNumber(tuple.get(incomingDocument.originalSymbolNumber));
+          processingDocument.getIncomingDoc().setArrivingDate(tuple.get(incomingDocument.arrivingDate));
           processingDocument.getIncomingDoc().setSummary(tuple.get(incomingDocument.summary));
-          processingDocument.getIncomingDoc().getSendingLevel()
-              .setId(tuple.get(incomingDocument.sendingLevel.id));
-          processingDocument.getIncomingDoc().getSendingLevel()
-              .setLevel(tuple.get(incomingDocument.sendingLevel.level));
-          processingDocument.getIncomingDoc().getDocumentType()
-              .setId(tuple.get(incomingDocument.documentType.id));
-          processingDocument.getIncomingDoc().getDocumentType()
-              .setType(tuple.get(incomingDocument.documentType.type));
-          processingDocument.getIncomingDoc().getDistributionOrg()
-              .setId(tuple.get(incomingDocument.distributionOrg.id));
-          processingDocument.getIncomingDoc().getDistributionOrg()
-              .setName(tuple.get(incomingDocument.distributionOrg.name));
+          processingDocument.getIncomingDoc().initSendingLevel();
+          processingDocument.getIncomingDoc().getSendingLevel().setId(tuple.get(incomingDocument.sendingLevel.id));
+          processingDocument.getIncomingDoc().getSendingLevel().setLevel(tuple.get(incomingDocument.sendingLevel.level));
+          processingDocument.getIncomingDoc().initDocumentType();
+          processingDocument.getIncomingDoc().getDocumentType().setId(tuple.get(incomingDocument.documentType.id));
+          processingDocument.getIncomingDoc().getDocumentType().setType(tuple.get(incomingDocument.documentType.type));
+          processingDocument.getIncomingDoc().initDistributionOrg();
+          processingDocument.getIncomingDoc().getDistributionOrg().setId(tuple.get(incomingDocument.distributionOrg.id));
+          processingDocument.getIncomingDoc().getDistributionOrg().setName(tuple.get(incomingDocument.distributionOrg.name));
           return processingDocument;
         })
         .toList();

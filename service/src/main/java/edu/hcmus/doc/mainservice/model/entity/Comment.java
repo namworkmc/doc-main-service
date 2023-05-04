@@ -19,4 +19,8 @@ public class Comment extends DocAbstractIdEntity {
 
   @Column(name = "content", columnDefinition = "TEXT")
   private String content;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "outgoing_document_id", referencedColumnName = "id")
+  private OutgoingDocument outgoingDocument;
 }

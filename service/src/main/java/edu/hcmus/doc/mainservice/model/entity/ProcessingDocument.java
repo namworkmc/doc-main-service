@@ -19,7 +19,7 @@ public class ProcessingDocument extends DocAbstractIdEntity {
 
   @OneToOne
   @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id", nullable = false)
-  private IncomingDocument incomingDoc = new IncomingDocument();
+  private IncomingDocument incomingDoc;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false)
@@ -33,4 +33,14 @@ public class ProcessingDocument extends DocAbstractIdEntity {
 
   @Transient
   private LocalDate processingDuration;
+
+  @OneToOne
+  @JoinColumn(name = "outgoing_document_id", referencedColumnName = "id")
+  private OutgoingDocument outgoingDocument;
+
+  public void initIncomingDocument() {
+    if (this.incomingDoc == null) {
+      this.incomingDoc = new IncomingDocument();
+    }
+  }
 }

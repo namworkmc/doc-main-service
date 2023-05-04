@@ -32,18 +32,30 @@ INSERT INTO "incoming_document"
  sending_level_id,
  created_by,
  updated_by)
-VALUES ('1', 1, '1', 1, NOW(), '2018-01-01', '19:00:00', 'comment', 'LOW', 'LOW', 'FOLDER', 1, 1, 1),
-         ('2', 2, '2', 2, NOW(), '2018-01-01', '19:00:00', 'comment', 'LOW', 'LOW', 'FOLDER', 2, 1, 1),
-         ('3', 3, '3', 3, NOW(), '2018-01-01', '19:00:00', 'comment', 'LOW', 'LOW', 'FOLDER', 3, 1, 1),
-         ('4', 4, '4', 1, NOW(), '2018-01-01', '19:00:00', 'comment', 'LOW', 'LOW', 'FOLDER', 1, 1, 1),
-         ('5', 5, '5', 2, NOW(), '2018-01-01', '19:00:00', 'comment', 'MEDIUM', 'MEDIUM', 'FOLDER', 2, 1, 1),
-         ('6', 1, '6', 3, NOW(), '2018-01-01', '19:00:00', 'comment', 'MEDIUM', 'MEDIUM', 'FOLDER', 3, 1, 1),
-         ('7', 2, '7', 1, NOW(), '2018-01-01', '19:00:00', 'comment', 'MEDIUM', 'MEDIUM', 'FOLDER', 1, 1, 1),
-         ('8', 3, '8', 2, NOW(), '2018-01-01', '19:00:00', 'comment', 'MEDIUM', 'MEDIUM', 'FOLDER', 2, 1, 1),
-         ('9', 4, '9', 3, NOW(), '2018-01-01', '19:00:00', 'comment', 'HIGH', 'HIGH', 'FOLDER', 3, 1, 1),
-         ('10', 5, '10', 1, NOW(), '2018-01-01', '19:00:00', 'comment', 'HIGH', 'HIGH', 'FOLDER', 1, 1, 1),
-         ('11', 1, '11', 2, NOW(), '2018-01-01', '19:00:00', 'comment', 'HIGH', 'HIGH', 'FOLDER', 2, 1, 1),
-         ('12', 2, '12', 3, NOW(), '2018-01-01', '19:00:00', 'comment', 'HIGH', 'HIGH', 'FOLDER', 3, 1, 1);
+VALUES ('1', 1, '1', 1, NOW(), '2018-01-01', '19:00:00', 'comment', 'LOW', 'LOW', 'FOLDER', 1, 1,
+        1),
+       ('2', 2, '2', 2, NOW(), '2018-01-01', '19:00:00', 'comment', 'LOW', 'LOW', 'FOLDER', 2, 1,
+        1),
+       ('3', 3, '3', 3, NOW(), '2018-01-01', '19:00:00', 'comment', 'LOW', 'LOW', 'FOLDER', 3, 1,
+        1),
+       ('4', 4, '4', 1, NOW(), '2018-01-01', '19:00:00', 'comment', 'LOW', 'LOW', 'FOLDER', 1, 1,
+        1),
+       ('5', 5, '5', 2, NOW(), '2018-01-01', '19:00:00', 'comment', 'MEDIUM', 'MEDIUM', 'FOLDER', 2,
+        1, 1),
+       ('6', 1, '6', 3, NOW(), '2018-01-01', '19:00:00', 'comment', 'MEDIUM', 'MEDIUM', 'FOLDER', 3,
+        1, 1),
+       ('7', 2, '7', 1, NOW(), '2018-01-01', '19:00:00', 'comment', 'MEDIUM', 'MEDIUM', 'FOLDER', 1,
+        1, 1),
+       ('8', 3, '8', 2, NOW(), '2018-01-01', '19:00:00', 'comment', 'MEDIUM', 'MEDIUM', 'FOLDER', 2,
+        1, 1),
+       ('9', 4, '9', 3, NOW(), '2018-01-01', '19:00:00', 'comment', 'HIGH', 'HIGH', 'FOLDER', 3, 1,
+        1),
+       ('10', 5, '10', 1, NOW(), '2018-01-01', '19:00:00', 'comment', 'HIGH', 'HIGH', 'FOLDER', 1,
+        1, 1),
+       ('11', 1, '11', 2, NOW(), '2018-01-01', '19:00:00', 'comment', 'HIGH', 'HIGH', 'FOLDER', 2,
+        1, 1),
+       ('12', 2, '12', 3, NOW(), '2018-01-01', '19:00:00', 'comment', 'HIGH', 'HIGH', 'FOLDER', 3,
+        1, 1);
 
 INSERT INTO "processed_document" (incoming_doc_id, created_by, updated_by)
 VALUES (2, 1, 1),
@@ -73,13 +85,20 @@ VALUES (1, 'IN_PROGRESS', FALSE, 'processing_request', 1, 1),
        (10, 'CLOSED', TRUE, 'processing_request', 1, 1),
        (12, 'CLOSED', TRUE, 'processing_request', 1, 1);
 
-INSERT INTO "outgoing_document" (created_by, updated_by)
-VALUES (1, 1),
-       (1, 1),
-       (1, 1),
-       (1, 1),
-       (1, 1),
-       (1, 1);
+INSERT INTO "outgoing_document"
+("document_type_id",
+ "urgency",
+ "confidentiality",
+ "summary",
+ "status",
+ "created_by",
+ "updated_by")
+VALUES (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
+       (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
+       (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
+       (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
+       (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
+       (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1);
 
 INSERT INTO "linked_document" (incoming_doc_id, outgoing_doc_id, created_by, updated_by)
 VALUES (1, 1, 1, 1),

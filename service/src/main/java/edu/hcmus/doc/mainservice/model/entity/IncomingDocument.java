@@ -24,14 +24,14 @@ public class IncomingDocument extends DocAbstractIdEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "document_type_id", referencedColumnName = "id", nullable = false)
-  private DocumentType documentType = new DocumentType();
+  private DocumentType documentType;
 
   @Column(name = "original_symbol_number", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
   private String originalSymbolNumber;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "distribution_org_id", referencedColumnName = "id", nullable = false)
-  private DistributionOrganization distributionOrg = new DistributionOrganization();
+  private DistributionOrganization distributionOrg;
 
   @Column(name = "distribution_date", nullable = false, columnDefinition = "TIMESTAMP NOT NULL")
   private LocalDate distributionDate;
@@ -59,5 +59,27 @@ public class IncomingDocument extends DocAbstractIdEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "sending_level_id", referencedColumnName = "id")
-  private SendingLevel sendingLevel = new SendingLevel();
+  private SendingLevel sendingLevel;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "publishing_department_id", referencedColumnName = "id", nullable = false)
+  private Department publishingDepartment;
+
+  public void initSendingLevel() {
+    if (this.sendingLevel == null) {
+      this.sendingLevel = new SendingLevel();
+    }
+  }
+
+  public void initDocumentType() {
+    if (this.documentType == null) {
+      this.documentType = new DocumentType();
+    }
+  }
+
+  public void initDistributionOrg() {
+    if (this.distributionOrg == null) {
+      this.distributionOrg = new DistributionOrganization();
+    }
+  }
 }

@@ -27,6 +27,10 @@ public class Attachment extends DocAbstractIdEntity {
   private FileType fileType;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id")
   private IncomingDocument incomingDoc;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "outgoing_document_id", referencedColumnName = "id")
+  private OutgoingDocument outgoingDocument;
 }

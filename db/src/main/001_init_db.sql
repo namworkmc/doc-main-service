@@ -7,6 +7,7 @@ CREATE TYPE "request_status" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 CREATE TYPE "urgency" AS ENUM ('LOW', 'MEDIUM', 'HIGH');
 CREATE TYPE "confidentiality" AS ENUM ('LOW', 'MEDIUM', 'HIGH');
 CREATE TYPE "processing_status" AS ENUM ('IN_PROGRESS', 'CLOSED');
+CREATE TYPE "outgoing_document_status" AS ENUM ('UNPROCESSED', 'IN_PROGRESS', 'WAITING_FOR_OUTGOING_NUMBER', 'READY_TO_RELEASE', 'RELEASED');
 
 CREATE TABLE "doc_base_table"
 (
@@ -89,7 +90,15 @@ CREATE TABLE "processing_document"
 
 CREATE TABLE "outgoing_document"
 (
-    "id" SERIAL NOT NULL,
+    "id"               SERIAL                     NOT NULL,
+    "document_type_id" BIGINT                     NOT NULL,
+    "urgency"          "urgency"                  NOT NULL,
+    "confidentiality"  "confidentiality"          NOT NULL,
+    "summary"          VARCHAR(255)               NOT NULL,
+    "outgoing_number"  VARCHAR(255),
+    "recipient"        VARCHAR(255),
+    "release_date"     DATE,
+    "status"           "outgoing_document_status" NOT NULL,
     CONSTRAINT "outgoing_document_pk" PRIMARY KEY ("id")
 ) INHERITS ("doc_base_table");
 
