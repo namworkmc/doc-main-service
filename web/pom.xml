@@ -75,6 +75,7 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocumentReminderDetailsDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.CommentDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.UserSearchCriteria</classPattern>
           </classPatterns>
           <excludeClasses>
             <class>java.io.Serializable</class>

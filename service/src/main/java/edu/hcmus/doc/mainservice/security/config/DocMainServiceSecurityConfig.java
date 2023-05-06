@@ -50,9 +50,11 @@ public class DocMainServiceSecurityConfig {
         .authorizeRequests()
         .antMatchers(DocURL.API_V1 + "/security/auth/**", "/actuator/**")
         .permitAll()
+        .antMatchers(DocURL.API_V1 + "/admin/**")
+        .hasAuthority(DocSystemRoleEnum.DOC_ADMIN.value)
         .anyRequest()
-        .permitAll()
-//        .authenticated()
+//        .permitAll()
+        .authenticated()
         .and()
         .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
         .build();

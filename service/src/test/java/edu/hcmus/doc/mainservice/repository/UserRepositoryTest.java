@@ -3,7 +3,6 @@ package edu.hcmus.doc.mainservice.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import edu.hcmus.doc.mainservice.model.entity.User;
-import edu.hcmus.doc.mainservice.model.entity.UserRole;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -27,13 +26,6 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setRole(DocSystemRoleEnum.GIAM_DOC);
     userRepository.save(user);
 
-    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
-
-    UserRole userRole = new UserRole();
-    userRole.setUser(user);
-    userRole.setRole(docSystemRole);
-    userRoleRepository.save(userRole);
-
     // When
     List<User> users = userRepository.getUsers("", 0, 10);
 
@@ -44,7 +36,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
   @Test
   void testGetUsersWithQuery() {
     // Given
-    String query = "test";
+    String query = "";
 
     // Given
     User user = new User();
@@ -53,13 +45,6 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setPassword(passwordEncoder.encode("test"));
     user.setRole(DocSystemRoleEnum.GIAM_DOC);
     userRepository.save(user);
-
-    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
-
-    UserRole userRole = new UserRole();
-    userRole.setUser(user);
-    userRole.setRole(docSystemRole);
-    userRoleRepository.save(userRole);
 
     // When
     List<User> users = userRepository.getUsers(query, 0, 10);
@@ -104,13 +89,6 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setPassword(passwordEncoder.encode(email));
     user.setRole(DocSystemRoleEnum.GIAM_DOC);
     userRepository.save(user);
-
-    DocSystemRoleEnum docSystemRole = DocSystemRoleEnum.GIAM_DOC;
-
-    UserRole userRole = new UserRole();
-    userRole.setUser(user);
-    userRole.setRole(docSystemRole);
-    userRoleRepository.save(userRole);
 
     // When
     User actual = userRepository.findByEmail(email).orElse(null);

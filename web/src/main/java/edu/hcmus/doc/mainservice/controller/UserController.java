@@ -52,6 +52,6 @@ public class UserController extends DocAbstractController {
   @PutMapping("/current")
   public Long updateCurrentUser(@RequestBody UserDto userDto) {
     User user = userDecoratorMapper.partialUpdate(userDto, userService.getCurrentUserFromDB());
-    return userService.updateCurrentUser(user);
+    return userService.updateUser(user);
   }
 }

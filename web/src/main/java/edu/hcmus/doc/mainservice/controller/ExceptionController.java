@@ -3,6 +3,7 @@ package edu.hcmus.doc.mainservice.controller;
 import edu.hcmus.doc.mainservice.model.dto.ExceptionDto;
 import edu.hcmus.doc.mainservice.model.dto.KeycloakErrorDto;
 import edu.hcmus.doc.mainservice.model.exception.DocAuthorizedException;
+import edu.hcmus.doc.mainservice.model.exception.DocExistedException;
 import edu.hcmus.doc.mainservice.model.exception.DocNotFoundException;
 import java.util.Objects;
 import javax.ws.rs.ClientErrorException;
@@ -20,6 +21,13 @@ public class ExceptionController {
   public ResponseEntity<ExceptionDto> handleDocNotFoundException(DocNotFoundException exception) {
     return ResponseEntity
         .status(HttpStatus.NOT_FOUND)
+        .body(new ExceptionDto(exception.getMessage()));
+  }
+
+  @ExceptionHandler(DocExistedException.class)
+  public ResponseEntity<ExceptionDto> handleDocExistedException(DocExistedException exception) {
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
         .body(new ExceptionDto(exception.getMessage()));
   }
 
@@ -47,7 +55,7 @@ public class ExceptionController {
     FieldError errorField = exception.getFieldError();
     return ResponseEntity
         .badRequest()
-        .body(new ExceptionDto(Objects.requireNonNull(errorField).getField() + ": " + errorField.getDefaultMessage()));
+        .body(new ExceptionDto(Objects.requireNonNull(errorField).getDefaultMessage()));
   }
 
   @ExceptionHandler(Throwable.class)

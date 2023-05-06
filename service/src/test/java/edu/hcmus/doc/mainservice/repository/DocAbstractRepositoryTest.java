@@ -63,7 +63,4 @@ abstract class DocAbstractRepositoryTest {
 
   @Autowired
   protected UserRepository userRepository;
-
-  @Autowired
-  protected UserRoleRepository userRoleRepository;
 }

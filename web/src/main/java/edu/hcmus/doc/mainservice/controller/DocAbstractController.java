@@ -24,6 +24,7 @@ public abstract class DocAbstractController {
 
   @Autowired
   protected DistributionOrganizationMapper distributionOrganizationMapper;
+
   @Autowired
   protected PaginationMapper paginationMapper;
 }

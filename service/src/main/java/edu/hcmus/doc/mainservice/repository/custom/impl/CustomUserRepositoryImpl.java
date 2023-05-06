@@ -1,7 +1,9 @@
 package edu.hcmus.doc.mainservice.repository.custom.impl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
+import edu.hcmus.doc.mainservice.model.dto.UserSearchCriteria;
 import edu.hcmus.doc.mainservice.model.entity.QDepartment;
 import edu.hcmus.doc.mainservice.model.entity.QUser;
 import edu.hcmus.doc.mainservice.model.entity.User;
@@ -19,7 +21,9 @@ public class CustomUserRepositoryImpl
 
   @Override
   public List<User> getUsers(String query, long first, long max) {
-    JPAQuery<User> userJPAQuery = selectFrom(QUser.user);
+    JPAQuery<User> userJPAQuery = selectFrom(QUser.user)
+        .innerJoin(QUser.user.department, QDepartment.department)
+        .fetchJoin();
     if (StringUtils.isNotBlank(query)) {
       userJPAQuery.where(QUser.user.username.startsWithIgnoreCase(query)
           .or(QUser.user.email.startsWithIgnoreCase(query)));
@@ -35,6 +39,8 @@ public class CustomUserRepositoryImpl
   public Optional<User> getUserById(Long id) {
     return Optional.ofNullable(
         selectFrom(QUser.user)
+            .innerJoin(QUser.user.department, QDepartment.department)
+            .fetchJoin()
             .where(QUser.user.id.eq(id))
             .fetchOne()
     );
@@ -91,5 +97,57 @@ public class CustomUserRepositoryImpl
           return userDepartmentDto;
         })
         .toList();
+  }
+
+  @Override
+  public List<User> getUsersIn(List<Long> userIds) {
+    return selectFrom(QUser.user)
+        .where(QUser.user.id.in(userIds))
+        .fetch();
+  }
+
+  @Override
+  public long getTotalElements(UserSearchCriteria criteria) {
+    return buildSearchQuery(criteria)
+        .fetch()
+        .size();
+  }
+
+  @Override
+  public long getTotalPages(UserSearchCriteria criteria, long limit) {
+    return 0;
+  }
+
+  @Override
+  public List<User> searchByCriteria(UserSearchCriteria criteria, long offset, long limit) {
+    return buildSearchQuery(criteria)
+        .orderBy(QUser.user.id.asc())
+        .offset(offset * limit)
+        .limit(limit)
+        .fetch();
+  }
+
+  private JPAQuery<User> buildSearchQuery(UserSearchCriteria criteria) {
+    BooleanBuilder whereBuilder = new BooleanBuilder();
+    if (StringUtils.isNotBlank(criteria.getUsername())) {
+      whereBuilder.and(QUser.user.username.startsWithIgnoreCase(criteria.getUsername()));
+    }
+    if (StringUtils.isNotBlank(criteria.getEmail())) {
+      whereBuilder.and(QUser.user.email.startsWithIgnoreCase(criteria.getEmail()));
+    }
+    if (StringUtils.isNotBlank(criteria.getFullName())) {
+      whereBuilder.and(QUser.user.fullName.startsWithIgnoreCase(criteria.getFullName()));
+    }
+    if (criteria.getRole() != null) {
+      whereBuilder.and(QUser.user.role.eq(criteria.getRole()));
+    }
+    if (criteria.getDepartmentId() != null) {
+      whereBuilder.and(QUser.user.department.id.eq(criteria.getDepartmentId()));
+    }
+
+    return selectFrom(QUser.user)
+        .innerJoin(QUser.user.department, QDepartment.department)
+        .where(whereBuilder)
+        .fetchJoin();
   }
 }

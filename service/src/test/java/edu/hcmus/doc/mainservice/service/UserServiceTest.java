@@ -10,32 +10,24 @@ import static org.mockito.Mockito.when;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
-import edu.hcmus.doc.mainservice.service.impl.UserServiceImpl;
 import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Condition;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Spy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 
 class UserServiceTest extends AbstractServiceTest {
 
-  @Spy
-  private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+  @SpyBean
+  private PasswordEncoder passwordEncoder;
 
+  @Autowired
   private UserService userService;
-
-  @BeforeEach
-  void setUp() {
-    userService = new UserServiceImpl(
-        userRepository,
-        passwordEncoder
-    );
-  }
 
   @Test
   void testGetUsers() {
@@ -45,6 +37,11 @@ class UserServiceTest extends AbstractServiceTest {
     long max = anyLong();
 
     // When
+    when(userRepository.getUsers(query, first, max)).thenReturn(List.of(
+        new User(),
+        new User(),
+        new User()
+    ));
     List<User> users = userService.getUsers(query, first, max);
 
     // Then
@@ -58,7 +55,7 @@ class UserServiceTest extends AbstractServiceTest {
     assertThat(firstCaptor.getValue()).isEqualTo(first);
     assertThat(maxCaptor.getValue()).isEqualTo(max);
 
-    assertThat(users).isNotNull();
+    assertThat(users).isNotEmpty();
   }
 
   @Test

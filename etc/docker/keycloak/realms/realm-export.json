@@ -56,7 +56,6 @@
       "realmRoles": [
         "offline_access",
         "uma_authorization",
-        "DOC_ADMIN",
         "default-roles-doc"
       ],
       "clientRoles": {
@@ -84,7 +83,6 @@
       "realmRoles": [
         "offline_access",
         "uma_authorization",
-        "DOC_ADMIN",
         "default-roles-doc",
         "GIAM_DOC"
       ],
@@ -113,7 +111,6 @@
       "realmRoles": [
         "offline_access",
         "uma_authorization",
-        "DOC_ADMIN",
         "default-roles-doc",
         "CHUYEN_VIEN"
       ],
@@ -142,7 +139,6 @@
       "realmRoles": [
         "offline_access",
         "uma_authorization",
-        "DOC_ADMIN",
         "default-roles-doc",
         "TRUONG_PHONG"
       ],
@@ -171,7 +167,6 @@
       "realmRoles": [
         "offline_access",
         "uma_authorization",
-        "DOC_ADMIN",
         "default-roles-doc",
         "VAN_THU"
       ],
@@ -260,8 +255,7 @@
         "composites": {
           "realm": [
             "offline_access",
-            "uma_authorization",
-            "DOC_ADMIN"
+            "uma_authorization"
           ],
           "client": {
             "realm-management": [
@@ -273,15 +267,6 @@
             ]
           }
         },
-        "clientRole": false,
-        "containerId": "6c7a49c6-c4d6-4e88-a602-6ad06d02ee67",
-        "attributes": {}
-      },
-      {
-        "id": "309741d2-d1f2-4706-a0ac-38c6c570007b",
-        "name": "DOC_ADMIN",
-        "description": "",
-        "composite": false,
         "clientRole": false,
         "containerId": "6c7a49c6-c4d6-4e88-a602-6ad06d02ee67",
         "attributes": {}
