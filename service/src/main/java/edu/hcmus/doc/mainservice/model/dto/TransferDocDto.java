@@ -25,4 +25,5 @@ public class TransferDocDto {
   @Nullable
   private ProcessMethod processMethod;
   private TransferDocumentType transferDocumentType;
+  private Boolean isTransferToSameLevel;
 }

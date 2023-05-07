@@ -6,6 +6,7 @@ import edu.hcmus.doc.mainservice.model.dto.ElasticSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.ProcessingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocDto;
@@ -85,8 +86,6 @@ public class IncomingDocumentController extends DocAbstractController {
     incomingDocumentService.transferDocuments(transferDocDto);
   }
 
-
-
   @PutMapping("/update")
   public IncomingDocumentDto createIncomingDocument(
       @RequestBody IncomingDocumentPutDto incomingDocumentPutDto) {
@@ -94,5 +93,10 @@ public class IncomingDocumentController extends DocAbstractController {
         incomingDocumentPutDto);
     return incomingDecoratorDocumentMapper.toDto(
         incomingDocumentService.updateIncomingDocument(incomingDocument));
+  }
+
+  @GetMapping("/transfer-documents-setting")
+  public TransferDocumentModalSettingDto getTransferDocumentModalSetting() {
+    return incomingDocumentService.getTransferDocumentModalSetting();
   }
 }
