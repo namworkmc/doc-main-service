@@ -14,14 +14,14 @@ INSERT INTO "incoming_document"
  "sending_level_id",
  "created_by",
  "updated_by")
-SELECT MD5(RANDOM()::TEXT),
+SELECT SUBSTR(MD5(RANDOM()::TEXT), 1, 10),
        1,
-       MD5(RANDOM()::TEXT),
+       SUBSTR(MD5(RANDOM()::TEXT), 1, 10),
        1,
        NOW() - '1 day'::INTERVAL * (RANDOM()::INT * 100),
        NOW() - '1 day'::INTERVAL * (RANDOM()::INT * 100),
        NOW() - '1 day'::INTERVAL * (RANDOM()::INT * 100 + 100),
-       MD5(RANDOM()::TEXT),
+       'summary',
        'MEDIUM',
        'MEDIUM',
        1,
@@ -30,8 +30,8 @@ SELECT MD5(RANDOM()::TEXT),
 FROM GENERATE_SERIES(1, 1000) id;
 
 INSERT INTO "distribution_organization" ("name", "symbol", "created_by", "updated_by")
-SELECT MD5(RANDOM()::TEXT),
-       MD5(RANDOM()::TEXT),
+SELECT 'University of Science',
+       SUBSTR(MD5(RANDOM()::TEXT), 1, 10),
        1,
        1
 FROM GENERATE_SERIES(1, 50) id;
