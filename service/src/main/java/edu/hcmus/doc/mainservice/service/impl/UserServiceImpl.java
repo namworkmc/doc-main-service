@@ -12,6 +12,7 @@ import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserPasswordIncorrectException;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
+import edu.hcmus.doc.mainservice.service.SearchService;
 import edu.hcmus.doc.mainservice.service.UserService;
 import edu.hcmus.doc.mainservice.util.mapper.PaginationMapper;
 import edu.hcmus.doc.mainservice.util.mapper.UserMapper;
@@ -125,7 +126,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public DocPaginationDto<UserDto> searchUsers(UserSearchCriteria userSearchCriteria, int page, int pageSize) {
+  public DocPaginationDto<UserDto> search(UserSearchCriteria userSearchCriteria, int page, int pageSize) {
     long totalElements = userRepository.getTotalElements(userSearchCriteria);
     long totalPages = (totalElements / pageSize) + (totalElements % pageSize == 0 ? 0 : 1);
     List<UserDto> users = userRepository

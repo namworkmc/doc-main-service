@@ -80,6 +80,7 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.UserSearchCriteria</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.ProcessingUserDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.ProcessingDetailsDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.DocumentTypeSearchCriteria</classPattern>
           </classPatterns>
           <excludeClasses>
             <class>java.io.Serializable</class>

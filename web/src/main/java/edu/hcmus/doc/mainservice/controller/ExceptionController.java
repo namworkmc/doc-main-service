@@ -3,17 +3,21 @@ package edu.hcmus.doc.mainservice.controller;
 import edu.hcmus.doc.mainservice.model.dto.ExceptionDto;
 import edu.hcmus.doc.mainservice.model.dto.KeycloakErrorDto;
 import edu.hcmus.doc.mainservice.model.exception.DocAuthorizedException;
+import edu.hcmus.doc.mainservice.model.exception.DocException;
 import edu.hcmus.doc.mainservice.model.exception.DocExistedException;
 import edu.hcmus.doc.mainservice.model.exception.DocNotFoundException;
 import java.util.Objects;
 import javax.ws.rs.ClientErrorException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class ExceptionController {
 
@@ -49,6 +53,13 @@ public class ExceptionController {
     return res;
   }
 
+  @ExceptionHandler(DocException.class)
+  public ResponseEntity<ExceptionDto> handleDocException(DocException exception) {
+    return ResponseEntity
+        .badRequest()
+        .body(new ExceptionDto(exception.getMessage()));
+  }
+
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ExceptionDto> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException exception) {
@@ -56,6 +67,15 @@ public class ExceptionController {
     return ResponseEntity
         .badRequest()
         .body(new ExceptionDto(Objects.requireNonNull(errorField).getDefaultMessage()));
+  }
+
+  @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+  public ResponseEntity<ExceptionDto> handleObjectOptimisticLockingFailureException(
+      ObjectOptimisticLockingFailureException exception) {
+    log.error(exception.getMessage());
+    return ResponseEntity
+        .status(HttpStatus.CONFLICT)
+        .body(new ExceptionDto(DocException.CONCURRENT_UPDATE));
   }
 
   @ExceptionHandler(Throwable.class)

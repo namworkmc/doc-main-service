@@ -10,15 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class DocumentTypeServiceTest extends AbstractServiceTest {
 
+  @Autowired
   private DocumentTypeService documentTypeService;
-
-  @BeforeEach
-  void setUp() {
-    this.documentTypeService = new DocumentTypeServiceImpl(documentTypeRepository);
-  }
 
   @Test
   void findDocumentTypes() {

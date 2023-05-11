@@ -1,13 +1,15 @@
 package edu.hcmus.doc.mainservice.service;
 
+import edu.hcmus.doc.mainservice.model.dto.DocumentTypeDto;
+import edu.hcmus.doc.mainservice.model.dto.DocumentTypeSearchCriteria;
 import edu.hcmus.doc.mainservice.model.entity.DocumentType;
 import java.util.List;
 
-public interface DocumentTypeService {
+public interface DocumentTypeService extends SearchService<DocumentTypeDto, DocumentTypeSearchCriteria> {
 
   List<DocumentType> findAll();
 
   DocumentType findById(Long id);
 
-  DocumentType createDocumentType(DocumentType documentType);
+  DocumentType saveDocumentType(DocumentType documentType);
 }

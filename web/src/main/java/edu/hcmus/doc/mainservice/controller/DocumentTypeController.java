@@ -29,6 +29,6 @@ public class DocumentTypeController extends DocAbstractController {
   @PostMapping
   public DocumentTypeDto createDocumentType(@Valid @RequestBody DocumentTypeDto documentTypeDto) {
     DocumentType documentType = documentTypeMapper.toEntity(documentTypeDto);
-    return documentTypeMapper.toDto(documentTypeService.createDocumentType(documentType));
+    return documentTypeMapper.toDto(documentTypeService.saveDocumentType(documentType));
   }
 }
