@@ -39,6 +39,13 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
   }
 
   @Override
+  public void deleteDocumentTypes(List<Long> documentTypeIds) {
+    List<DocumentType> documentTypes = documentTypeRepository.getDocumentTypesByIdIn(documentTypeIds);
+    documentTypes.parallelStream().forEach(documentType -> documentType.setDeleted(true));
+    documentTypeRepository.saveAll(documentTypes);
+  }
+
+  @Override
   public DocPaginationDto<DocumentTypeDto> search(DocumentTypeSearchCriteria criteria, int page, int pageSize) {
     long totalElements = documentTypeRepository.getTotalElements(criteria);
     long totalPages = (totalElements / pageSize) + (totalElements % pageSize == 0 ? 0 : 1);

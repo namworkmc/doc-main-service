@@ -2,6 +2,7 @@ package edu.hcmus.doc.mainservice.repository;
 
 import edu.hcmus.doc.mainservice.model.entity.DocumentType;
 import edu.hcmus.doc.mainservice.repository.custom.CustomDocumentTypeRepository;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
@@ -12,4 +13,5 @@ public interface DocumentTypeRepository extends
     QuerydslPredicateExecutor<DocumentType>,
     CustomDocumentTypeRepository {
 
+  List<DocumentType> getDocumentTypesByIdIn(List<Long> documentTypeIds);
 }

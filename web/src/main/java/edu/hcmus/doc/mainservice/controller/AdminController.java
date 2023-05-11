@@ -94,4 +94,10 @@ public class AdminController extends DocAbstractController {
   public void deleteUsers(@RequestBody List<Long> userIds) {
     userService.deleteUsers(userIds);
   }
+
+  @DeleteMapping("/document-types")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteDocumentTypes(@RequestBody List<Long> documentTypeIds) {
+    documentTypeService.deleteDocumentTypes(documentTypeIds);
+  }
 }
