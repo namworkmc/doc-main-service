@@ -17,7 +17,13 @@ public abstract class DocAbstractController {
   protected IncomingDocumentMapper incomingDecoratorDocumentMapper;
 
   @Autowired
+  protected OutgoingDocumentMapper outgoingDecoratorDocumentMapper;
+
+  @Autowired
   protected DocumentTypeMapper documentTypeMapper;
+
+  @Autowired
+  protected DepartmentMapper departmentMapper;
 
   @Autowired
   protected FolderMapper folderMapper;
