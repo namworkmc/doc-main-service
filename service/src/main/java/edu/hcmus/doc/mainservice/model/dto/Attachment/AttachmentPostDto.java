@@ -7,5 +7,5 @@ import lombok.Data;
 public class AttachmentPostDto {
 
   private List<FileWrapper> attachments;
-  private Long incomingDocId;
+  private Long docId;
 }

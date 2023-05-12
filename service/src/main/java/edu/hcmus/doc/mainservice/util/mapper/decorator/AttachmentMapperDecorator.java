@@ -22,10 +22,10 @@ public abstract class AttachmentMapperDecorator implements AttachmentMapper {
 
 
   @Override
-  public AttachmentPostDto toAttachmentPostDto(Long incomingDocId,
+  public AttachmentPostDto toAttachmentPostDto(Long docId,
       List<MultipartFile> attachments) {
     AttachmentPostDto attachmentPostDto = new AttachmentPostDto();
-    attachmentPostDto.setIncomingDocId(incomingDocId);
+    attachmentPostDto.setDocId(docId);
     List<FileWrapper> fileWrappers = attachments.stream()
         .map(file -> {
           FileWrapper fileWrapper = new FileWrapper();
@@ -50,12 +50,12 @@ public abstract class AttachmentMapperDecorator implements AttachmentMapper {
   }
 
   @Override
-  public AttachmentDto convertFileDtoToAttachmentDto(Long incomingDocId, FileDto fileDto) {
+  public AttachmentDto convertFileDtoToAttachmentDto(Long docId, FileDto fileDto) {
     AttachmentDto attachmentDto = new AttachmentDto();
     attachmentDto.setAlfrescoFileId(fileDto.getId());
     attachmentDto.setAlfrescoFolderId(fileDto.getParentFolderId());
     attachmentDto.setFileType(FileType.fromValue(fileDto.getMimeType()));
-    attachmentDto.setIncomingDocId(incomingDocId);
+    attachmentDto.setDocId(docId);
     return attachmentDto;
   }
 

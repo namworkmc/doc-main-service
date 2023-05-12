@@ -5,6 +5,7 @@ import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.FileDto;
 import edu.hcmus.doc.mainservice.repository.AttachmentRepository;
 import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
+import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
 import java.util.List;
@@ -36,7 +37,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
   private final IncomingDocumentRepository incomingDocumentRepository;
 
-  private final AsyncRabbitTemplate asyncRabbitTemplate;
+  private final OutgoingDocumentRepository outgoingDocumentRepository;
+
+    private final AsyncRabbitTemplate asyncRabbitTemplate;
 
   private final AttachmentMapperDecorator attachmentMapperDecorator;
 
@@ -77,9 +80,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     List<AttachmentDto> attachmentDtos = Objects.requireNonNull(fileDtos).stream()
         .map(fileDto -> attachmentMapperDecorator.convertFileDtoToAttachmentDto(
-            attachmentPostDto.getIncomingDocId(), fileDto)).toList();
+            attachmentPostDto.getDocId(), fileDto)).toList();
 
-    incomingDocumentRepository.findById(attachmentPostDto.getIncomingDocId())
+    incomingDocumentRepository.findById(attachmentPostDto.getDocId())
         .ifPresent(incomingDoc -> {
           attachmentDtos.stream().map(attachmentMapperDecorator::toEntity).forEach(attachment -> {
             attachment.setIncomingDoc(incomingDoc);
@@ -89,4 +92,48 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     return attachmentDtos;
   }
+
+    @SneakyThrows
+    @Override
+    public List<AttachmentDto> saveAttachmentsByOutgoingDocId(AttachmentPostDto attachmentPostDto) {
+        if (attachmentPostDto.getAttachments().size() == 0) {
+            return List.of();
+        }
+
+        RabbitConverterFuture<List<FileDto>> rabbitConverterFuture = asyncRabbitTemplate
+                .convertSendAndReceiveAsType(exchange, routingkey, attachmentPostDto,
+                        new ParameterizedTypeReference<>() {
+                        }
+                );
+
+        rabbitConverterFuture.addCallback(
+                new ListenableFutureCallback<>() {
+                    @Override
+                    public void onFailure(Throwable ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    @Override
+                    public void onSuccess(List<FileDto> result) {
+                    }
+                }
+        );
+
+        // save file info to db
+        List<FileDto> fileDtos = rabbitConverterFuture.get();
+
+        List<AttachmentDto> attachmentDtos = Objects.requireNonNull(fileDtos).stream()
+                .map(fileDto -> attachmentMapperDecorator.convertFileDtoToAttachmentDto(
+                        attachmentPostDto.getDocId(), fileDto)).toList();
+
+        outgoingDocumentRepository.findById(attachmentPostDto.getDocId())
+                .ifPresent(doc -> {
+                    attachmentDtos.stream().map(attachmentMapperDecorator::toEntity).forEach(attachment -> {
+                        attachment.setOutgoingDocument(doc);
+                        attachmentRepository.save(attachment);
+                    });
+                });
+
+        return attachmentDtos;
+    }
 }

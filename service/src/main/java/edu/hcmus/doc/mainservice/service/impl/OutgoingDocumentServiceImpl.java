@@ -1,8 +1,16 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
+import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
+import edu.hcmus.doc.mainservice.util.mapper.OutgoingDocumentMapper;
+import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +20,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Throwable.class)
 public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   private final OutgoingDocumentRepository outgoingDocumentRepository;
+  private final OutgoingDocumentMapper outgoingDecoratorDocumentMapper;
+  private final AttachmentMapperDecorator attachmentMapperDecorator;
+  private final AttachmentService attachmentService;
+  private final ObjectMapper objectMapper;
 
   @Override
-  public OutgoingDocument createOutgoingDocument(OutgoingDocument outgoingDocument) {
-    return outgoingDocumentRepository.save(outgoingDocument);
+  public OutgoingDocument createOutgoingDocument(OutgoingDocumentWithAttachmentPostDto outgoingDocumentWithAttachmentPostDto)
+          throws JsonProcessingException {
+    OutgoingDocumentPostDto outgoingDocumentPostDto =
+            objectMapper.readValue(
+                    outgoingDocumentWithAttachmentPostDto.getOutgoingDocumentPostDto(),
+            OutgoingDocumentPostDto.class);
+
+    OutgoingDocument outgoingDocument = outgoingDecoratorDocumentMapper
+            .toEntity(outgoingDocumentPostDto);
+
+    OutgoingDocument savedOutgoingDocument = outgoingDocumentRepository.save(outgoingDocument);
+
+    AttachmentPostDto attachmentPostDto = attachmentMapperDecorator.toAttachmentPostDto(
+            savedOutgoingDocument.getId(), outgoingDocumentWithAttachmentPostDto.getAttachments());
+
+    attachmentService.saveAttachmentsByOutgoingDocId(attachmentPostDto);
+
+    return savedOutgoingDocument;
   }
 }

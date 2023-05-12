@@ -2,12 +2,12 @@ package edu.hcmus.doc.mainservice.controller;
 
 import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
-import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
-import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(DocURL.API_V1 + "/outgoing-documents")
 public class OutgoingDocumentController extends DocAbstractController {
-
   private final OutgoingDocumentService outgoingDocumentService;
 
+  @SneakyThrows
   @PostMapping("/create")
-  public OutgoingDocumentGetDto createOutgoingDocument(@RequestBody OutgoingDocumentPostDto outgoingDocumentDto) {
-    OutgoingDocument outgoingDocument = outgoingDecoratorDocumentMapper.toEntity(outgoingDocumentDto);
-    return outgoingDecoratorDocumentMapper
-            .toDto(outgoingDocumentService.createOutgoingDocument(outgoingDocument));
+  public OutgoingDocumentGetDto createIncomingDocument(
+          @ModelAttribute OutgoingDocumentWithAttachmentPostDto outgoingDocumentWithAttachmentPostDto) {
+    return outgoingDecoratorDocumentMapper.toDto(
+            outgoingDocumentService.createOutgoingDocument(outgoingDocumentWithAttachmentPostDto));
   }
 }

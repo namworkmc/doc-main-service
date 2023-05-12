@@ -6,8 +6,7 @@ import lombok.Data;
 
 @Data
 public class AttachmentDto extends DocAbstractDto {
-
-  private Long incomingDocId;
+  private Long docId;
   private String alfrescoFileId;
   private String alfrescoFolderId;
   private FileType fileType;

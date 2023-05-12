@@ -60,9 +60,9 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPostDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentGetDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto</classPattern>
-            <classPattern>edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.enums.Urgency</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.enums.Confidentiality</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.enums.ProcessMethod</classPattern>
