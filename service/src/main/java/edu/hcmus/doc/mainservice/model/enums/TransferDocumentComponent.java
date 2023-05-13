@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum TransferDocumentComponent {
-  TRANSFER_TO_GIAM_DOC("DirectorScreenComponent"),
-  TRANSFER_TO_TRUONG_PHONG("ManagerScreenComponent"),
-  TRANSFER_TO_VAN_THU("SecretaryScreenComponent"),
-  TRANSFER_TO_CHUYEN_VIEN("ExpertScreenComponent");
+  TRANSFER_TO_GIAM_DOC(1),
+  TRANSFER_TO_TRUONG_PHONG(2),
+  TRANSFER_TO_VAN_THU(3),
+  TRANSFER_TO_CHUYEN_VIEN(4);
 
-  public final String value;
+  public final Integer value;
 }

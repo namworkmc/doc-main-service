@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
-import edu.hcmus.doc.mainservice.model.dto.TransferDocDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 

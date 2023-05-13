@@ -1,4 +1,4 @@
-package edu.hcmus.doc.mainservice.model.dto;
+package edu.hcmus.doc.mainservice.model.dto.TransferDocument;
 
 import edu.hcmus.doc.mainservice.model.enums.ProcessMethod;
 import edu.hcmus.doc.mainservice.model.enums.TransferDocumentType;

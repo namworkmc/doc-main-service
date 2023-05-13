@@ -22,11 +22,13 @@ class ProcessingDocumentServiceTest extends AbstractServiceTest {
   @Mock
   private AsyncRabbitTemplate asyncRabbitTemplate;
 
+
   @BeforeEach
   void setUp() {
     this.processingDocumentService = new ProcessingDocumentServiceImpl(
         processingDocumentRepository,
-        asyncRabbitTemplate
+        asyncRabbitTemplate,
+        userRepository
     );
   }
 

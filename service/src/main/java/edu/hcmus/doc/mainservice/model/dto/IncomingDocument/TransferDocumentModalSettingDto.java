@@ -10,5 +10,5 @@ public class TransferDocumentModalSettingDto {
   private List<TransferDocumentMenuConfig> menuConfigs;
   private DocSystemRoleEnum currentRole;
   private TransferDocumentType defaultTransferDocumentType;
-  private String defaultComponent;
+  private Integer defaultComponentKey;
 }

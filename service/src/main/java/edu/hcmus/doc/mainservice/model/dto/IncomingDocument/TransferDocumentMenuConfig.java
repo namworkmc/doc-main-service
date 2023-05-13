@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class TransferDocumentMenuConfig {
   private String transferDocumentTypeLabel;
-  private String component;
+  private Integer componentKey;
   private String menuLabel;
   private Integer menuKey;
   private TransferDocumentType transferDocumentType;

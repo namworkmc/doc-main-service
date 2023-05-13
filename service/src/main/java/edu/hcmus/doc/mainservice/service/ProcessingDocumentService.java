@@ -3,6 +3,9 @@ package edu.hcmus.doc.mainservice.service;
 import edu.hcmus.doc.mainservice.model.dto.ElasticSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.ProcessingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
+import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -17,4 +20,8 @@ public interface ProcessingDocumentService {
 
   ProcessingDocumentSearchResultDto searchProcessingDocumentsByElasticSearch(ElasticSearchCriteriaDto elasticSearchCriteriaDto, long offset, long limit)
       throws ExecutionException, InterruptedException;
+
+  Boolean isUserWorkingOnDocumentWithSpecificRole(GetTransferDocumentDetailRequest request);
+
+  ValidateTransferDocDto validateTransferDocument(TransferDocDto transferDocDto);
 }
