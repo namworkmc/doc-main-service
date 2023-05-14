@@ -1,6 +1,4 @@
-package edu.hcmus.doc.mainservice.model;
-
-import edu.hcmus.doc.mainservice.model.exception.DocExistedException;
+package edu.hcmus.doc.mainservice.model.exception;
 
 public class EmailExistedException extends DocExistedException {
 

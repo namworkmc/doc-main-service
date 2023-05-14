@@ -2,11 +2,13 @@ package edu.hcmus.doc.mainservice.controller;
 
 import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.dto.DepartmentDto;
+import edu.hcmus.doc.mainservice.model.dto.DepartmentSearchCriteria;
 import edu.hcmus.doc.mainservice.model.dto.DocPaginationDto;
 import edu.hcmus.doc.mainservice.model.dto.DocumentTypeDto;
 import edu.hcmus.doc.mainservice.model.dto.DocumentTypeSearchCriteria;
 import edu.hcmus.doc.mainservice.model.dto.UserDto;
 import edu.hcmus.doc.mainservice.model.dto.UserSearchCriteria;
+import edu.hcmus.doc.mainservice.model.entity.Department;
 import edu.hcmus.doc.mainservice.model.entity.DocumentType;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.service.DepartmentService;
@@ -46,6 +48,12 @@ public class AdminController extends DocAbstractController {
         .toList();
   }
 
+  @GetMapping("/already-assigned/truong-phong/{userId}/departments/{departmentId}")
+  public boolean isUserTruongPhongOfAnotherDepartment(@PathVariable Long userId, @PathVariable Long departmentId) {
+    return departmentService.isUserTruongPhongOfAnotherDepartment(userId, departmentId);
+  }
+
+
   @PostMapping("/search/document-types")
   public DocPaginationDto<DocumentTypeDto> searchDocumentTypes(
       @RequestBody(required = false) DocumentTypeSearchCriteria documentTypeSearchCriteria,
@@ -64,6 +72,15 @@ public class AdminController extends DocAbstractController {
     return userService.search(userSearchCriteria, page, pageSize);
   }
 
+  @PostMapping("/search/departments")
+  public DocPaginationDto<DepartmentDto> searchDepartments(
+      @RequestBody DepartmentSearchCriteria departmentSearchCriteria,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "10") int pageSize
+  ) {
+    return departmentService.search(departmentSearchCriteria, page, pageSize);
+  }
+
   @PostMapping("/users")
   @ResponseStatus(HttpStatus.CREATED)
   public Long createUser(@RequestBody @Valid UserDto userDto) {
@@ -71,7 +88,7 @@ public class AdminController extends DocAbstractController {
     return userService.createUser(user);
   }
 
-  @PostMapping("document-types")
+  @PostMapping("/document-types")
   @ResponseStatus(HttpStatus.CREATED)
   public Long saveDocumentType(@RequestBody @Valid DocumentTypeDto documentTypeDto) {
     DocumentType documentType;
@@ -81,6 +98,19 @@ public class AdminController extends DocAbstractController {
       documentType = documentTypeMapper.partialUpdate(documentTypeDto, documentTypeService.findById(documentTypeDto.getId()));
     }
     return documentTypeService.saveDocumentType(documentType).getId();
+  }
+
+  @PostMapping("/departments")
+  @ResponseStatus(HttpStatus.CREATED)
+  public Long saveDepartment(@RequestBody @Valid DepartmentDto departmentDto) {
+    Department department;
+    if (!departmentDto.isPersisted()) {
+      department = departmentMapper.toEntity(departmentDto);
+    } else {
+      department = departmentMapper.partialUpdate(departmentDto, departmentService.getDepartmentById(departmentDto.getId()));
+    }
+
+    return departmentService.saveDepartment(department, departmentDto.getTruongPhong().getId());
   }
 
   @PutMapping("/users/{id}")
@@ -99,5 +129,11 @@ public class AdminController extends DocAbstractController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteDocumentTypes(@RequestBody List<Long> documentTypeIds) {
     documentTypeService.deleteDocumentTypes(documentTypeIds);
+  }
+
+  @DeleteMapping("/departments")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteDepartments(@RequestBody List<Long> departmentIds) {
+    departmentService.deleteDepartments(departmentIds);
   }
 }

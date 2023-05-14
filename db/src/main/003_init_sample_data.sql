@@ -1,11 +1,11 @@
 SET SEARCH_PATH TO "doc_main";
 
 INSERT INTO "document_type" ("type", "created_by", "updated_by")
-VALUES ('CONTRACT', 1, 1),
-       ('INVOICE', 1, 1),
-       ('PAYMENT', 1, 1),
-       ('RECEIPT', 1, 1),
-       ('OTHER', 1, 1);
+VALUES ('CONTRACT', 'docadmin', 'docadmin'),
+       ('INVOICE', 'docadmin', 'docadmin'),
+       ('PAYMENT', 'docadmin', 'docadmin'),
+       ('RECEIPT', 'docadmin', 'docadmin'),
+       ('OTHER', 'docadmin', 'docadmin');
 
 INSERT INTO "sending_level" ("level", "created_by", "updated_by")
 VALUES ('CITY', 1, 1),

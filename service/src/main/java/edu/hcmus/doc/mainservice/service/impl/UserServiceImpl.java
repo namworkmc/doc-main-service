@@ -1,18 +1,17 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
-import edu.hcmus.doc.mainservice.model.EmailExistedException;
 import edu.hcmus.doc.mainservice.model.dto.DocPaginationDto;
 import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
 import edu.hcmus.doc.mainservice.model.dto.UserDto;
 import edu.hcmus.doc.mainservice.model.dto.UserSearchCriteria;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
-import edu.hcmus.doc.mainservice.model.exception.UsernameExistedException;
+import edu.hcmus.doc.mainservice.model.exception.EmailExistedException;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserPasswordIncorrectException;
+import edu.hcmus.doc.mainservice.model.exception.UsernameExistedException;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
-import edu.hcmus.doc.mainservice.service.SearchService;
 import edu.hcmus.doc.mainservice.service.UserService;
 import edu.hcmus.doc.mainservice.util.mapper.PaginationMapper;
 import edu.hcmus.doc.mainservice.util.mapper.UserMapper;
@@ -141,7 +140,9 @@ public class UserServiceImpl implements UserService {
   @Override
   public void deleteUsers(List<Long> userIds) {
     List<User> users = userRepository.getUsersIn(userIds);
-    users.parallelStream().forEach(user -> user.setDeleted(true));
+    users.parallelStream()
+        .filter(user -> user.getRole() != DocSystemRoleEnum.DOC_ADMIN)
+        .forEach(user -> user.setDeleted(true));
     userRepository.saveAll(users);
   }
 }

@@ -113,6 +113,11 @@ public class CustomProcessingDocumentRepositoryImpl
   }
 
   @Override
+  public JPAQuery<ProcessingDocument> buildSearchQuery(SearchCriteriaDto criteria) {
+    return null;
+  }
+
+  @Override
   public List<ProcessingDocument> findProcessingDocumentsByElasticSearchResult(
       List<IncomingDocumentSearchResultDto> incomingDocumentSearchResultDtoList, long offset,
       long limit) {

@@ -2,7 +2,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
@@ -29,6 +29,9 @@ spring:
       exchange: doc.exchange
       routing-key: doc.routingkey
       attachment-routing-key: doc.attachment-routing-key
+
+  main:
+    allow-circular-references: true
 
 logging:
   level:

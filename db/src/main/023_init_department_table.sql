@@ -7,9 +7,9 @@ CREATE TABLE "department"
     CONSTRAINT "department_pk" PRIMARY KEY ("id")
 ) INHERITS ("doc_base_table");
 
-INSERT INTO "department" ("department_name")
-VALUES ('Ban Chỉ Huy'),
-       ('Phòng kế hoạch đầu tư');
+INSERT INTO "department" ("department_name", "created_by")
+VALUES ('Ban Chỉ Huy', 'docadmin'),
+       ('Phòng kế hoạch đầu tư', 'docadmin');
 
 ALTER TABLE "user"
     ADD COLUMN "department_id" BIGINT;

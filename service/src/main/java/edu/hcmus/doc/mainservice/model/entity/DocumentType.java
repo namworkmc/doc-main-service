@@ -12,4 +12,7 @@ public class DocumentType extends DocAbstractIdEntity {
 
   @Column(name = "type", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
   private String type;
+
+  @Column(name = "description", columnDefinition = "TEXT")
+  private String description;
 }

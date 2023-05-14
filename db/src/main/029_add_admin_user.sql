@@ -2,7 +2,7 @@ SET SEARCH_PATH TO doc_main;
 
 DROP TABLE "user_role";
 
-INSERT INTO "department"("department_name") VALUES ('RA');
+INSERT INTO "department"("department_name", "created_by") VALUES ('RA', 'docadmin');
 
 ALTER TABLE "user" DROP CONSTRAINT "user_role_check";
 CREATE TYPE "doc_user_role" AS ENUM ('GIAM_DOC', 'CHUYEN_VIEN', 'TRUONG_PHONG', 'VAN_THU', 'DOC_ADMIN');

@@ -18,6 +18,10 @@ public abstract class DocAbstractIdEntity extends DocAbstractVersionEntity {
   @Column(name = "id", nullable = false, columnDefinition = "SERIAL")
   protected Long id;
 
+  public boolean isPersisted() {
+    return id != null;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

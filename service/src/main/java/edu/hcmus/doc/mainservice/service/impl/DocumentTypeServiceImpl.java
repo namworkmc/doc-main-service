@@ -6,7 +6,6 @@ import edu.hcmus.doc.mainservice.model.dto.DocumentTypeSearchCriteria;
 import edu.hcmus.doc.mainservice.model.entity.DocumentType;
 import edu.hcmus.doc.mainservice.repository.DocumentTypeRepository;
 import edu.hcmus.doc.mainservice.service.DocumentTypeService;
-import edu.hcmus.doc.mainservice.service.SearchService;
 import edu.hcmus.doc.mainservice.util.mapper.DocumentTypeMapper;
 import edu.hcmus.doc.mainservice.util.mapper.PaginationMapper;
 import java.util.List;
@@ -40,7 +39,7 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
 
   @Override
   public void deleteDocumentTypes(List<Long> documentTypeIds) {
-    List<DocumentType> documentTypes = documentTypeRepository.getDocumentTypesByIdIn(documentTypeIds);
+    List<DocumentType> documentTypes = documentTypeRepository.findAllById(documentTypeIds);
     documentTypes.parallelStream().forEach(documentType -> documentType.setDeleted(true));
     documentTypeRepository.saveAll(documentTypes);
   }

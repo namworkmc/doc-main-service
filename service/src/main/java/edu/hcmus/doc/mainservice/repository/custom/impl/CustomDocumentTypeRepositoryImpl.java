@@ -27,13 +27,15 @@ public class CustomDocumentTypeRepositoryImpl
   @Override
   public List<DocumentType> searchByCriteria(DocumentTypeSearchCriteria criteria, long offset, long limit) {
     return buildSearchQuery(criteria)
+        .orderBy(QDocumentType.documentType.type.asc())
         .orderBy(QDocumentType.documentType.id.asc())
         .offset(offset * limit)
         .limit(limit)
         .fetch();
   }
 
-  private JPAQuery<DocumentType> buildSearchQuery(DocumentTypeSearchCriteria criteria) {
+  @Override
+  public JPAQuery<DocumentType> buildSearchQuery(DocumentTypeSearchCriteria criteria) {
     return selectFrom(QDocumentType.documentType);
   }
 }

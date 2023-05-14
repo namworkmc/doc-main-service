@@ -2,7 +2,7 @@ package edu.hcmus.doc.mainservice.service;
 
 import edu.hcmus.doc.mainservice.model.dto.DocPaginationDto;
 
-public interface SearchService<T, C> {
+public interface SearchService<R, C> {
 
-  DocPaginationDto<T> search(C criteria, int page, int pageSize);
+  DocPaginationDto<R> search(C criteria, int page, int pageSize);
 }

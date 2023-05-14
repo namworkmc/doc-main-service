@@ -12,7 +12,7 @@ import org.mapstruct.MappingConstants.ComponentModel;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = ComponentModel.SPRING, uses = {DepartmentMapper.class})
+@Mapper(componentModel = ComponentModel.SPRING)
 @DecoratedWith(UserMapperDecorator.class)
 public interface UserMapper {
 

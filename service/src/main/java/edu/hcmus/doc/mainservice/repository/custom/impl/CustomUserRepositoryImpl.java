@@ -127,7 +127,8 @@ public class CustomUserRepositoryImpl
         .fetch();
   }
 
-  private JPAQuery<User> buildSearchQuery(UserSearchCriteria criteria) {
+  @Override
+  public JPAQuery<User> buildSearchQuery(UserSearchCriteria criteria) {
     BooleanBuilder whereBuilder = new BooleanBuilder();
     if (StringUtils.isNotBlank(criteria.getUsername())) {
       whereBuilder.and(QUser.user.username.startsWithIgnoreCase(criteria.getUsername()));
