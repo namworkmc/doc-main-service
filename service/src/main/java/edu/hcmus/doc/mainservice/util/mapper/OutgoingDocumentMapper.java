@@ -21,12 +21,16 @@ import org.mapstruct.Mapping;
 )
 @DecoratedWith(OutgoingDocumentMapperDecorator.class)
 public interface OutgoingDocumentMapper {
-//  @Mapping(source = "outgoingNumber", target = "outgoingNumber")
-//  @Mapping(source = "recipient", target = "recipient")
-//  @Mapping(source = "summary", target = "summary")
-//  @Mapping(source = "urgency", target = "urgency")
-//  @Mapping(source = "confidentiality", target = "confidentiality")
-//  @Mapping(source = "releaseDate", target = "releaseDate")
+  @Mapping(source = "outgoingNumber", target = "outgoingNumber")
+  @Mapping(source = "recipient", target = "recipient")
+  @Mapping(source = "summary", target = "summary")
+  @Mapping(source = "urgency", target = "urgency")
+  @Mapping(source = "confidentiality", target = "confidentiality")
+  @Mapping(source = "releaseDate", target = "releaseDate")
+  @Mapping(target = "status")
+  @Mapping(target = "folder")
+  @Mapping(target = "documentType")
+  @Mapping(target = "publishingDepartment")
   OutgoingDocumentGetDto toDto(OutgoingDocument entity);
 
 //  @Mapping(source = "recipient", target = "recipient")

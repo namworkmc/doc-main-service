@@ -26,3 +26,5 @@ ALTER TABLE "attachment"
 ALTER TABLE "comment" ADD COLUMN "outgoing_document_id" BIGINT
     CONSTRAINT "comment_outgoing_document_fk" REFERENCES "outgoing_document" ("id");
 ALTER TABLE "comment" ALTER COLUMN "incoming_document_id" DROP NOT NULL;
+
+ALTER TABLE "outgoing_document" ADD CONSTRAINT "outgoing_document_document_type_fk" FOREIGN KEY ("document_type_id") REFERENCES "document_type" ("id");

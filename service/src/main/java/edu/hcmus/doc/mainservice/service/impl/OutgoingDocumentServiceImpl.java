@@ -3,6 +3,7 @@ package edu.hcmus.doc.mainservice.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
@@ -11,6 +12,7 @@ import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
 import edu.hcmus.doc.mainservice.util.mapper.OutgoingDocumentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,5 +46,20 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
     attachmentService.saveAttachmentsByOutgoingDocId(attachmentPostDto);
 
     return savedOutgoingDocument;
+  }
+
+  @Override
+  public long getTotalElements(OutgoingDocSearchCriteriaDto searchCriteriaDto){
+    return outgoingDocumentRepository.getTotalElements(searchCriteriaDto);
+  }
+
+  @Override
+  public long getTotalPages(OutgoingDocSearchCriteriaDto searchCriteriaDto, long limit){
+    return outgoingDocumentRepository.getTotalPages(searchCriteriaDto, limit);
+  }
+
+  @Override
+  public List<OutgoingDocument> searchOutgoingDocuments(OutgoingDocSearchCriteriaDto searchCriteria, int page, int pageSize) {
+    return outgoingDocumentRepository.searchByCriteria(searchCriteria, page, pageSize);
   }
 }
