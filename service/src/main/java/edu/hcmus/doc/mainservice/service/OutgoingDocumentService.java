@@ -7,8 +7,12 @@ import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import java.util.List;
 
 public interface OutgoingDocumentService {
+  OutgoingDocument getOutgoingDocumentById(Long id);
+
   OutgoingDocument createOutgoingDocument(OutgoingDocumentWithAttachmentPostDto outgoingDocumentWithAttachmentPostDto)
           throws JsonProcessingException;
+
+  OutgoingDocument updateOutgoingDocument(OutgoingDocument outgoingDocument);
 
   long getTotalElements(OutgoingDocSearchCriteriaDto searchCriteriaDto);
 

@@ -1,6 +1,7 @@
 package edu.hcmus.doc.mainservice.util.mapper.decorator;
 
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPutDto;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
 import edu.hcmus.doc.mainservice.service.DepartmentService;
@@ -30,6 +31,17 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
     OutgoingDocument entity = delegate.toEntity(dto);
 
     entity.setStatus(OutgoingDocumentStatusEnum.UNPROCESSED);
+    entity.setFolder(folderService.findById(dto.getFolder()));
+    entity.setDocumentType(documentTypeService.findById(dto.getDocumentType()));
+    entity.setPublishingDepartment(departmentService.getDepartmentById(dto.getPublishingDepartment()));
+
+    return entity;
+  }
+
+  @Override
+  public OutgoingDocument toEntity(OutgoingDocumentPutDto dto) {
+    OutgoingDocument entity = delegate.toEntity(dto);
+
     entity.setFolder(folderService.findById(dto.getFolder()));
     entity.setDocumentType(documentTypeService.findById(dto.getDocumentType()));
     entity.setPublishingDepartment(departmentService.getDepartmentById(dto.getPublishingDepartment()));

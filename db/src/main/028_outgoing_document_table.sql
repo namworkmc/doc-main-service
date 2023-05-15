@@ -28,3 +28,8 @@ ALTER TABLE "comment" ADD COLUMN "outgoing_document_id" BIGINT
 ALTER TABLE "comment" ALTER COLUMN "incoming_document_id" DROP NOT NULL;
 
 ALTER TABLE "outgoing_document" ADD CONSTRAINT "outgoing_document_document_type_fk" FOREIGN KEY ("document_type_id") REFERENCES "document_type" ("id");
+update outgoing_document
+set folder_id = 2 where id is not null;
+
+update outgoing_document
+set publishing_department_id = 1 where id is not null;

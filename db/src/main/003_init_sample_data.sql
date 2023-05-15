@@ -87,18 +87,19 @@ VALUES (1, 'IN_PROGRESS', FALSE, 'processing_request', 1, 1),
 
 INSERT INTO "outgoing_document"
 ("document_type_id",
+ "original_symbol_number",
  "urgency",
  "confidentiality",
  "summary",
  "status",
  "created_by",
  "updated_by")
-VALUES (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
-       (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
-       (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
-       (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
-       (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
-       (1, 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1);
+VALUES (1, 'BB-PĐT', 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
+       (1, 'BB-PĐT', 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
+       (1, 'BB-PĐT', 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
+       (1, 'BB-PĐT', 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
+       (1, 'BB-PĐT', 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1),
+       (1, 'BB-PĐT', 'LOW', 'LOW', 'TEST', 'UNPROCESSED', 1, 1);
 
 INSERT INTO "linked_document" (incoming_doc_id, outgoing_doc_id, created_by, updated_by)
 VALUES (1, 1, 1, 1),

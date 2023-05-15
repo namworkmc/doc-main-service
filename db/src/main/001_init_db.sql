@@ -56,7 +56,7 @@ CREATE TABLE "incoming_document"
     "id"                     SERIAL            NOT NULL,
     "incoming_number"        VARCHAR(255)      NOT NULL,
     "document_type_id"       BIGINT            NOT NULL,
-    "original_symbol_number" VARCHAR(255)      NOT NULL UNIQUE,
+    "original_symbol_number" VARCHAR(255)      NOT NULL,
     "distribution_org_id"    BIGINT            NOT NULL,
     "distribution_date"      DATE              NOT NULL,
     "arriving_date"          DATE              NOT NULL,
@@ -92,6 +92,7 @@ CREATE TABLE "outgoing_document"
 (
     "id"               SERIAL                     NOT NULL,
     "document_type_id" BIGINT                     NOT NULL,
+    "original_symbol_number" VARCHAR(255)         NOT NULL,
     "urgency"          "urgency"                  NOT NULL,
     "confidentiality"  "confidentiality"          NOT NULL,
     "summary"          VARCHAR(255)               NOT NULL,

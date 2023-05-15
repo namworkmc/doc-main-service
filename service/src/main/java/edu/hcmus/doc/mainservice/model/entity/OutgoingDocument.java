@@ -34,11 +34,17 @@ public class OutgoingDocument extends DocAbstractIdEntity {
   @Column(name = "summary")
   private String summary;
 
+  @Column(name = "original_symbol_number", nullable = false)
+  private String originalSymbolNumber;
+
   @Column(name = "outgoing_number")
   private String outgoingNumber;
 
   @Column(name = "recipient")
   private String recipient;
+
+  @Column(name = "signer")
+  private String signer;
 
   @Column(name = "release_date")
   private LocalDate releaseDate;

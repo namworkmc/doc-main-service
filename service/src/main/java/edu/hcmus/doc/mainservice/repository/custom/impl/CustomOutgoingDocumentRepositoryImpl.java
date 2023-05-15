@@ -1,23 +1,33 @@
 package edu.hcmus.doc.mainservice.repository.custom.impl;
 
-import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
-
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
-import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
-import edu.hcmus.doc.mainservice.model.entity.QDepartment;
-import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
-import edu.hcmus.doc.mainservice.model.entity.QFolder;
+import edu.hcmus.doc.mainservice.model.entity.*;
 import edu.hcmus.doc.mainservice.repository.custom.CustomOutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+
+import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
 
 public class CustomOutgoingDocumentRepositoryImpl
     extends DocAbstractCustomRepository<OutgoingDocument>
     implements CustomOutgoingDocumentRepository {
 
+    @Override
+    public OutgoingDocument getOutgoingDocumentById(Long id) {
+        return selectFrom(QOutgoingDocument.outgoingDocument)
+                .join(QOutgoingDocument.outgoingDocument.folder, QFolder.folder)
+                .fetchJoin()
+                .join(QOutgoingDocument.outgoingDocument.documentType, QDocumentType.documentType)
+                .fetchJoin()
+                .join(QOutgoingDocument.outgoingDocument.publishingDepartment, QDepartment.department)
+                .fetchJoin()
+                .where(QOutgoingDocument.outgoingDocument.id.eq(id))
+                .fetchFirst();
+    }
   @Override
   public long getTotalElements(OutgoingDocSearchCriteriaDto searchCriteriaDto) {
     return buildSearchQuery(searchCriteriaDto)

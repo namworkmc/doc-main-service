@@ -26,7 +26,8 @@ public class IncomingDocument extends DocAbstractIdEntity {
   @JoinColumn(name = "document_type_id", referencedColumnName = "id", nullable = false)
   private DocumentType documentType;
 
-  @Column(name = "original_symbol_number", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
+  @Column(name = "original_symbol_number", nullable = false,
+          columnDefinition = "VARCHAR(255) NOT NULL")
   private String originalSymbolNumber;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -42,7 +43,7 @@ public class IncomingDocument extends DocAbstractIdEntity {
   @Column(name = "arriving_time", nullable = false, columnDefinition = "TIME NOT NULL")
   private LocalTime arrivingTime;
 
-  @Column(name = "summary", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
+  @Column(name = "summary", columnDefinition = "VARCHAR(255)")
   private String summary;
 
   @Enumerated(EnumType.STRING)

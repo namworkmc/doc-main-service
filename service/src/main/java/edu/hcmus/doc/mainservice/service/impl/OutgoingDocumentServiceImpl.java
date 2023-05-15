@@ -7,13 +7,16 @@ import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
+import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
 import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
+import edu.hcmus.doc.mainservice.util.DocObjectUtils;
 import edu.hcmus.doc.mainservice.util.mapper.OutgoingDocumentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +29,17 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   private final AttachmentMapperDecorator attachmentMapperDecorator;
   private final AttachmentService attachmentService;
   private final ObjectMapper objectMapper;
+
+  @Override
+  public OutgoingDocument getOutgoingDocumentById(Long id) {
+    OutgoingDocument outgoingDocument = outgoingDocumentRepository.getOutgoingDocumentById(id);
+
+    if (ObjectUtils.isEmpty(outgoingDocument)) {
+      throw new DocumentNotFoundException(DocumentNotFoundException.DOCUMENT_NOT_FOUND);
+    }
+
+    return outgoingDocument;
+  }
 
   @Override
   public OutgoingDocument createOutgoingDocument(OutgoingDocumentWithAttachmentPostDto outgoingDocumentWithAttachmentPostDto)
@@ -46,6 +60,13 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
     attachmentService.saveAttachmentsByOutgoingDocId(attachmentPostDto);
 
     return savedOutgoingDocument;
+  }
+
+  @Override
+  public OutgoingDocument updateOutgoingDocument(OutgoingDocument outgoingDocument) {
+    OutgoingDocument updatingDocument = getOutgoingDocumentById(outgoingDocument.getId());
+    DocObjectUtils.copyNonNullProperties(outgoingDocument, updatingDocument);
+    return outgoingDocumentRepository.saveAndFlush(updatingDocument);
   }
 
   @Override
