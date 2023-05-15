@@ -30,7 +30,7 @@ SELECT SUBSTR(MD5(RANDOM()::TEXT), 1, 10),
 FROM GENERATE_SERIES(1, 1000) id;
 
 INSERT INTO "distribution_organization" ("name", "symbol", "created_by", "updated_by")
-SELECT 'University of Science',
+SELECT CONCAT('University of Science ', SUBSTR(MD5(RANDOM()::TEXT), 1, 10)),
        SUBSTR(MD5(RANDOM()::TEXT), 1, 10),
        1,
        1
