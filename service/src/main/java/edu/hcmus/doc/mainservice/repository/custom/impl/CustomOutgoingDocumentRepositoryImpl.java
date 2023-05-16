@@ -7,9 +7,7 @@ import edu.hcmus.doc.mainservice.model.entity.*;
 import edu.hcmus.doc.mainservice.repository.custom.CustomOutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.List;
-
 import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
 
 public class CustomOutgoingDocumentRepositoryImpl
@@ -60,6 +58,11 @@ public class CustomOutgoingDocumentRepositoryImpl
     if (searchCriteriaDto != null && StringUtils.isNotBlank(
         searchCriteriaDto.getOutgoingNumber())) {
       where.and(outgoingDocument.outgoingNumber.eq(searchCriteriaDto.getOutgoingNumber()));
+    }
+    if (searchCriteriaDto != null && StringUtils.isNotBlank(
+        searchCriteriaDto.getOriginalSymbolNumber())) {
+      where.and(
+          outgoingDocument.originalSymbolNumber.eq(searchCriteriaDto.getOriginalSymbolNumber()));
     }
     if (searchCriteriaDto != null && searchCriteriaDto.getDocumentTypeId() != null) {
       where.and(outgoingDocument.documentType.id.eq(searchCriteriaDto.getDocumentTypeId()));

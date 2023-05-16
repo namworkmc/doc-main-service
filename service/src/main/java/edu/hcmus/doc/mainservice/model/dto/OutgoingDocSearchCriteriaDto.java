@@ -8,6 +8,7 @@ import lombok.Data;
 public class OutgoingDocSearchCriteriaDto {
 
   private String outgoingNumber;
+  private String originalSymbolNumber;
   private Long documentTypeId;
   @JsonFormat(pattern = "dd-MM-yyyy")
   private LocalDate releaseDateFrom;
