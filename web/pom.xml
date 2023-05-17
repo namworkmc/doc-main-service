@@ -90,6 +90,10 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocumentTypeSearchCriteria</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DepartmentSearchCriteria</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.TruongPhongDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.IncomingDocumentStatisticsDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.DocumentTypeStatisticsWrapperDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.DocumentTypeStatisticsDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.StatisticsWrapperDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto</classPattern>
           </classPatterns>
           <excludeClasses>

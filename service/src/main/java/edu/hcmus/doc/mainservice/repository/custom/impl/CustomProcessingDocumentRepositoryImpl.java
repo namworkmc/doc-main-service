@@ -301,5 +301,4 @@ public class CustomProcessingDocumentRepositoryImpl
         })
         .orElse(null);
   }
-
 }

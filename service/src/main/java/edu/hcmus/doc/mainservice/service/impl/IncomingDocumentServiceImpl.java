@@ -6,15 +6,20 @@ import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcess
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcessingUser;
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcessingUserRole;
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.getStep;
+import static java.time.temporal.IsoFields.QUARTER_OF_YEAR;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.DocumentTypeStatisticsDto;
+import edu.hcmus.doc.mainservice.model.dto.DocumentTypeStatisticsWrapperDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentMenuConfig;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
+import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentStatisticsDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
+import edu.hcmus.doc.mainservice.model.dto.StatisticsWrapperDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.Folder;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
@@ -33,7 +38,6 @@ import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.IncomingDocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserRoleNotFoundException;
-import edu.hcmus.doc.mainservice.repository.FolderRepository;
 import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingUserRepository;
@@ -48,9 +52,13 @@ import edu.hcmus.doc.mainservice.util.DocObjectUtils;
 import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
 import edu.hcmus.doc.mainservice.util.mapper.IncomingDocumentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
@@ -82,8 +90,6 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   private final UserRepository userRepository;
 
   private final ReturnRequestRepository returnRequestRepository;
-
-  private final FolderRepository folderRepository;
 
   @Override
   public long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
@@ -387,5 +393,38 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     }
     settings.setMenuConfigs(menuConfigs);
     return settings;
+  }
+
+  @Override
+  public StatisticsWrapperDto getCurrentUserStatistics() {
+    Map<String, Set<Long>> incomingDocumentStatistics = incomingDocumentRepository.getQuarterProcessingStatisticsByUserId(SecurityUtils.getCurrentUserId());
+    IncomingDocumentStatisticsDto incomingDocumentStatisticsDto = new IncomingDocumentStatisticsDto();
+    incomingDocumentStatisticsDto.setNumberOfUnprocessedDocument(
+        incomingDocumentStatistics.get(ProcessingStatus.UNPROCESSED.value) == null
+            ? 0
+            : incomingDocumentStatistics.get(ProcessingStatus.UNPROCESSED.value).size());
+    incomingDocumentStatisticsDto.setNumberOfProcessingDocument(
+        incomingDocumentStatistics.get(ProcessingStatus.IN_PROGRESS.value) == null
+            ? 0
+            : incomingDocumentStatistics.get(ProcessingStatus.IN_PROGRESS.value).size());
+    incomingDocumentStatisticsDto.setNumberOfProcessedDocument(
+        incomingDocumentStatistics.get(ProcessingStatus.CLOSED.value) == null
+            ? 0
+            : incomingDocumentStatistics.get(ProcessingStatus.CLOSED.value).size());
+
+    Map<String, Set<Long>> documentTypeStatistics = incomingDocumentRepository.getQuarterProcessingDocumentTypeStatisticsByUserId(SecurityUtils.getCurrentUserId());
+    DocumentTypeStatisticsWrapperDto documentTypeStatisticsWrapperDto = new DocumentTypeStatisticsWrapperDto();
+    documentTypeStatisticsWrapperDto.setXAxisData(documentTypeStatistics.keySet().stream().toList());
+    documentTypeStatisticsWrapperDto.setSeriesData(documentTypeStatistics.entrySet()
+        .stream()
+        .map(entry -> new DocumentTypeStatisticsDto(entry.getKey(), entry.getValue().size()))
+        .toList());
+
+    return StatisticsWrapperDto.builder()
+        .incomingDocumentStatisticsDto(incomingDocumentStatisticsDto)
+        .documentTypeStatisticsWrapperDto(documentTypeStatisticsWrapperDto)
+        .quarter(LocalDate.now().get(QUARTER_OF_YEAR))
+        .year(Year.now().getValue())
+        .build();
   }
 }
