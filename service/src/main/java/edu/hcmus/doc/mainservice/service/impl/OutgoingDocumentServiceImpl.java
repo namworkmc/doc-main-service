@@ -7,6 +7,8 @@ import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
+import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
+import edu.hcmus.doc.mainservice.model.exception.DocStatusViolatedException;
 import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
 import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
@@ -14,11 +16,12 @@ import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
 import edu.hcmus.doc.mainservice.util.DocObjectUtils;
 import edu.hcmus.doc.mainservice.util.mapper.OutgoingDocumentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -39,6 +42,20 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
     }
 
     return outgoingDocument;
+  }
+
+  @Override
+  public OutgoingDocument releaseDocument(OutgoingDocument document) {
+    OutgoingDocument updatingDocument = getOutgoingDocumentById(document.getId());
+    DocObjectUtils.copyNonNullProperties(document, updatingDocument);
+
+    if (updatingDocument.getStatus() != OutgoingDocumentStatusEnum.RELEASED) {
+      updatingDocument.setStatus(OutgoingDocumentStatusEnum.RELEASED);
+    } else {
+      throw new DocStatusViolatedException(DocStatusViolatedException.STATUS_VIOLATED);
+    }
+
+    return outgoingDocumentRepository.saveAndFlush(updatingDocument);
   }
 
   @Override
@@ -66,6 +83,11 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   public OutgoingDocument updateOutgoingDocument(OutgoingDocument outgoingDocument) {
     OutgoingDocument updatingDocument = getOutgoingDocumentById(outgoingDocument.getId());
     DocObjectUtils.copyNonNullProperties(outgoingDocument, updatingDocument);
+
+    if (updatingDocument.getStatus() == OutgoingDocumentStatusEnum.RELEASED) {
+      throw new DocStatusViolatedException(DocStatusViolatedException.STATUS_VIOLATED);
+    }
+
     return outgoingDocumentRepository.saveAndFlush(updatingDocument);
   }
 

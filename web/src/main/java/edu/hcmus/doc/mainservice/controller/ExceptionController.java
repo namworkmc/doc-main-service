@@ -2,10 +2,8 @@ package edu.hcmus.doc.mainservice.controller;
 
 import edu.hcmus.doc.mainservice.model.dto.ExceptionDto;
 import edu.hcmus.doc.mainservice.model.dto.KeycloakErrorDto;
-import edu.hcmus.doc.mainservice.model.exception.DocAuthorizedException;
-import edu.hcmus.doc.mainservice.model.exception.DocException;
-import edu.hcmus.doc.mainservice.model.exception.DocExistedException;
-import edu.hcmus.doc.mainservice.model.exception.DocNotFoundException;
+import edu.hcmus.doc.mainservice.model.exception.*;
+
 import java.util.Objects;
 import javax.ws.rs.ClientErrorException;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +49,13 @@ public class ExceptionController {
     }
 
     return res;
+  }
+
+  @ExceptionHandler(DocStatusViolatedException.class)
+  public ResponseEntity<ExceptionDto> docStatusViolatedException(DocStatusViolatedException exception) {
+    return ResponseEntity
+            .badRequest()
+            .body(new ExceptionDto(exception.getMessage()));
   }
 
   @ExceptionHandler(DocException.class)

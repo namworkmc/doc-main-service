@@ -8,14 +8,16 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class OutgoingDocumentPostDto extends DocAbstractDto  {
-    private Long documentType;
+public class PublishDocumentDto extends DocAbstractDto {
+    private String outgoingNumber;
     private String originalSymbolNumber;
-    private Long folder;
-    private Long publishingDepartment;
     private String recipient;
+    private String signer;
     private String summary;
     private Urgency urgency;
     private Confidentiality confidentiality;
-    private LocalDate publishingDate;
+    private LocalDate releaseDate;
+    private Long documentType;
+    private Long folder;
+    private Long publishingDepartment;
 }

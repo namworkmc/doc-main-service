@@ -6,6 +6,7 @@ import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.PublishDocumentDto;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,15 @@ public class OutgoingDocumentController extends DocAbstractController {
             outgoingDocumentPutDto);
     return outgoingDecoratorDocumentMapper.toDto(
             outgoingDocumentService.updateOutgoingDocument(outgoingDocument));
+  }
+
+  @PostMapping("/release")
+  public OutgoingDocumentGetDto updateOutgoingDocument(
+          @RequestBody PublishDocumentDto outgoingDocumentPutDto) {
+    OutgoingDocument outgoingDocument = outgoingDecoratorDocumentMapper.toEntity(
+            outgoingDocumentPutDto);
+    return outgoingDecoratorDocumentMapper.toDto(
+            outgoingDocumentService.releaseDocument(outgoingDocument));
   }
 
   @SneakyThrows
