@@ -5,6 +5,7 @@ import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.repository.DocAbstractSearchRepository;
 import java.util.List;
 
@@ -17,5 +18,7 @@ public interface CustomProcessingDocumentRepository
 
   List<ProcessingDocument> findAllByIds(List<Long> ids);
 
-  GetTransferDocumentDetailResponse findTransferDocumentDetail(GetTransferDocumentDetailRequest request);
+  GetTransferDocumentDetailResponse getTransferDocumentDetail(GetTransferDocumentDetailRequest request);
+
+  List<Long> getListOfUserIdRelatedToTransferredDocument(Long processingDocumentId, Integer step, ProcessingDocumentRoleEnum role);
 }

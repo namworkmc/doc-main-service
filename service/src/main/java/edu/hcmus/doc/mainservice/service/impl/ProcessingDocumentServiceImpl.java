@@ -6,6 +6,7 @@ import edu.hcmus.doc.mainservice.model.dto.ElasticSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.ProcessingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailCustomResponse;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
@@ -114,7 +115,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
    */
   @Override
   public Boolean isUserWorkingOnDocumentWithSpecificRole(GetTransferDocumentDetailRequest request) {
-    GetTransferDocumentDetailResponse detail = processingDocumentRepository.findTransferDocumentDetail(
+    GetTransferDocumentDetailResponse detail = processingDocumentRepository.getTransferDocumentDetail(
         request);
     return detail != null;
   }
@@ -238,6 +239,26 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         }
       }
     }
+
+    return response;
+  }
+
+  @Override
+  public GetTransferDocumentDetailCustomResponse getTransferDocumentDetail(
+      GetTransferDocumentDetailRequest request) {
+    GetTransferDocumentDetailCustomResponse response = new GetTransferDocumentDetailCustomResponse();
+    GetTransferDocumentDetailResponse baseInfo = processingDocumentRepository.getTransferDocumentDetail(
+        request);
+    Long assigneeId = processingDocumentRepository.getListOfUserIdRelatedToTransferredDocument(
+        baseInfo.getProcessingDocumentId(), baseInfo.getStep(), ProcessingDocumentRoleEnum.ASSIGNEE).get(0);
+
+    List<Long> collaboratorIds = processingDocumentRepository.getListOfUserIdRelatedToTransferredDocument(
+        baseInfo.getProcessingDocumentId(), baseInfo.getStep(),
+        ProcessingDocumentRoleEnum.COLLABORATOR);
+
+    response.setBaseInfo(baseInfo);
+    response.setAssigneeId(assigneeId);
+    response.setCollaboratorIds(collaboratorIds);
 
     return response;
   }

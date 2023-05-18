@@ -35,4 +35,5 @@ public class IncomingDocumentDto extends DocAbstractDto {
     private List<AttachmentDto> attachments = new ArrayList<>();
     private Urgency urgency;
     private Confidentiality confidentiality;
+    private Boolean isDocTransferred;
 }

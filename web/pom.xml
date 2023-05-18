@@ -66,6 +66,7 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPutDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailCustomResponse</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.enums.Urgency</classPattern>

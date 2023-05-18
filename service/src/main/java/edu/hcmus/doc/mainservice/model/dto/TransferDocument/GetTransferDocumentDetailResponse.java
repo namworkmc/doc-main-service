@@ -13,6 +13,7 @@ public class GetTransferDocumentDetailResponse {
   private String incomingNumber;
   private String incomingSummary;
   private Long processingDocumentId;
+  private LocalDate transferDate;
   private ProcessingStatus processingStatus;
   private LocalDate processingDuration;
   private Boolean isInfiniteProcessingTime = false;

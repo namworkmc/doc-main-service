@@ -3,6 +3,7 @@ package edu.hcmus.doc.mainservice.service;
 import edu.hcmus.doc.mainservice.model.dto.ElasticSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.ProcessingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailCustomResponse;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
@@ -24,4 +25,6 @@ public interface ProcessingDocumentService {
   Boolean isUserWorkingOnDocumentWithSpecificRole(GetTransferDocumentDetailRequest request);
 
   ValidateTransferDocDto validateTransferDocument(TransferDocDto transferDocDto);
+
+  GetTransferDocumentDetailCustomResponse getTransferDocumentDetail(GetTransferDocumentDetailRequest request);
 }

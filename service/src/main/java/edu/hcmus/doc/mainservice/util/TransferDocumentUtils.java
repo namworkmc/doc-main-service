@@ -21,9 +21,9 @@ public class TransferDocumentUtils {
     int step = 1;
     switch (reporter.getRole()) {
       case VAN_THU:
-        if (assignee.getRole() == GIAM_DOC) {
-          step = 1;
-        }
+//        if (assignee.getRole() == GIAM_DOC) {
+        step = 1;
+//        }
         break;
       case GIAM_DOC:
         if (isCreate) {

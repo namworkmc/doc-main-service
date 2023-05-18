@@ -29,11 +29,11 @@ services:
           memory: 512M
         reservations:
           memory: 256M
-          
-# uncomment below option when using Linux and
+
+  # uncomment below option when using Linux and
   # add this line: 127.0.0.1       host.docker.internal to the /etc/hosts file
-#    extra_hosts:
-#      - "host.docker.internal:host-gateway"
+  #    extra_hosts:
+  #      - "host.docker.internal:host-gateway"
 
   doc-main-service:
     profiles:
