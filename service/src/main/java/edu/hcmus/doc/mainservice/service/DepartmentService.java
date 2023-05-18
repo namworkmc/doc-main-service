@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface DepartmentService extends SearchService<DepartmentDto, DepartmentSearchCriteria> {
 
-  List<Department> findAll();
+  List<Department> getAllDepartments();
 
   Department getDepartmentById(Long id);
 

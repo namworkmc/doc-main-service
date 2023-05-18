@@ -59,4 +59,11 @@ public class CustomDepartmentRepositoryImpl
         .where(QDepartment.department.truongPhong.id.eq(userId))
         .fetchFirst();
   }
+
+  @Override
+  public List<Department> getAllDepartments() {
+    return selectFrom(QDepartment.department)
+        .orderBy(QDepartment.department.departmentName.asc())
+        .fetch();
+  }
 }

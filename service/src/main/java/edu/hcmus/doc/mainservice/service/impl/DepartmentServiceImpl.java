@@ -10,7 +10,6 @@ import edu.hcmus.doc.mainservice.util.mapper.DepartmentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.PaginationMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +23,8 @@ public class DepartmentServiceImpl implements DepartmentService {
   private final PaginationMapper paginationMapper;
 
   @Override
-  public List<Department> findAll() {
-    return departmentRepository.findAll(Sort.by("departmentName").ascending()).stream().toList();
+  public List<Department> getAllDepartments() {
+    return departmentRepository.getAllDepartments();
   }
 
   @Override

@@ -42,7 +42,7 @@ public class AdminController extends DocAbstractController {
 
   @GetMapping("/selection/departments")
   public List<DepartmentDto> getDepartmentsForSelection() {
-    return departmentService.findAll()
+    return departmentService.getAllDepartments()
         .stream()
         .map(departmentMapper::toDto)
         .toList();
