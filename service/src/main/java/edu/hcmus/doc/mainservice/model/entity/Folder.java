@@ -1,10 +1,11 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
-import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
 
 @Data
 @Entity
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 public class Folder extends DocAbstractIdEntity {
 
   @Column(name = "folder_name", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
+  @Getter(AccessLevel.NONE)
   private String folderName;
 
   @Column(name="next_number", nullable = false)
@@ -19,4 +21,8 @@ public class Folder extends DocAbstractIdEntity {
 
   @Column(name="year", nullable = false)
   private int year;
+
+  public String getFolderName() {
+    return folderName + " " + year;
+  }
 }

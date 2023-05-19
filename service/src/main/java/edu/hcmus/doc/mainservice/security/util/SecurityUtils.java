@@ -17,6 +17,8 @@ public final class SecurityUtils {
 
   private static final int FIVE_MINUTES = 300;
 
+  private static final int ONE_DAY = 86400;
+
   private SecurityUtils() {
   }
 
@@ -57,13 +59,36 @@ public final class SecurityUtils {
         "username", DOC_BATCH_JOB_USER,
         "email", DOC_BATCH_JOB_USER,
         "fullName", DOC_BATCH_JOB_USER,
-        "realm_access", Map.of("roles", List.of(DOC_BATCH_JOB_USER))
+        "realm_access", Map.of("roles", List.of(DOC_BATCH_JOB_USER.value))
     );
 
     Jwt jwt = new Jwt(
         batchJobName,
         Instant.now(),
         Instant.now().plusSeconds(FIVE_MINUTES),
+        headers,
+        claims);
+
+    JwtAuthenticationToken token = new JwtAuthenticationToken(jwt);
+    SecurityContextHolder.getContext().setAuthentication(token);
+  }
+
+  public static void setSecurityContextForTesting(User user) {
+    Map<String, Object> headers = Map.of(
+        "alg", "RS256",
+        "typ", "JWT",
+        "kid", UUID.randomUUID());
+
+    Map<String, Object> claims = Map.of(
+        "sub", "f:" + UUID.randomUUID() + ":" + user.getId(),
+        "username", user.getUsername(),
+        "realm_access", Map.of("roles", List.of(user.getRole().value))
+    );
+
+    Jwt jwt = new Jwt(
+        user.getId().toString(),
+        Instant.now(),
+        Instant.now().plusSeconds(ONE_DAY),
         headers,
         claims);
 

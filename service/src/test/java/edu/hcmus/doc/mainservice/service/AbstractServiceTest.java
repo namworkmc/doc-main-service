@@ -1,5 +1,6 @@
 package edu.hcmus.doc.mainservice.service;
 
+import edu.hcmus.doc.mainservice.DocAbstractTest;
 import edu.hcmus.doc.mainservice.repository.DistributionOrganizationRepository;
 import edu.hcmus.doc.mainservice.repository.DocumentTypeRepository;
 import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
@@ -13,7 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
 @ExtendWith({PostgresContainerExtension.class, MockitoExtension.class})
-abstract class AbstractServiceTest {
+abstract class AbstractServiceTest extends DocAbstractTest {
 
   @MockBean
   protected DistributionOrganizationRepository distributionOrganizationRepository;

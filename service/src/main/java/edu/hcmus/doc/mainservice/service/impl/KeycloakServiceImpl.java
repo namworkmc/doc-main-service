@@ -1,6 +1,7 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
 import edu.hcmus.doc.mainservice.model.dto.TokenDto;
+import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserPasswordIncorrectException;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
@@ -42,7 +43,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 
   @Override
   public TokenDto getToken(String username, String password) {
-    var user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+    User user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
 
     if (!passwordEncoder.matches(password, user.getPassword())) {
       throw new UserPasswordIncorrectException();

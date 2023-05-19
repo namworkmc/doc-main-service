@@ -1,5 +1,6 @@
 package edu.hcmus.doc.mainservice.repository;
 
+import edu.hcmus.doc.mainservice.DocAbstractTest;
 import edu.hcmus.doc.mainservice.util.PostgresContainerExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureTestEntityManager
 @ImportAutoConfiguration
 @ExtendWith(PostgresContainerExtension.class)
-abstract class DocAbstractRepositoryTest {
+abstract class DocAbstractRepositoryTest extends DocAbstractTest {
 
   @Autowired
   protected DistributionOrganizationRepository distributionOrganizationRepository;

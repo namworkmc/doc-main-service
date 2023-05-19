@@ -10,7 +10,7 @@ import org.mapstruct.MappingConstants.ComponentModel;
 public interface FolderMapper {
 
     @Mapping(source = "id", target = "id")
-    @Mapping(target = "folderName", expression = "java(String.format(folder.getFolderName(), folder.getYear()))")
+    @Mapping(source = "folderName", target = "folderName")
     @Mapping(source = "nextNumber", target = "nextNumber")
     @Mapping(source = "year", target = "year")
     FolderDto toDto(Folder folder);

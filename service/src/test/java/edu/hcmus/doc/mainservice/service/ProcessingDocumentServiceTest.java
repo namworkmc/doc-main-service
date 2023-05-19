@@ -6,31 +6,21 @@ import static org.mockito.Mockito.when;
 
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
-import edu.hcmus.doc.mainservice.service.impl.ProcessingDocumentServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 class ProcessingDocumentServiceTest extends AbstractServiceTest {
 
+  @Autowired
   private ProcessingDocumentService processingDocumentService;
 
-  @Mock
+  @MockBean
   private AsyncRabbitTemplate asyncRabbitTemplate;
-
-
-  @BeforeEach
-  void setUp() {
-    this.processingDocumentService = new ProcessingDocumentServiceImpl(
-        processingDocumentRepository,
-        asyncRabbitTemplate,
-        userRepository
-    );
-  }
 
   @Test
   void testGetTotalElements() {
