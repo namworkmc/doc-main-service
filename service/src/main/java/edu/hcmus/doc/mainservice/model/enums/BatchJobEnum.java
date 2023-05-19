@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum BatchJobEnum {
 
-  DOC_BATCH_JOB_USER("Batch job user", "DOC_BATCH_JOB_USER", folderService -> {}),
+  DOC_BATCH_JOB_USER("Batch job user", "DOC_BATCH_JOB_USER", null),
   RESET_FOLDER_NEXT_NUMBER_BATCH_JOB(
       "Reset folder next number batch job is running",
       "RESET_FOLDER_NEXT_NUMBER_BATCH_JOB",
