@@ -29,7 +29,7 @@ import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 public class CustomProcessingDocumentRepositoryImpl
@@ -325,9 +325,16 @@ public class CustomProcessingDocumentRepositoryImpl
             .and(processingUserRole.role.eq(role)))
         .fetch()
         .stream()
-        .map(tuple -> {
-          return tuple.get(processingUser.user.id);
-        })
-        .collect(Collectors.toList());
+        .map(tuple -> tuple.get(processingUser.user.id))
+        .toList();
+  }
+
+  @Override
+  public Optional<ProcessingDocument> findByIncomingDocumentId(Long incomingDocumentId) {
+    return Optional.ofNullable(
+        selectFrom(processingDocument)
+            .where(processingDocument.incomingDoc.id.eq(incomingDocumentId))
+            .fetchOne()
+    );
   }
 }

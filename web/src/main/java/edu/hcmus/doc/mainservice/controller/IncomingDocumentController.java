@@ -134,8 +134,11 @@ public class IncomingDocumentController extends DocAbstractController {
   // TODO: xu ly them case readonly cho collaborators
   @PostMapping("/get-transfer-documents-detail")
   public GetTransferDocumentDetailCustomResponse getTransferDocumentsDetail(@RequestBody GetTransferDocumentDetailRequest request) {
-    GetTransferDocumentDetailCustomResponse response = processingDocumentService.getTransferDocumentDetail(request);
-    return response;
+    return processingDocumentService.getTransferDocumentDetail(request);
   }
 
+  @PutMapping("/close-document/{id}")
+  public String closeDocument(@PathVariable Long id) {
+    return incomingDocumentService.closeDocument(id);
+  }
 }

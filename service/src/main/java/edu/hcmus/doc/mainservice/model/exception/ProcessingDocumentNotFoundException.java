@@ -7,4 +7,8 @@ public class ProcessingDocumentNotFoundException extends DocNotFoundException {
   public ProcessingDocumentNotFoundException(String message) {
     super(message);
   }
+
+  public ProcessingDocumentNotFoundException() {
+    super(PROCESSING_DOCUMENT_NOT_FOUND);
+  }
 }

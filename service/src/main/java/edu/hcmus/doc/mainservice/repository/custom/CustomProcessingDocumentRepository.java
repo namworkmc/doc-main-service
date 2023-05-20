@@ -8,6 +8,7 @@ import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.repository.DocAbstractSearchRepository;
 import java.util.List;
+import java.util.Optional;
 
 public interface CustomProcessingDocumentRepository
     extends DocAbstractSearchRepository<ProcessingDocument, SearchCriteriaDto> {
@@ -21,4 +22,6 @@ public interface CustomProcessingDocumentRepository
   GetTransferDocumentDetailResponse getTransferDocumentDetail(GetTransferDocumentDetailRequest request);
 
   List<Long> getListOfUserIdRelatedToTransferredDocument(Long processingDocumentId, Integer step, ProcessingDocumentRoleEnum role);
+
+  Optional<ProcessingDocument> findByIncomingDocumentId(Long incomingDocumentId);
 }

@@ -5,6 +5,7 @@ import static com.querydsl.core.group.GroupBy.set;
 import static edu.hcmus.doc.mainservice.model.entity.QDocumentType.documentType;
 import static edu.hcmus.doc.mainservice.model.entity.QIncomingDocument.incomingDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
 
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
@@ -107,7 +108,7 @@ public class CustomIncomingDocumentRepositoryImpl
   public Map<String, Set<Long>> getQuarterProcessingStatisticsByUserId(Long userId) {
     QProcessingDocument qProcessingDocument = processingDocument;
     QIncomingDocument qIncomingDocument = QIncomingDocument.incomingDocument;
-    QProcessingUser qProcessingUser = QProcessingUser.processingUser;
+    QProcessingUser qProcessingUser = processingUser;
 
     return selectFrom(qIncomingDocument)
         .select(processingStatusCases)
@@ -127,6 +128,10 @@ public class CustomIncomingDocumentRepositoryImpl
   public Map<String, Set<Long>> getQuarterProcessingDocumentTypeStatisticsByUserId(Long userId) {
     return selectFrom(incomingDocument)
         .innerJoin(incomingDocument.documentType, documentType)
+        .innerJoin(processingDocument)
+        .on(incomingDocument.id.eq(processingDocument.incomingDoc.id))
+        .innerJoin(processingUser)
+        .on(processingDocument.id.eq(processingUser.processingDocument.id).and(processingUser.user.id.eq(userId)))
         .orderBy(documentType.id.asc())
         .where(incomingDocument.createdDate.month()
             .divide(3)

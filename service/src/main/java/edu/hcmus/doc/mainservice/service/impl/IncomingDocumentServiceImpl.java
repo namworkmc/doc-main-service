@@ -36,8 +36,9 @@ import edu.hcmus.doc.mainservice.model.enums.TransferDocumentComponent;
 import edu.hcmus.doc.mainservice.model.enums.TransferDocumentType;
 import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.IncomingDocumentNotFoundException;
+import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentException;
+import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
-import edu.hcmus.doc.mainservice.model.exception.UserRoleNotFoundException;
 import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingUserRepository;
@@ -55,9 +56,11 @@ import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -387,9 +390,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
         settings.setDefaultTransferDocumentType(TransferDocumentType.TRANSFER_TO_CHUYEN_VIEN);
         settings.setDefaultComponentKey(TransferDocumentComponent.TRANSFER_TO_CHUYEN_VIEN.value);
       }
-      default -> {
-        throw new UserRoleNotFoundException(UserRoleNotFoundException.USER_ROLE_NOT_FOUND);
-      }
+      default -> throw new IllegalStateException("Unexpected value: " + currUser.getRole());
     }
     settings.setMenuConfigs(menuConfigs);
     return settings;
@@ -400,17 +401,17 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     Map<String, Set<Long>> incomingDocumentStatistics = incomingDocumentRepository.getQuarterProcessingStatisticsByUserId(SecurityUtils.getCurrentUserId());
     IncomingDocumentStatisticsDto incomingDocumentStatisticsDto = new IncomingDocumentStatisticsDto();
     incomingDocumentStatisticsDto.setNumberOfUnprocessedDocument(
-        incomingDocumentStatistics.get(ProcessingStatus.UNPROCESSED.value) == null
-            ? 0
-            : incomingDocumentStatistics.get(ProcessingStatus.UNPROCESSED.value).size());
+        Optional.ofNullable(incomingDocumentStatistics.get(ProcessingStatus.UNPROCESSED.value))
+            .orElse(Collections.emptySet())
+            .size());
     incomingDocumentStatisticsDto.setNumberOfProcessingDocument(
-        incomingDocumentStatistics.get(ProcessingStatus.IN_PROGRESS.value) == null
-            ? 0
-            : incomingDocumentStatistics.get(ProcessingStatus.IN_PROGRESS.value).size());
+        Optional.ofNullable(incomingDocumentStatistics.get(ProcessingStatus.IN_PROGRESS.value))
+            .orElse(Collections.emptySet())
+            .size());
     incomingDocumentStatisticsDto.setNumberOfProcessedDocument(
-        incomingDocumentStatistics.get(ProcessingStatus.CLOSED.value) == null
-            ? 0
-            : incomingDocumentStatistics.get(ProcessingStatus.CLOSED.value).size());
+        Optional.ofNullable(incomingDocumentStatistics.get(ProcessingStatus.CLOSED.value))
+            .orElse(Collections.emptySet())
+            .size());
 
     Map<String, Set<Long>> documentTypeStatistics = incomingDocumentRepository.getQuarterProcessingDocumentTypeStatisticsByUserId(SecurityUtils.getCurrentUserId());
     DocumentTypeStatisticsWrapperDto documentTypeStatisticsWrapperDto = new DocumentTypeStatisticsWrapperDto();
@@ -426,5 +427,32 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
         .quarter(LocalDate.now().get(QUARTER_OF_YEAR))
         .year(Year.now().getValue())
         .build();
+  }
+
+  @Override
+  public String closeDocument(Long incomingDocumentId) {
+    if (SecurityUtils.getCurrentUser().getRole() != DocSystemRoleEnum.CHUYEN_VIEN) {
+      throw new ProcessingDocumentException(ProcessingDocumentException.ILLEGAL_ROLE);
+    }
+
+    if (!processingUserRepository.isProcessAtStep(incomingDocumentId, 3)) {
+      throw new ProcessingDocumentException(ProcessingDocumentException.ILLEGAL_STEP);
+    }
+
+    ProcessingDocument processingDocument = processingDocumentRepository
+        .findByIncomingDocumentId(incomingDocumentId)
+        .orElseThrow(ProcessingDocumentNotFoundException::new);
+
+    if (processingDocument.getStatus() == ProcessingStatus.CLOSED) {
+      throw new ProcessingDocumentException(ProcessingDocumentException.DOCUMENT_ALREADY_CLOSED);
+    }
+
+    if (processingDocument.getStatus() != ProcessingStatus.IN_PROGRESS) {
+      throw new ProcessingDocumentException(ProcessingDocumentException.CLOSE_UNPROCESSED_DOCUMENT);
+    }
+
+    processingDocument.setStatus(ProcessingStatus.CLOSED);
+
+    return "incomingDocDetailPage.message.closed_successfully";
   }
 }

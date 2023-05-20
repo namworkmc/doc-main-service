@@ -35,4 +35,6 @@ public interface IncomingDocumentService {
   TransferDocumentModalSettingDto getTransferDocumentModalSetting();
 
   StatisticsWrapperDto getCurrentUserStatistics();
+
+  String closeDocument(Long incomingDocumentId);
 }

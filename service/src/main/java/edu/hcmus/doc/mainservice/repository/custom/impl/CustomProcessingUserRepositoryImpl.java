@@ -18,4 +18,13 @@ public class CustomProcessingUserRepositoryImpl extends DocAbstractCustomReposit
             .and(processingUser.processingDocument.id.eq(processingDocumentId)))
         .fetch();
   }
+
+  @Override
+  public boolean isProcessAtStep(Long incomingDocumentId, int step) {
+    return selectFrom(processingUser)
+        .select(processingUser.id)
+        .where(processingUser.processingDocument.incomingDoc.id.eq(incomingDocumentId)
+            .and(processingUser.step.eq(step)))
+        .fetchFirst() != null;
+  }
 }
