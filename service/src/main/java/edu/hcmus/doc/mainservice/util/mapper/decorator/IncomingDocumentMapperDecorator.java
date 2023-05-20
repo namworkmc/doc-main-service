@@ -4,14 +4,12 @@ import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPutDto;
-import edu.hcmus.doc.mainservice.model.dto.ProcessingDetailsDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
-import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
-import edu.hcmus.doc.mainservice.model.entity.ProcessingUserRole;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.DistributionOrganizationService;
@@ -47,7 +45,24 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
 
   @Override
   public IncomingDocumentDto toDto(IncomingDocument incomingDocument) {
-    return delegate.toDto(incomingDocument);
+    IncomingDocumentDto dto = delegate.toDto(incomingDocument);
+    User currentUser = SecurityUtils.getCurrentUser();
+
+    int step = TransferDocumentUtils.getStep(currentUser, null, true);
+    Boolean isDocTransferred = processingDocumentService.isUserWorkingOnDocumentWithSpecificRole(
+        GetTransferDocumentDetailRequest.builder()
+            .incomingDocumentId(incomingDocument.getId())
+            .userId(currentUser.getId())
+            .role(ProcessingDocumentRoleEnum.REPORTER)
+            .step(step)
+            .build());
+
+    ProcessingStatus status = processingDocumentService.getProcessingStatus(
+        incomingDocument.getId());
+    dto.setStatus(status);
+    dto.setIsDocTransferred(isDocTransferred);
+
+    return dto;
   }
 
   @Override

@@ -337,4 +337,16 @@ public class CustomProcessingDocumentRepositoryImpl
             .fetchOne()
     );
   }
+
+  @Override
+  public Optional<ProcessingStatus> getProcessingStatus(Long documentId) {
+    String result = selectFrom(processingDocument)
+        .rightJoin(processingDocument.incomingDoc, incomingDocument)
+        .select(processingStatusCases)
+        .where(incomingDocument.id.eq(documentId))
+        .fetchOne();
+
+      return Optional.ofNullable(result)
+          .map(ProcessingStatus::valueOf);
+  }
 }

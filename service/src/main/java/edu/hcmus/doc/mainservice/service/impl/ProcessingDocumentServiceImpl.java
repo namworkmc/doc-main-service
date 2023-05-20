@@ -16,6 +16,7 @@ import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
@@ -261,5 +262,10 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
     response.setCollaboratorIds(collaboratorIds);
 
     return response;
+  }
+
+  @Override
+  public ProcessingStatus getProcessingStatus(Long documentId) {
+    return processingDocumentRepository.getProcessingStatus(documentId).orElse(ProcessingStatus.UNPROCESSED);
   }
 }

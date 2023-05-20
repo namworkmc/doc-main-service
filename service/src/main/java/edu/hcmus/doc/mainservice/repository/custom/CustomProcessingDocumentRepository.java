@@ -6,6 +6,7 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentD
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.DocAbstractSearchRepository;
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +25,6 @@ public interface CustomProcessingDocumentRepository
   List<Long> getListOfUserIdRelatedToTransferredDocument(Long processingDocumentId, Integer step, ProcessingDocumentRoleEnum role);
 
   Optional<ProcessingDocument> findByIncomingDocumentId(Long incomingDocumentId);
+
+  Optional<ProcessingStatus> getProcessingStatus(Long documentId);
 }

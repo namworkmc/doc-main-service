@@ -8,6 +8,7 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentD
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -27,4 +28,6 @@ public interface ProcessingDocumentService {
   ValidateTransferDocDto validateTransferDocument(TransferDocDto transferDocDto);
 
   GetTransferDocumentDetailCustomResponse getTransferDocumentDetail(GetTransferDocumentDetailRequest request);
+
+  ProcessingStatus getProcessingStatus(Long documentId);
 }
