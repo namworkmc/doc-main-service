@@ -131,7 +131,6 @@ public class IncomingDocumentController extends DocAbstractController {
     return incomingDocumentService.getCurrentUserStatistics();
   }
 
-  // TODO: xu ly them case readonly cho collaborators (collab van se thay duoc thong tin cua transfer document)
   @PostMapping("/get-transfer-documents-detail")
   public GetTransferDocumentDetailCustomResponse getTransferDocumentsDetail(@RequestBody GetTransferDocumentDetailRequest request) {
     return processingDocumentService.getTransferDocumentDetail(request);
