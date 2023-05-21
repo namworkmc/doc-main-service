@@ -8,5 +8,5 @@ public class GetTransferDocumentDetailCustomResponse {
   private GetTransferDocumentDetailResponse baseInfo;
   private Long assigneeId;
   private List<Long> collaboratorIds;
-
+  private String senderName;
 }

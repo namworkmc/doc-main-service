@@ -247,9 +247,11 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
   @Override
   public GetTransferDocumentDetailCustomResponse getTransferDocumentDetail(
       GetTransferDocumentDetailRequest request) {
+    User currentUser = SecurityUtils.getCurrentUser();
     GetTransferDocumentDetailCustomResponse response = new GetTransferDocumentDetailCustomResponse();
     GetTransferDocumentDetailResponse baseInfo = processingDocumentRepository.getTransferDocumentDetail(
         request);
+
     Long assigneeId = processingDocumentRepository.getListOfUserIdRelatedToTransferredDocument(
         baseInfo.getProcessingDocumentId(), baseInfo.getStep(), ProcessingDocumentRoleEnum.ASSIGNEE).get(0);
 
@@ -257,9 +259,14 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         baseInfo.getProcessingDocumentId(), baseInfo.getStep(),
         ProcessingDocumentRoleEnum.COLLABORATOR);
 
+    Long reporterId = processingDocumentRepository.getListOfUserIdRelatedToTransferredDocument(
+        baseInfo.getProcessingDocumentId(), baseInfo.getStep(), ProcessingDocumentRoleEnum.REPORTER).get(0);
+    User senderUser = userRepository.getUserById(reporterId).orElse(currentUser);
+
     response.setBaseInfo(baseInfo);
     response.setAssigneeId(assigneeId);
     response.setCollaboratorIds(collaboratorIds);
+    response.setSenderName(senderUser.getFullName());
 
     return response;
   }

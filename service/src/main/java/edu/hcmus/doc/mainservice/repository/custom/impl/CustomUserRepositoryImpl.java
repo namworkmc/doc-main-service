@@ -80,8 +80,8 @@ public class CustomUserRepositoryImpl
 
     return selectFrom(QUser.user)
         .leftJoin(QUser.user.department, QDepartment.department)
-        .where(QUser.user.role.eq(role)
-            .and(QUser.user.id.ne(currentUser.getId()))) // exclude current user
+        .where(QUser.user.role.eq(role))
+//            .and(QUser.user.id.ne(currentUser.getId()))) // exclude current user
         .select(QUser.user.id, QUser.user.version, QUser.user.username, QUser.user.email, QUser.user.fullName, QUser.user.role, QDepartment.department.departmentName)
         .fetch()
         .stream()

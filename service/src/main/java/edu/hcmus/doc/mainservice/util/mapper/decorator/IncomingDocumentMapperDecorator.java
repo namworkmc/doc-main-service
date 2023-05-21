@@ -59,8 +59,19 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
 
     ProcessingStatus status = processingDocumentService.getProcessingStatus(
         incomingDocument.getId());
+
+    int collabStep = TransferDocumentUtils.getStep(currentUser, null, false);
+    Boolean isDocCollaborator = processingDocumentService.isUserWorkingOnDocumentWithSpecificRole(
+        GetTransferDocumentDetailRequest.builder()
+            .incomingDocumentId(incomingDocument.getId())
+            .userId(currentUser.getId())
+            .role(ProcessingDocumentRoleEnum.COLLABORATOR)
+            .step(collabStep)
+            .build());
+
     dto.setStatus(status);
     dto.setIsDocTransferred(isDocTransferred);
+    dto.setIsDocCollaborator(isDocCollaborator);
 
     return dto;
   }
@@ -84,6 +95,17 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
             .step(step)
             .build());
     dto.setIsDocTransferred(isDocTransferred);
+
+    int collabStep = TransferDocumentUtils.getStep(currentUser, null, false);
+    Boolean isDocCollaborator = processingDocumentService.isUserWorkingOnDocumentWithSpecificRole(
+        GetTransferDocumentDetailRequest.builder()
+            .incomingDocumentId(processingDocument.getIncomingDoc().getId())
+            .userId(currentUser.getId())
+            .role(ProcessingDocumentRoleEnum.COLLABORATOR)
+            .step(collabStep)
+            .build());
+
+    dto.setIsDocCollaborator(isDocCollaborator);
 
     return dto;
   }
