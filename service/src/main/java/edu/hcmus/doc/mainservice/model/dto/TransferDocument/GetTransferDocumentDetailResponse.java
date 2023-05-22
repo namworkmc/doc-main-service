@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 public class GetTransferDocumentDetailResponse {
 
-  private Long incomingDocumentId;
-  private String incomingNumber;
-  private String incomingSummary;
+  private Long documentId;
+  private String documentNumber;
+  private String summary;
   private Long processingDocumentId;
   private LocalDate transferDate;
   private ProcessingStatus processingStatus;

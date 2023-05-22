@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class GetTransferDocumentDetailRequest {
-  private Long incomingDocumentId;
+  private Long documentId;
   private Long userId;
   private ProcessingDocumentRoleEnum role;
   private Integer step;

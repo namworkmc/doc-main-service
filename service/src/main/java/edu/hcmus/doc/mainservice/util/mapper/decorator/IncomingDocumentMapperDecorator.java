@@ -51,7 +51,7 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
     int step = TransferDocumentUtils.getStep(currentUser, null, true);
     Boolean isDocTransferred = processingDocumentService.isUserWorkingOnDocumentWithSpecificRole(
         GetTransferDocumentDetailRequest.builder()
-            .incomingDocumentId(incomingDocument.getId())
+            .documentId(incomingDocument.getId())
             .userId(currentUser.getId())
             .role(ProcessingDocumentRoleEnum.REPORTER)
             .step(step)
@@ -63,7 +63,7 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
     int collabStep = TransferDocumentUtils.getStep(currentUser, null, false);
     Boolean isDocCollaborator = processingDocumentService.isUserWorkingOnDocumentWithSpecificRole(
         GetTransferDocumentDetailRequest.builder()
-            .incomingDocumentId(incomingDocument.getId())
+            .documentId(incomingDocument.getId())
             .userId(currentUser.getId())
             .role(ProcessingDocumentRoleEnum.COLLABORATOR)
             .step(collabStep)
@@ -89,7 +89,7 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
     int step = TransferDocumentUtils.getStep(currentUser, null, true);
     Boolean isDocTransferred = processingDocumentService.isUserWorkingOnDocumentWithSpecificRole(
         GetTransferDocumentDetailRequest.builder()
-            .incomingDocumentId(processingDocument.getIncomingDoc().getId())
+            .documentId(processingDocument.getIncomingDoc().getId())
             .userId(currentUser.getId())
             .role(ProcessingDocumentRoleEnum.REPORTER)
             .step(step)
@@ -99,7 +99,7 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
     int collabStep = TransferDocumentUtils.getStep(currentUser, null, false);
     Boolean isDocCollaborator = processingDocumentService.isUserWorkingOnDocumentWithSpecificRole(
         GetTransferDocumentDetailRequest.builder()
-            .incomingDocumentId(processingDocument.getIncomingDoc().getId())
+            .documentId(processingDocument.getIncomingDoc().getId())
             .userId(currentUser.getId())
             .role(ProcessingDocumentRoleEnum.COLLABORATOR)
             .step(collabStep)

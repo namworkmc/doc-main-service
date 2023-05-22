@@ -1,6 +1,7 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.getStep;
+import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.getStepOutgoingDocument;
 
 import edu.hcmus.doc.mainservice.model.dto.ElasticSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentSearchResultDto;
@@ -122,6 +123,13 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
   }
 
   @Override
+  public Boolean isUserWorkingOnOutgoingDocumentWithSpecificRole(GetTransferDocumentDetailRequest request) {
+    GetTransferDocumentDetailResponse detail = processingDocumentRepository.getTransferOutgoingDocumentDetail(
+        request);
+    return detail != null;
+  }
+
+  @Override
   public ValidateTransferDocDto validateTransferDocument(TransferDocDto transferDocDto) {
 
     User currentUser = SecurityUtils.getCurrentUser();
@@ -148,7 +156,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
       for (Long incomingDocId : transferDocDto.getDocumentIds()) {
         Boolean currentUserCheck = isUserWorkingOnDocumentWithSpecificRole(
             GetTransferDocumentDetailRequest.builder()
-                .incomingDocumentId(incomingDocId)
+                .documentId(incomingDocId)
                 .step(step)
                 .userId(currentUser.getId())
                 .role(ProcessingDocumentRoleEnum.ASSIGNEE)
@@ -164,7 +172,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         // kiem tra xem assignee co dang xu ly van ban nay khong
         Boolean assigneeCheck = isUserWorkingOnDocumentWithSpecificRole(
             GetTransferDocumentDetailRequest.builder()
-                .incomingDocumentId(incomingDocId)
+                .documentId(incomingDocId)
                 .step(step)
                 .userId(assignee.getId())
                 .role(null)
@@ -185,7 +193,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
       for (Long incomingDocId : transferDocDto.getDocumentIds()) {
         Boolean currentUserCheck = isUserWorkingOnDocumentWithSpecificRole(
             GetTransferDocumentDetailRequest.builder()
-                .incomingDocumentId(incomingDocId)
+                .documentId(incomingDocId)
                 .step(step)
                 .userId(currentUser.getId())
                 .role(ProcessingDocumentRoleEnum.ASSIGNEE)
@@ -202,7 +210,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         // kiem tra xem tai step hien tai, assignee, reporter, collaborator co dang xu ly van ban nay khong
         Boolean assigneeCheck = isUserWorkingOnDocumentWithSpecificRole(
             GetTransferDocumentDetailRequest.builder()
-                .incomingDocumentId(incomingDocId)
+                .documentId(incomingDocId)
                 .step(step)
                 .userId(assignee.getId())
                 .role(ProcessingDocumentRoleEnum.ASSIGNEE)
@@ -220,7 +228,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         for (User collaborator : collaborators) {
           Boolean collaboratorCheck = isUserWorkingOnDocumentWithSpecificRole(
               GetTransferDocumentDetailRequest.builder()
-                  .incomingDocumentId(incomingDocId)
+                  .documentId(incomingDocId)
                   .step(step)
                   .userId(collaborator.getId())
                   .role(ProcessingDocumentRoleEnum.COLLABORATOR)
@@ -238,6 +246,98 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
               MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
           break;
         }
+      }
+    }
+
+    return response;
+  }
+
+  @Override
+  public ValidateTransferDocDto validateTransferOutgoingDocument(TransferDocDto transferDocDto) {
+    User currentUser = SecurityUtils.getCurrentUser();
+    User reporter = userRepository.findById(Objects.requireNonNull(transferDocDto.getReporterId()))
+        .orElseThrow(() -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND));
+
+    User assignee = userRepository.findById(Objects.requireNonNull(transferDocDto.getAssigneeId()))
+        .orElseThrow(() -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND));
+
+    List<User> collaborators = userRepository.findAllById(Objects.requireNonNull(transferDocDto.getCollaboratorIds()));
+
+    int step = getStepOutgoingDocument(reporter, false);
+
+    ValidateTransferDocDto response = new ValidateTransferDocDto();
+    response.setMessage("");
+    response.setIsValid(true);
+
+    // neu la chuyen vien, khong can kiem tra
+    if (currentUser.getRole() == DocSystemRoleEnum.CHUYEN_VIEN) {
+      return response;
+    }
+
+    // neu la van thu, khong duoc phep chuyen van ban
+    if(currentUser.getRole() == DocSystemRoleEnum.VAN_THU){
+      Object[] arguments = {currentUser.getUsername()};
+      response.setIsValid(false);
+      response.setMessage(ResourceBundleUtils.getDynamicContent(MESSAGE.user_not_have_permission_to_transfer_this_document, arguments));
+      return response;
+    }
+
+    // current user phai la assignee thi moi duoc phep transfer
+    for (Long outgoingDocId : Objects.requireNonNull(transferDocDto.getDocumentIds())) {
+      Boolean currentUserCheck = isUserWorkingOnOutgoingDocumentWithSpecificRole(
+          GetTransferDocumentDetailRequest.builder()
+              .documentId(outgoingDocId)
+              .step(step)
+              .userId(currentUser.getId())
+              .role(ProcessingDocumentRoleEnum.ASSIGNEE)
+              .build()
+      );
+      if (!currentUserCheck) {
+        Object[] arguments = {outgoingDocId};
+        response.setIsValid(false);
+        response.setMessage(ResourceBundleUtils.getDynamicContent(
+            MESSAGE.user_not_have_permission_to_transfer_this_document, arguments));
+        break;
+      }
+
+      // kiem tra xem tai step hien tai, assignee, reporter, collaborator co dang xu ly van ban nay khong
+      Boolean assigneeCheck = isUserWorkingOnOutgoingDocumentWithSpecificRole(
+          GetTransferDocumentDetailRequest.builder()
+              .documentId(outgoingDocId)
+              .step(step)
+              .userId(assignee.getId())
+              .role(ProcessingDocumentRoleEnum.ASSIGNEE)
+              .build()
+      );
+      if (assigneeCheck) {
+        Object[] arguments = {assignee.getFullName(), outgoingDocId};
+        response.setIsValid(false);
+        response.setMessage(ResourceBundleUtils.getDynamicContent(
+            MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
+        break;
+      }
+      StringBuilder collaboratorNames = new StringBuilder();
+      boolean isCollaboratorsValid = true;
+      for (User collaborator : collaborators) {
+        Boolean collaboratorCheck = isUserWorkingOnOutgoingDocumentWithSpecificRole(
+            GetTransferDocumentDetailRequest.builder()
+                .documentId(outgoingDocId)
+                .step(step)
+                .userId(collaborator.getId())
+                .role(ProcessingDocumentRoleEnum.COLLABORATOR)
+                .build()
+        );
+        if (collaboratorCheck) {
+          isCollaboratorsValid = false;
+          collaboratorNames.append(collaborator.getFullName()).append(", ");
+        }
+      }
+      if (!isCollaboratorsValid) {
+        Object[] arguments = {collaboratorNames.substring(0, collaboratorNames.length() - 2)};
+        response.setIsValid(false);
+        response.setMessage(ResourceBundleUtils.getDynamicContent(
+            MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
+        break;
       }
     }
 
@@ -274,5 +374,10 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
   @Override
   public ProcessingStatus getProcessingStatus(Long documentId) {
     return processingDocumentRepository.getProcessingStatus(documentId).orElse(ProcessingStatus.UNPROCESSED);
+  }
+
+  @Override
+  public Integer getCurrentStep(Long documentId){
+    return processingDocumentRepository.getCurrentStep(documentId).get(0, Integer.class);
   }
 }

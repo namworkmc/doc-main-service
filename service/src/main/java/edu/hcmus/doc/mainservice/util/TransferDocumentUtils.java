@@ -1,9 +1,9 @@
 package edu.hcmus.doc.mainservice.util;
 
-import static edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum.GIAM_DOC;
 
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
+import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUserRole;
@@ -53,10 +53,35 @@ public class TransferDocumentUtils {
     return step;
   }
 
-  public static ProcessingDocument createProcessingDocument(IncomingDocument incomingDocument,
-      ProcessingStatus processingStatus) {
+  public static int getStepOutgoingDocument(User reporter, Boolean isCreate) {
+    int step;
+    switch (reporter.getRole()) {
+      case TRUONG_PHONG -> {
+        if (isCreate) {
+          step = 2;
+        } else {
+          step = 1;
+        }
+      }
+      case GIAM_DOC -> {
+        if (isCreate) {
+          step = 3;
+        } else {
+          step = 2;
+        }
+      }
+      default -> step = 1;
+    }
+    return step;
+  }
+
+  public static ProcessingDocument createProcessingDocument(IncomingDocument incomingDocument, OutgoingDocument outgoingDocument, ProcessingStatus processingStatus) {
     ProcessingDocument processingDocument = new ProcessingDocument();
-    processingDocument.setIncomingDoc(incomingDocument);
+    if (Objects.nonNull(incomingDocument)) {
+      processingDocument.setIncomingDoc(incomingDocument);
+    } else {
+      processingDocument.setOutgoingDocument(outgoingDocument);
+    }
     processingDocument.setStatus(processingStatus);
     processingDocument.setOpened(true);
     processingDocument.setProcessingRequest("processing_request");

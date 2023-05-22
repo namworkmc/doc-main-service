@@ -25,9 +25,15 @@ public interface ProcessingDocumentService {
 
   Boolean isUserWorkingOnDocumentWithSpecificRole(GetTransferDocumentDetailRequest request);
 
+  Boolean isUserWorkingOnOutgoingDocumentWithSpecificRole(GetTransferDocumentDetailRequest request);
+
   ValidateTransferDocDto validateTransferDocument(TransferDocDto transferDocDto);
 
+  ValidateTransferDocDto validateTransferOutgoingDocument(TransferDocDto transferDocDto);
+
   GetTransferDocumentDetailCustomResponse getTransferDocumentDetail(GetTransferDocumentDetailRequest request);
+
+  Integer getCurrentStep(Long documentId);
 
   ProcessingStatus getProcessingStatus(Long documentId);
 }

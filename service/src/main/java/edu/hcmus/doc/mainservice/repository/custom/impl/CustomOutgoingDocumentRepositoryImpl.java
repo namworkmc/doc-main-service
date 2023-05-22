@@ -1,31 +1,42 @@
 package edu.hcmus.doc.mainservice.repository.custom.impl;
 
+import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
+
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
-import edu.hcmus.doc.mainservice.model.entity.*;
+import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
+import edu.hcmus.doc.mainservice.model.entity.QDepartment;
+import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
+import edu.hcmus.doc.mainservice.model.entity.QFolder;
+import edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument;
+import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.repository.custom.CustomOutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
-import org.apache.commons.lang3.StringUtils;
+import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import java.util.List;
-import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
+import org.apache.commons.lang3.StringUtils;
 
 public class CustomOutgoingDocumentRepositoryImpl
     extends DocAbstractCustomRepository<OutgoingDocument>
     implements CustomOutgoingDocumentRepository {
 
-    @Override
-    public OutgoingDocument getOutgoingDocumentById(Long id) {
-        return selectFrom(QOutgoingDocument.outgoingDocument)
-                .join(QOutgoingDocument.outgoingDocument.folder, QFolder.folder)
-                .fetchJoin()
-                .join(QOutgoingDocument.outgoingDocument.documentType, QDocumentType.documentType)
-                .fetchJoin()
-                .join(QOutgoingDocument.outgoingDocument.publishingDepartment, QDepartment.department)
-                .fetchJoin()
-                .where(QOutgoingDocument.outgoingDocument.id.eq(id))
-                .fetchFirst();
-    }
+  @Override
+  public OutgoingDocument getOutgoingDocumentById(Long id) {
+    return selectFrom(QOutgoingDocument.outgoingDocument)
+        .join(QOutgoingDocument.outgoingDocument.folder, QFolder.folder)
+        .fetchJoin()
+        .join(QOutgoingDocument.outgoingDocument.documentType, QDocumentType.documentType)
+        .fetchJoin()
+        .join(QOutgoingDocument.outgoingDocument.publishingDepartment, QDepartment.department)
+        .fetchJoin()
+        .where(QOutgoingDocument.outgoingDocument.id.eq(id))
+        .fetchFirst();
+  }
+
   @Override
   public long getTotalElements(OutgoingDocSearchCriteriaDto searchCriteriaDto) {
     return buildSearchQuery(searchCriteriaDto)
@@ -79,14 +90,34 @@ public class CustomOutgoingDocumentRepositoryImpl
       where.and(outgoingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
     }
 
-    return selectFrom(outgoingDocument)
+    User currUser = SecurityUtils.getCurrentUser();
+
+    JPAQuery<OutgoingDocument> query = selectFrom(outgoingDocument)
+        .leftJoin(processingDocument).on(outgoingDocument.id.eq(processingDocument.outgoingDocument.id))
+        .fetchJoin()
         .innerJoin(outgoingDocument.documentType, QDocumentType.documentType)
         .fetchJoin()
         .innerJoin(outgoingDocument.publishingDepartment, QDepartment.department)
         .fetchJoin()
         .innerJoin(outgoingDocument.folder, QFolder.folder)
-        .fetchJoin()
-        .distinct()
-        .where(where);
+        .fetchJoin();
+
+    if (currUser.getRole() != DocSystemRoleEnum.CHUYEN_VIEN) {
+      query.innerJoin(processingUser)
+          .on(processingUser.processingDocument.id.eq(processingDocument.id)
+              .and(processingUser.user.id.eq(currUser.getId())))
+          .fetchJoin();
+    } else {
+      where.and(outgoingDocument.createdBy.eq(currUser.getUsername()));
+    }
+
+    return query.distinct().where(where);
+  }
+
+  @Override
+  public List<OutgoingDocument> getOutgoingDocumentsByIds(List<Long> ids) {
+    return selectFrom(outgoingDocument)
+        .where(outgoingDocument.id.in(ids))
+        .fetch();
   }
 }
