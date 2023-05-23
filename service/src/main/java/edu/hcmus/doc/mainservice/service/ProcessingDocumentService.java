@@ -10,7 +10,9 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocD
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public interface ProcessingDocumentService {
@@ -37,4 +39,6 @@ public interface ProcessingDocumentService {
   Integer getCurrentStep(Long documentId);
 
   ProcessingStatus getProcessingStatus(Long documentId);
+
+  Optional<LocalDate> getDateExpired(Long incomingDocumentId, Long userId);
 }

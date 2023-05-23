@@ -5,6 +5,5 @@ import java.util.List;
 
 public interface ProcessingUserRoleService {
 
-  List<ProcessingDetailsDto> getProcessingUserRolesByIncomingDocumentId(Long incomingDocumentId,
-      boolean onlyAssignee);
+  List<ProcessingDetailsDto> getProcessingUserRolesByIncomingDocumentId(Long incomingDocumentId, boolean onlyAssignee);
 }

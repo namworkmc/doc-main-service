@@ -27,7 +27,7 @@ abstract class DocAbstractRepositoryTest extends DocAbstractTest {
   protected DocumentTypeRepository documentTypeRepository;
 
   @Autowired
-  protected ExtensionRequestRepository extensionRequestRepository;
+  protected ExtendRequestRepository extendRequestRepository;
 
   @Autowired
   protected FeedbackRepository feedbackRepository;

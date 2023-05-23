@@ -1,6 +1,6 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
-import edu.hcmus.doc.mainservice.model.enums.ExtensionRequestStatus;
+import edu.hcmus.doc.mainservice.model.enums.ExtendRequestStatus;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -18,5 +18,5 @@ public class ReturnRequest extends DocAbstractIdEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false)
-  private ExtensionRequestStatus status;
+  private ExtendRequestStatus status;
 }

@@ -1,6 +1,9 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
-import edu.hcmus.doc.mainservice.model.enums.ExtensionRequestStatus;
+import static edu.hcmus.doc.mainservice.DocConst.CATALOG_NAME;
+import static edu.hcmus.doc.mainservice.DocConst.SCHEMA_NAME;
+
+import edu.hcmus.doc.mainservice.model.enums.ExtendRequestStatus;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,27 +17,27 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "extension_request", schema = "doc_main", catalog = "doc")
-public class ExtensionRequest extends DocAbstractIdEntity {
+@Table(name = "extend_request", schema = SCHEMA_NAME, catalog = CATALOG_NAME)
+public class ExtendRequest extends DocAbstractIdEntity {
 
   @OneToOne
   @JoinColumn(name = "processing_user_id", referencedColumnName = "id", nullable = false)
   private ProcessingUser processingUser;
 
-  @Column(name = "reason", nullable = false, length = 200)
-  private String reason;
-
-  @Column(name = "extended_until", nullable = false)
-  private LocalDate extendedUntil;
+  @Column(name = "old_deadline", nullable = false)
+  private LocalDate oldDeadline;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false)
-  private ExtensionRequestStatus status;
+  private ExtendRequestStatus status;
+
+  @Column(name = "reason", nullable = false, length = 200)
+  private String reason;
+
+  @Column(name = "new_deadline", nullable = false)
+  private LocalDate newDeadline;
 
   @JoinColumn(name = "validated_by", referencedColumnName = "id")
   @OneToOne(fetch = FetchType.LAZY)
   private User validatedBy;
-
-  @Column(name = "old_expired_date", nullable = false)
-  private LocalDate oldExpiredDate;
 }

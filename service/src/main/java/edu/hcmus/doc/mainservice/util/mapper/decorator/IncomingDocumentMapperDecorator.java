@@ -73,6 +73,11 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
     dto.setIsDocTransferred(isDocTransferred);
     dto.setIsDocCollaborator(isDocCollaborator);
 
+    dto.setProcessingDuration(
+        processingDocumentService
+            .getDateExpired(incomingDocument.getId(), SecurityUtils.getCurrentUser().getId())
+            .orElse(null)
+    );
     return dto;
   }
 

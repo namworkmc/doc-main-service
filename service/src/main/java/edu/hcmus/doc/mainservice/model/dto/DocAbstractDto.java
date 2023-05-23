@@ -7,10 +7,14 @@ import org.springframework.lang.Nullable;
 
 @Data
 public class DocAbstractDto {
+
   protected Long id;
+
   protected Long version;
+
   @Nullable
   protected LocalDateTime createdDate;
+
   @Nullable
   protected String createdBy;
 

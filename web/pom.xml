@@ -97,6 +97,7 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocumentTypeStatisticsDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.StatisticsWrapperDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.ExtendRequestDto</classPattern>
           </classPatterns>
           <excludeClasses>
             <class>java.io.Serializable</class>

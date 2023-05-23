@@ -22,12 +22,15 @@ import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
+import edu.hcmus.doc.mainservice.repository.ProcessingUserRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
@@ -44,6 +47,8 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 public class ProcessingDocumentServiceImpl implements ProcessingDocumentService {
 
   private final ProcessingDocumentRepository processingDocumentRepository;
+
+  private final ProcessingUserRepository processingUserRepository;
 
   private final AsyncRabbitTemplate asyncRabbitTemplate;
 
@@ -389,5 +394,10 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
   @Override
   public Integer getCurrentStep(Long documentId){
     return processingDocumentRepository.getCurrentStep(documentId).get(0, Integer.class);
+  }
+
+  @Override
+  public Optional<LocalDate> getDateExpired(Long incomingDocumentId, Long userId) {
+    return processingUserRepository.getDateExpired(incomingDocumentId, userId);
   }
 }

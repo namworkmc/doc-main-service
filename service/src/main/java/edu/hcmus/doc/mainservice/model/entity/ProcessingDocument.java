@@ -18,7 +18,7 @@ import lombok.Data;
 public class ProcessingDocument extends DocAbstractIdEntity {
 
   @OneToOne
-  @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id", updatable = false, nullable = false)
   private IncomingDocument incomingDoc;
 
   @Enumerated(EnumType.STRING)

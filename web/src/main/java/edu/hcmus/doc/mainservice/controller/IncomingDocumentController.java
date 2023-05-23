@@ -45,8 +45,7 @@ public class IncomingDocumentController extends DocAbstractController {
 
   @GetMapping("/{id}")
   public IncomingDocumentDto getIncomingDocument(@PathVariable Long id) {
-    return incomingDecoratorDocumentMapper
-        .toDto(incomingDocumentService.getIncomingDocumentById(id));
+    return incomingDecoratorDocumentMapper.toDto(incomingDocumentService.getIncomingDocumentById(id));
   }
 
   @GetMapping("/{incomingDocumentId}/processing-details")
