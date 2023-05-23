@@ -1,13 +1,20 @@
 package edu.hcmus.doc.mainservice.util.mapper.decorator;
 
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.PublishDocumentDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
+import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.DepartmentService;
 import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.FolderService;
+import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
+import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
 import edu.hcmus.doc.mainservice.util.mapper.OutgoingDocumentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +29,9 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
 
   @Autowired
   FolderService folderService;
+
+  @Autowired
+  ProcessingDocumentService processingDocumentService;
 
   @Autowired
   @Qualifier("delegate")
@@ -59,6 +69,36 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
     entity.setPublishingDepartment(departmentService.getDepartmentById(dto.getPublishingDepartment()));
 
     return entity;
+  }
+
+  @Override
+  public OutgoingDocumentGetDto toDto(OutgoingDocument outgoingDocument) {
+    OutgoingDocumentGetDto dto = delegate.toDto(outgoingDocument);
+    User currentUser = SecurityUtils.getCurrentUser();
+
+    int step = TransferDocumentUtils.getStepOutgoingDocument(currentUser, true);
+    Boolean isDocTransferred = processingDocumentService.isUserWorkingOnOutgoingDocumentWithSpecificRole(
+        GetTransferDocumentDetailRequest.builder()
+            .documentId(outgoingDocument.getId())
+            .userId(currentUser.getId())
+            .role(ProcessingDocumentRoleEnum.REPORTER)
+            .step(step)
+            .build());
+
+    int collabStep = TransferDocumentUtils.getStepOutgoingDocument(currentUser, false);
+    Boolean isDocCollaborator = processingDocumentService.isUserWorkingOnOutgoingDocumentWithSpecificRole(
+        GetTransferDocumentDetailRequest.builder()
+            .documentId(outgoingDocument.getId())
+            .userId(currentUser.getId())
+            .role(ProcessingDocumentRoleEnum.COLLABORATOR)
+            .step(collabStep)
+            .build());
+
+    dto.setStatus(outgoingDocument.getStatus());
+    dto.setIsDocTransferred(isDocTransferred);
+    dto.setIsDocCollaborator(isDocCollaborator);
+
+    return dto;
   }
 }
 

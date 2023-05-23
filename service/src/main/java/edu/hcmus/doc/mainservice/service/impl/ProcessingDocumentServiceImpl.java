@@ -17,7 +17,9 @@ import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
+import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
@@ -133,10 +135,10 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
   public ValidateTransferDocDto validateTransferDocument(TransferDocDto transferDocDto) {
 
     User currentUser = SecurityUtils.getCurrentUser();
-    User reporter = userRepository.findById(transferDocDto.getReporterId())
+    User reporter = userRepository.findById(Objects.requireNonNull(transferDocDto.getReporterId()))
         .orElseThrow(() -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND));
 
-    User assignee = userRepository.findById(transferDocDto.getAssigneeId())
+    User assignee = userRepository.findById(Objects.requireNonNull(transferDocDto.getAssigneeId()))
         .orElseThrow(() -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND));
 
     int step = getStep(reporter, assignee, false);
@@ -153,7 +155,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
     if (transferDocDto.getIsTransferToSameLevel()) {
 
       // kiem tra xem current user co phai la assignee cua van ban nay khong
-      for (Long incomingDocId : transferDocDto.getDocumentIds()) {
+      for (Long incomingDocId : Objects.requireNonNull(transferDocDto.getDocumentIds())) {
         Boolean currentUserCheck = isUserWorkingOnDocumentWithSpecificRole(
             GetTransferDocumentDetailRequest.builder()
                 .documentId(incomingDocId)
@@ -190,7 +192,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
       List<User> collaborators = userRepository.findAllById(
           Objects.requireNonNull(transferDocDto.getCollaboratorIds()));
       // current user phai la assignee thi moi duoc phep transfer
-      for (Long incomingDocId : transferDocDto.getDocumentIds()) {
+      for (Long incomingDocId : Objects.requireNonNull(transferDocDto.getDocumentIds())) {
         Boolean currentUserCheck = isUserWorkingOnDocumentWithSpecificRole(
             GetTransferDocumentDetailRequest.builder()
                 .documentId(incomingDocId)
@@ -345,12 +347,20 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
   }
 
   @Override
-  public GetTransferDocumentDetailCustomResponse getTransferDocumentDetail(
-      GetTransferDocumentDetailRequest request) {
+  public GetTransferDocumentDetailCustomResponse getTransferDocumentDetail(GetTransferDocumentDetailRequest request, ProcessingDocumentType processingDocumentType) {
     User currentUser = SecurityUtils.getCurrentUser();
     GetTransferDocumentDetailCustomResponse response = new GetTransferDocumentDetailCustomResponse();
-    GetTransferDocumentDetailResponse baseInfo = processingDocumentRepository.getTransferDocumentDetail(
-        request);
+    GetTransferDocumentDetailResponse baseInfo;
+
+    if(ProcessingDocumentType.INCOMING_DOCUMENT.equals(processingDocumentType)){
+      baseInfo = processingDocumentRepository.getTransferDocumentDetail(request);
+    } else {
+      baseInfo = processingDocumentRepository.getTransferOutgoingDocumentDetail(request);
+    }
+
+    if(Objects.isNull(baseInfo)){
+      throw new ProcessingDocumentNotFoundException(ProcessingDocumentNotFoundException.PROCESSING_DOCUMENT_NOT_FOUND);
+    }
 
     Long assigneeId = processingDocumentRepository.getListOfUserIdRelatedToTransferredDocument(
         baseInfo.getProcessingDocumentId(), baseInfo.getStep(), ProcessingDocumentRoleEnum.ASSIGNEE).get(0);
