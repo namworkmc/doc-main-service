@@ -11,5 +11,5 @@ public class DocumentReminderDetailsDto extends DocAbstractDto {
   private String summary;
   private LocalDate expirationDate;
   private DocumentReminderStatusEnum status;
-  private Long processingDocumentId;
+  private Long incomingDocumentId;
 }

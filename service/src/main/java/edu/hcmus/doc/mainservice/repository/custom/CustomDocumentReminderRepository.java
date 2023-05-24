@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public interface CustomDocumentReminderRepository {
@@ -22,4 +23,6 @@ public interface CustomDocumentReminderRepository {
   long countByUserId(Long currentUserId);
 
   List<DocumentReminder> getDocumentRemindersInAndIsNotOpen(List<Long> ids, Long currentUserId);
+
+  Optional<DocumentReminder> findByProcessingUserId(Long processingUserId);
 }

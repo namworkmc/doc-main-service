@@ -47,6 +47,7 @@ import edu.hcmus.doc.mainservice.repository.ReturnRequestRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
+import edu.hcmus.doc.mainservice.service.DocumentReminderService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.util.DocObjectUtils;
@@ -93,6 +94,8 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   private final UserRepository userRepository;
 
   private final ReturnRequestRepository returnRequestRepository;
+
+  private final DocumentReminderService documentReminderService;
 
   @Override
   public long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
@@ -270,9 +273,10 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   public void saveCollaboratorList(ProcessingDocument processingDocument, List<User> collaborators,
       ReturnRequest returnRequest, TransferDocDto transferDocDto, Integer step) {
     collaborators.forEach(collaborator -> {
-      ProcessingUser processingUser1 = createProcessingUser(processingDocument, collaborator, step,
-          returnRequest, transferDocDto);
+      ProcessingUser processingUser1 = createProcessingUser(processingDocument, collaborator, step, returnRequest, transferDocDto);
       ProcessingUser savedProcessingUser1 = processingUserRepository.save(processingUser1);
+
+      documentReminderService.createdDocumentReminder(processingUser1);
 
       ProcessingUserRole processingUserRole1 = createProcessingUserRole(savedProcessingUser1,
           ProcessingDocumentRoleEnum.COLLABORATOR);
@@ -284,9 +288,10 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   public void saveReporterOrAssignee(ProcessingDocument processingDocument, User user,
       ReturnRequest returnRequest, TransferDocDto transferDocDto, Integer step,
       ProcessingDocumentRoleEnum role) {
-    ProcessingUser processingUser = createProcessingUser(processingDocument, user, step,
-        returnRequest, transferDocDto);
+    ProcessingUser processingUser = createProcessingUser(processingDocument, user, step, returnRequest, transferDocDto);
     ProcessingUser savedProcessingUser = processingUserRepository.save(processingUser);
+
+    documentReminderService.createdDocumentReminder(processingUser);
 
     ProcessingUserRole processingUserRole = createProcessingUserRole(savedProcessingUser, role);
     processingUserRoleRepository.save(processingUserRole);

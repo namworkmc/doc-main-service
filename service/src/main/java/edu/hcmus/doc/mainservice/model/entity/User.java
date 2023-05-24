@@ -1,5 +1,8 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
+import static edu.hcmus.doc.mainservice.DocConst.CATALOG_NAME;
+import static edu.hcmus.doc.mainservice.DocConst.SCHEMA_NAME;
+
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -10,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -19,27 +23,31 @@ import org.hibernate.Hibernate;
 @Setter
 @RequiredArgsConstructor
 @Entity
-@Table(name = "user", schema = "doc_main", catalog = "doc")
+@Table(name = "user", schema = SCHEMA_NAME, catalog = CATALOG_NAME)
 public class User extends DocAbstractIdEntity {
 
-  @Column(name = "full_name", columnDefinition = "VARCHAR(255)")
+  @Column(name = "full_name")
   private String fullName;
 
-  @Column(name = "username", nullable = false, unique = true, columnDefinition = "VARCHAR(255) NOT NULL")
+  @NotNull
+  @Column(name = "username", updatable = false, nullable = false, unique = true)
   private String username;
 
-  @Column(name = "password", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
+  @NotNull
+  @Column(name = "password", nullable = false)
   private String password;
 
-  @Column(name = "email", nullable = false, unique = true, columnDefinition = "VARCHAR(255) NOT NULL")
+  @NotNull
+  @Column(name = "email", nullable = false, unique = true)
   private String email;
 
-  @Column(name = "role", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
+  @NotNull
+  @Column(name = "role", nullable = false)
   @Enumerated(EnumType.STRING)
   private DocSystemRoleEnum role;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "department_id", referencedColumnName = "id", columnDefinition = "BIGINT")
+  @JoinColumn(name = "department_id", referencedColumnName = "id")
   private Department department;
 
   @Override

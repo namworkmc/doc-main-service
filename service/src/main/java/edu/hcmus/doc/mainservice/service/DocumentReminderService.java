@@ -1,7 +1,7 @@
 package edu.hcmus.doc.mainservice.service;
 
 import edu.hcmus.doc.mainservice.model.dto.DocumentReminderDetailsDto;
-import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
+import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
 import java.time.LocalDate;
 import java.util.List;
@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 public interface DocumentReminderService {
-
-  void scheduleReminder(ProcessingDocument processingDocument);
 
   Map<LocalDate, Set<DocumentReminderStatusEnum>> getCurrentUserDocumentReminders(int year, int month);
 
@@ -23,4 +21,6 @@ public interface DocumentReminderService {
   long countUnreadDocumentReminders();
 
   long updateCurrentUserIsNotOpenedReminders(List<Long> ids);
+
+  Long createdDocumentReminder(ProcessingUser processingUser);
 }

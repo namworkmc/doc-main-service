@@ -1,66 +1,36 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
-import edu.hcmus.doc.mainservice.DocDateTime;
 import edu.hcmus.doc.mainservice.model.dto.DocumentReminderDetailsDto;
 import edu.hcmus.doc.mainservice.model.entity.DocumentReminder;
-import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
+import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
 import edu.hcmus.doc.mainservice.repository.DocumentReminderRepository;
-import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.DocumentReminderService;
-import edu.hcmus.doc.mainservice.util.mapper.DocumentReminderMapper;
+import edu.hcmus.doc.mainservice.service.ScheduleService;
+import edu.hcmus.doc.mainservice.util.DocDateTimeUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.time.ZoneId;
 import java.util.AbstractMap;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.TaskScheduler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional(rollbackFor = Throwable.class)
 public class DocumentReminderServiceImpl implements DocumentReminderService {
 
-  private final TaskScheduler taskScheduler;
+  private final ScheduleService scheduleService;
 
   private final DocumentReminderRepository documentReminderRepository;
-
-  private final UserRepository userRepository;
-
-  private final DocumentReminderMapper documentReminderMapper;
-
-  @Override
-  public void scheduleReminder(ProcessingDocument processingDocument) {
-//    Date startTime = Date.from(processingDocument
-//        .getProcessingDuration()
-//        .atStartOfDay(ZoneId.systemDefault())
-//        .minusDays(DocDateTime.expirationDate)
-//        .toInstant());
-
-    // TODO: For testing
-    Date startTime = Date.from(LocalDateTime.now()
-        .atZone(ZoneId.systemDefault())
-        .plusSeconds(10)
-        .toInstant());
-
-    taskScheduler.schedule(() -> {
-          DocumentReminder documentReminder = new DocumentReminder();
-          documentReminder.setProcessingDoc(processingDocument);
-          documentReminder.setExecutionTime(LocalDateTime.now());
-          documentReminder.setExpirationDate(LocalDate.now().plusDays(DocDateTime.EXPIRATION_DATE));
-          documentReminderRepository.save(documentReminder);
-        },
-        startTime);
-  }
 
   @Override
   public Map<LocalDate, Set<DocumentReminderStatusEnum>> getCurrentUserDocumentReminders(int year, int month) {
@@ -86,7 +56,7 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
               .stream()
               .map(processingDocument -> {
                 DocumentReminderDetailsDto dto = new DocumentReminderDetailsDto();
-                dto.setProcessingDocumentId(processingDocument.getId());
+                dto.setIncomingDocumentId(processingDocument.getIncomingDoc().getId());
                 dto.setVersion(processingDocument.getVersion());
                 dto.setIncomingNumber(processingDocument.getIncomingDoc().getIncomingNumber());
                 dto.setSummary(processingDocument.getIncomingDoc().getSummary());
@@ -124,7 +94,7 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
                     dto.setIncomingNumber(processingDocument.getIncomingDoc().getIncomingNumber());
                     dto.setSummary(processingDocument.getIncomingDoc().getSummary());
                     dto.setExpirationDate(processingEntry.getKey());
-                    dto.setProcessingDocumentId(processingDocument.getId());
+                    dto.setIncomingDocumentId(processingDocument.getId());
                     return dto;
                   })
                   .collect(Collectors.toSet()))
@@ -146,5 +116,30 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
     reminders.forEach(documentReminder -> documentReminder.setOpened(true));
 
     return documentReminderRepository.saveAll(reminders).size();
+  }
+
+  @Override
+  public Long createdDocumentReminder(ProcessingUser processingUser) {
+    DocumentReminder documentReminder = new DocumentReminder();
+    documentReminder.setProcessingUser(processingUser);
+    documentReminder.setExpirationDate(processingUser.getProcessingDuration());
+    documentReminder.setStatus(DocumentReminderStatusEnum.ACTIVE);
+
+    LocalDateTime setCloseToExpirationDate = DocDateTimeUtils.getAtStartOf7DaysBefore(processingUser.getProcessingDuration());
+    log.info("Schedule change document reminder status {} run at: {}", DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION, setCloseToExpirationDate);
+    scheduleService.changeDocumentReminderStatus(
+        processingUser,
+        LocalDateTime.now().plusMinutes(1),
+        DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION
+    );
+
+    LocalDateTime setExpiredDate = DocDateTimeUtils.getAtEndOfDay(processingUser.getProcessingDuration());
+    log.info("Schedule change document reminder status {} run at: {}", DocumentReminderStatusEnum.EXPIRED, setExpiredDate);
+    scheduleService.changeDocumentReminderStatus(
+        processingUser,
+        LocalDateTime.now().plusMinutes(2),
+        DocumentReminderStatusEnum.EXPIRED
+    );
+    return documentReminderRepository.save(documentReminder).getId();
   }
 }

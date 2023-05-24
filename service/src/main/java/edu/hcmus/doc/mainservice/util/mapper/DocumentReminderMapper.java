@@ -17,21 +17,15 @@ public interface DocumentReminderMapper {
 
   @Mapping(target = "updatedDate", ignore = true)
   @Mapping(target = "updatedBy", ignore = true)
-  @Mapping(target = "processingDoc", ignore = true)
-  @Mapping(target = "executionTime", ignore = true)
   @Mapping(target = "deleted", ignore = true)
   @Mapping(target = "createdDate", ignore = true)
   @Mapping(target = "createdBy", ignore = true)
   DocumentReminder toEntity(DocumentReminderDetailsDto documentReminderDetailsDto);
 
-  @Mapping(target = "incomingNumber", source = "processingDoc.incomingDoc.incomingNumber")
-  @Mapping(target = "summary", source = "processingDoc.incomingDoc.summary")
   DocumentReminderDetailsDto toDto(DocumentReminder documentReminder);
 
   @Mapping(target = "updatedDate", ignore = true)
   @Mapping(target = "updatedBy", ignore = true)
-  @Mapping(target = "processingDoc", ignore = true)
-  @Mapping(target = "executionTime", ignore = true)
   @Mapping(target = "deleted", ignore = true)
   @Mapping(target = "createdDate", ignore = true)
   @Mapping(target = "createdBy", ignore = true)
