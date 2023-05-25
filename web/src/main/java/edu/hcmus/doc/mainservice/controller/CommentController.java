@@ -3,6 +3,7 @@ package edu.hcmus.doc.mainservice.controller;
 import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.dto.CommentDto;
 import edu.hcmus.doc.mainservice.model.entity.Comment;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import edu.hcmus.doc.mainservice.service.CommentService;
 import edu.hcmus.doc.mainservice.util.mapper.CommentMapper;
 import java.util.List;
@@ -23,17 +24,21 @@ public class CommentController {
 
   private final CommentService commentService;
 
-  @GetMapping("/incoming-documents/{incomingDocumentId}")
-  public List<CommentDto> getCommentByIncomingDocumentId(@PathVariable Long incomingDocumentId) {
-    return commentService.getCommentByIncomingDocumentId(incomingDocumentId)
+  @GetMapping("/{processingDocumentType}/{documentId}")
+  public List<CommentDto> getCommentByIncomingDocumentId(
+      @PathVariable ProcessingDocumentTypeEnum processingDocumentType,
+      @PathVariable Long documentId) {
+    return commentService.getCommentByTypeAndDocumentId(processingDocumentType, documentId)
         .stream()
         .map(commentMapper::toDto)
         .toList();
   }
 
-  @PostMapping("/incoming-documents/{incomingDocumentId}")
-  public Long createComment(@PathVariable Long incomingDocumentId, @RequestBody CommentDto commentDto) {
+  @PostMapping("/{documentId}")
+  public Long createComment(
+      @PathVariable Long documentId,
+      @RequestBody CommentDto commentDto) {
     Comment comment = commentMapper.toEntity(commentDto);
-    return commentService.createComment(incomingDocumentId, comment);
+    return commentService.createComment(documentId, commentDto.getProcessingDocumentType(), comment);
   }
 }

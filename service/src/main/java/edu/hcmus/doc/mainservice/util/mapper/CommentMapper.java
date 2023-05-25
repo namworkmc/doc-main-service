@@ -12,6 +12,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = ComponentModel.SPRING, uses = {IncomingDocumentMapper.class})
 public interface CommentMapper {
 
+  @Mapping(target = "outgoingDocument", ignore = true)
+  @Mapping(target = "incomingDocument", ignore = true)
   @Mapping(target = "deleted", ignore = true)
   @Mapping(target = "updatedDate", ignore = true)
   @Mapping(target = "updatedBy", ignore = true)

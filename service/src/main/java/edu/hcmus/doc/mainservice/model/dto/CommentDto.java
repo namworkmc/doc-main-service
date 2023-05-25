@@ -1,5 +1,6 @@
 package edu.hcmus.doc.mainservice.model.dto;
 
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import lombok.Data;
 
 /**
@@ -9,4 +10,5 @@ import lombok.Data;
 public class CommentDto extends DocAbstractDto {
 
   private String content;
+  private ProcessingDocumentTypeEnum processingDocumentType;
 }

@@ -126,8 +126,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   }
 
   @Override
-  public List<ProcessingDocument> searchIncomingDocuments(SearchCriteriaDto searchCriteria,
-      int page, int pageSize) {
+  public List<ProcessingDocument> searchIncomingDocuments(SearchCriteriaDto searchCriteria, int page, int pageSize) {
     return processingDocumentRepository.searchByCriteria(searchCriteria, page, pageSize);
   }
 
