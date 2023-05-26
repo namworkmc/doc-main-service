@@ -5,8 +5,6 @@ name: DOC test
 
 on:
   pull_request:
-  push:
-    branches: [ main ]
 
 jobs:
   test:
@@ -25,4 +23,4 @@ jobs:
           java-version: '17.0.5'
 
       - name: Test
-        run: mvn clean test -DskipTypescriptGenerator=true
+        run: mvn clean test

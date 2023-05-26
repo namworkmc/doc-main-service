@@ -34,6 +34,9 @@ spring:
       routing-key: ${DOC_MAIN_SERVICE_RABBITMQ_TEMPLATE_ROUTING_KEY}
       attachment-routing-key: ${DOC_MAIN_SERVICE_RABBITMQ_TEMPLATE_ATTACHMENT_ROUTING_KEY}
 
+  main:
+    allow-circular-references: true
+
 logging:
   level:
     sql: debug
