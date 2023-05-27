@@ -17,6 +17,7 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingUserRoleService;
@@ -48,11 +49,12 @@ public class IncomingDocumentController extends DocAbstractController {
     return incomingDecoratorDocumentMapper.toDto(incomingDocumentService.getIncomingDocumentById(id));
   }
 
-  @GetMapping("/{incomingDocumentId}/processing-details")
+  @GetMapping("/{processingDocumentType}/{documentId}/processing-details")
   public List<ProcessingDetailsDto> getProcessingDetails(
-      @PathVariable Long incomingDocumentId,
+      @PathVariable ProcessingDocumentTypeEnum processingDocumentType,
+      @PathVariable Long documentId,
       @RequestParam(required = false) boolean onlyAssignee) {
-    return processingUserRoleService.getProcessingUserRolesByIncomingDocumentId(incomingDocumentId, onlyAssignee);
+    return processingUserRoleService.getProcessingUserRolesByDocumentId(processingDocumentType, documentId, onlyAssignee);
   }
 
 

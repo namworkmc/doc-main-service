@@ -18,6 +18,7 @@ public class CustomCommentRepositoryImpl
     return selectFrom(comment)
         .innerJoin(comment.incomingDocument, incomingDocument)
         .where(incomingDocument.id.eq(incomingDocumentId))
+        .orderBy(comment.createdDate.desc())
         .fetch();
   }
 
@@ -27,6 +28,7 @@ public class CustomCommentRepositoryImpl
     return selectFrom(comment)
         .innerJoin(comment.outgoingDocument, outgoingDocument)
         .where(outgoingDocument.id.eq(outgoingDocumentId))
+        .orderBy(comment.createdDate.desc())
         .fetch();
   }
 }
