@@ -174,10 +174,44 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
             .transferDocumentType(TransferDocumentType.TRANSFER_TO_GIAM_DOC)
             .isTransferToSameLevel(false)
             .build());
+        menuConfigs.add(TransferDocumentMenuConfig.builder()
+            .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
+                MESSAGE.transfer_document_to_truong_phong_type_label))
+            .componentKey(TransferDocumentComponent.TRANSFER_TO_TRUONG_PHONG.value)
+            .menuLabel(ResourceBundleUtils.getContent(
+                MESSAGE.transfer_document_to_truong_phong_menu_label))
+            .menuKey(TransferDocumentComponent.TRANSFER_TO_TRUONG_PHONG.value)
+            .transferDocumentType(TransferDocumentType.TRANSFER_TO_TRUONG_PHONG)
+            .isTransferToSameLevel(true)
+            .build());
         settings.setDefaultTransferDocumentType(TransferDocumentType.TRANSFER_TO_GIAM_DOC);
         settings.setDefaultComponentKey(TransferDocumentComponent.TRANSFER_TO_GIAM_DOC.value);
       }
-      case GIAM_DOC, VAN_THU -> {
+      case GIAM_DOC -> {
+        menuConfigs.add(TransferDocumentMenuConfig.builder()
+            .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
+                MESSAGE.transfer_document_to_van_thu_type_label))
+            .componentKey(TransferDocumentComponent.TRANSFER_TO_VAN_THU.value)
+            .menuLabel(ResourceBundleUtils.getContent(
+                MESSAGE.transfer_document_to_van_thu_menu_label))
+            .menuKey(TransferDocumentComponent.TRANSFER_TO_VAN_THU.value)
+            .transferDocumentType(TransferDocumentType.TRANSFER_TO_VAN_THU)
+            .isTransferToSameLevel(false)
+            .build());
+        menuConfigs.add(TransferDocumentMenuConfig.builder()
+            .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
+                MESSAGE.submit_document_to_giam_doc_type_label))
+            .componentKey(TransferDocumentComponent.TRANSFER_TO_GIAM_DOC.value)
+            .menuLabel(ResourceBundleUtils.getContent(
+                MESSAGE.submit_document_to_giam_doc_menu_label))
+            .menuKey(TransferDocumentComponent.TRANSFER_TO_GIAM_DOC.value)
+            .transferDocumentType(TransferDocumentType.TRANSFER_TO_GIAM_DOC)
+            .isTransferToSameLevel(true)
+            .build());
+        settings.setDefaultTransferDocumentType(TransferDocumentType.TRANSFER_TO_VAN_THU);
+        settings.setDefaultComponentKey(TransferDocumentComponent.TRANSFER_TO_VAN_THU.value);
+      }
+      case VAN_THU -> {
         menuConfigs.add(TransferDocumentMenuConfig.builder()
             .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
                 MESSAGE.transfer_document_to_van_thu_type_label))

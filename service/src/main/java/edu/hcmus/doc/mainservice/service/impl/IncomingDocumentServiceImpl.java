@@ -275,7 +275,9 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
       ProcessingUser processingUser1 = createProcessingUser(processingDocument, collaborator, step, returnRequest, transferDocDto);
       ProcessingUser savedProcessingUser1 = processingUserRepository.save(processingUser1);
 
-      documentReminderService.createdDocumentReminder(processingUser1);
+      if(Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())){
+        documentReminderService.createdDocumentReminder(processingUser1);
+      }
 
       ProcessingUserRole processingUserRole1 = createProcessingUserRole(savedProcessingUser1,
           ProcessingDocumentRoleEnum.COLLABORATOR);
@@ -290,8 +292,9 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     ProcessingUser processingUser = createProcessingUser(processingDocument, user, step, returnRequest, transferDocDto);
     ProcessingUser savedProcessingUser = processingUserRepository.save(processingUser);
 
-    documentReminderService.createdDocumentReminder(processingUser);
-
+    if(Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
+      documentReminderService.createdDocumentReminder(processingUser);
+    }
     ProcessingUserRole processingUserRole = createProcessingUserRole(savedProcessingUser, role);
     processingUserRoleRepository.save(processingUserRole);
   }
