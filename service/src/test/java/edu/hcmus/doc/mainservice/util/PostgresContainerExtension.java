@@ -26,8 +26,6 @@ public class PostgresContainerExtension implements BeforeAllCallback {
           .withDatabaseName(DATABASE_NAME)
           .withUsername(USERNAME)
           .withPassword(PASSWORD)
-          .withExposedPorts(PORT)
-          .withFileSystemBind(DB_SCRIPTS_PATH, ENTRYPOINT_INIT_DB_PATH, BindMode.READ_ONLY)
           .withEnv("TZ", "Asia/Ho_Chi_Minh");
 
   @Override
@@ -37,8 +35,14 @@ public class PostgresContainerExtension implements BeforeAllCallback {
   }
 
   private void overrideProperties() {
+    // Database
     System.setProperty("spring.datasource.url", postgreSQLContainer.getJdbcUrl() + "&stringtype=unspecified");
     System.setProperty("spring.datasource.username", postgreSQLContainer.getUsername());
     System.setProperty("spring.datasource.password", postgreSQLContainer.getPassword());
+
+    //  Liquibase
+    System.setProperty("spring.liquibase.url", postgreSQLContainer.getJdbcUrl());
+    System.setProperty("spring.liquibase.user", postgreSQLContainer.getUsername());
+    System.setProperty("spring.liquibase.password", postgreSQLContainer.getPassword());
   }
 }

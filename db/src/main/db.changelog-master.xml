@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <include id="001" file="sql/001_init_db.sql" relativeToChangelogFile="true" />
+  <include id="002" file="sql/002_init_user_table_data.sql" relativeToChangelogFile="true" />
+  <include id="003" file="sql/003_init_sample_data.sql" relativeToChangelogFile="true" />
+  <include id="004" file="sql/004_remove_role_tables.sql" relativeToChangelogFile="true" />
+  <include id="005" file="sql/005_remove_composite_PK.sql" relativeToChangelogFile="true" />
+  <include id="006" file="sql/006_change_comment_col_name.sql" relativeToChangelogFile="true" />
+  <include id="007" file="sql/007_add_unprocessed_enum.sql" relativeToChangelogFile="true" />
+  <include id="008" file="sql/008_update_income_doc_data.sql" relativeToChangelogFile="true" />
+  <include id="009" file="sql/009_allow_null_field_docin.sql" relativeToChangelogFile="true" />
+  <include id="010" file="sql/010_init_folder_table.sql" relativeToChangelogFile="true" />
+  <include id="011" file="sql/011_alter_docin_folder_col.sql" relativeToChangelogFile="true" />
+  <include id="012" file="sql/012_init_work_folder_table.sql" relativeToChangelogFile="true" />
+  <include id="013" file="sql/013_update_users_name.sql" relativeToChangelogFile="true" />
+  <include id="014" file="sql/014_init_attachment_table.sql" relativeToChangelogFile="true" />
+  <changeSet id="016" author="doc" dbms="postgresql">
+    <sqlFile path="/sql/016_add_more_sample_data.sql" splitStatements="false" />
+  </changeSet>
+  <include id="017" file="sql/017_add_mime_type.sql" relativeToChangelogFile="true" />
+  <include id="018" file="sql/018_update_processing_document_role.sql" relativeToChangelogFile="true" />
+  <include id="019" file="sql/019_add_more_user.sql" relativeToChangelogFile="true" />
+  <include id="020" file="sql/020_update_user-roles.sql" relativeToChangelogFile="true" />
+  <include id="021" file="sql/021_add_role_col_for_user.sql" relativeToChangelogFile="true" />
+  <include id="022" file="sql/022_add_reminder_table.sql" relativeToChangelogFile="true" />
+  <include id="023" file="sql/023_init_department_table.sql" relativeToChangelogFile="true" />
+  <include id="024" file="sql/024_add_process_method_column.sql" relativeToChangelogFile="true" />
+  <include id="025" file="sql/025_move_processing_duration_column.sql" relativeToChangelogFile="true" />
+  <include id="026" file="sql/026_add_cols_extension_request.sql" relativeToChangelogFile="true" />
+  <include id="027" file="sql/027_comment_table.sql" relativeToChangelogFile="true" />
+  <include id="028" file="sql/028_outgoing_document_table.sql" relativeToChangelogFile="true" />
+  <include id="029" file="sql/029_add_admin_user.sql" relativeToChangelogFile="true" />
+  <include id="030" file="sql/030_add_truong_phong_column_to_department_table.sql" relativeToChangelogFile="true" />
+  <include id="031" file="sql/031_summary_allow_null.sql" relativeToChangelogFile="true" />
+  <include id="032" file="sql/032_docout_add_signer_origin_number.sql" relativeToChangelogFile="true" />
+  <include id="033" file="sql/033_update_user_password.sql" relativeToChangelogFile="true" />
+  <include id="034" file="sql/034_update_folder_name_format.sql" relativeToChangelogFile="true" />
+  <include id="035" file="sql/035_add_test_user_and_refactor_extend_request_table.sql" relativeToChangelogFile="true" />
+  <include id="036" file="sql/036_update_document_reminder_structure.sql" relativeToChangelogFile="true" />
+  <include id="037" file="sql/037_update_incoming_folder.sql" relativeToChangelogFile="true" />
+</databaseChangeLog>
