@@ -70,12 +70,15 @@ public class TransferDocumentUtils {
           step = 2;
         }
       }
+      case VAN_THU -> step = 3;
+
       default -> step = 1;
     }
     return step;
   }
 
-  public static ProcessingDocument createProcessingDocument(IncomingDocument incomingDocument, OutgoingDocument outgoingDocument, ProcessingStatus processingStatus) {
+  public static ProcessingDocument createProcessingDocument(IncomingDocument incomingDocument,
+      OutgoingDocument outgoingDocument, ProcessingStatus processingStatus) {
     ProcessingDocument processingDocument = new ProcessingDocument();
     if (Objects.nonNull(incomingDocument)) {
       processingDocument.setIncomingDoc(incomingDocument);
