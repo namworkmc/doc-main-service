@@ -1,3 +1,6 @@
 spring:
   profiles:
-    active: unit-test
+    active: test
+
+server:
+  port: 9090

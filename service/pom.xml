@@ -79,10 +79,6 @@
       <artifactId>javax.servlet-api</artifactId>
       <version>4.0.1</version>
     </dependency>
-    <dependency>
-      <groupId>org.liquibase</groupId>
-      <artifactId>liquibase-core</artifactId>
-    </dependency>
 
     <!--    Spring boot test dependencies    -->
     <dependency>
@@ -90,15 +86,9 @@
       <artifactId>spring-security-test</artifactId>
     </dependency>
 
-    <!--    Project dependencies-->
     <dependency>
       <groupId>edu.hcmus.doc.main-service</groupId>
       <artifactId>doc-main-service-common</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>edu.hcmus.doc.main-service</groupId>
-      <artifactId>doc-main-service-db</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>

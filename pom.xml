@@ -9,7 +9,6 @@
     <module>common</module>
     <module>service</module>
     <module>web</module>
-    <module>db</module>
   </modules>
 
   <parent>
