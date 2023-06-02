@@ -13,7 +13,6 @@ import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
 import edu.hcmus.doc.mainservice.model.entity.QFolder;
 import edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
-import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.repository.custom.CustomOutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
@@ -91,27 +90,23 @@ public class CustomOutgoingDocumentRepositoryImpl
     }
 
     User currUser = SecurityUtils.getCurrentUser();
+    where.and(outgoingDocument.createdBy.eq(currUser.getUsername()).or(processingUser.user.id.eq(currUser.getId())));
 
-    JPAQuery<OutgoingDocument> query = selectFrom(outgoingDocument)
-        .leftJoin(processingDocument).on(outgoingDocument.id.eq(processingDocument.outgoingDocument.id))
+    return selectFrom(outgoingDocument)
+        .leftJoin(processingDocument)
+        .on(outgoingDocument.id.eq(processingDocument.outgoingDocument.id))
         .fetchJoin()
         .innerJoin(outgoingDocument.documentType, QDocumentType.documentType)
         .fetchJoin()
         .innerJoin(outgoingDocument.publishingDepartment, QDepartment.department)
         .fetchJoin()
         .innerJoin(outgoingDocument.folder, QFolder.folder)
-        .fetchJoin();
-
-    if (currUser.getRole() != DocSystemRoleEnum.CHUYEN_VIEN) {
-      query.innerJoin(processingUser)
-          .on(processingUser.processingDocument.id.eq(processingDocument.id)
-              .and(processingUser.user.id.eq(currUser.getId())))
-          .fetchJoin();
-    } else {
-      where.and(outgoingDocument.createdBy.eq(currUser.getUsername()));
-    }
-
-    return query.distinct().where(where);
+        .fetchJoin()
+        .leftJoin(processingUser)
+        .on(processingUser.processingDocument.id.eq(processingDocument.id))
+        .fetchJoin()
+        .distinct()
+        .where(where);
   }
 
   @Override

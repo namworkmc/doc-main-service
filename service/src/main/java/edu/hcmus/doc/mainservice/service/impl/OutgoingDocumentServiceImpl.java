@@ -1,6 +1,5 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
-import static edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum.CHUYEN_VIEN;
 import static edu.hcmus.doc.mainservice.model.enums.MESSAGE.user_has_already_exists_in_the_flow_of_document;
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcessingDocument;
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.getStepOutgoingDocument;
@@ -238,27 +237,37 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
       throw new TransferDocumentException(validateTransferDocDto.getMessage());
     }
 
-    User currentUser = SecurityUtils.getCurrentUser();
     User reporter = incomingDocumentService.getUserByIdOrThrow(transferDocDto.getReporterId());
     User assignee = incomingDocumentService.getUserByIdOrThrow(transferDocDto.getAssigneeId());
 
     List<User> collaborators = userRepository.findAllById(
         Objects.requireNonNull(transferDocDto.getCollaboratorIds()));
 
-    if (transferDocDto.getTransferDocumentType() == TransferDocumentType.TRANSFER_TO_TRUONG_PHONG
-        && currentUser.getRole() == CHUYEN_VIEN) {
-      transferNewDocuments(transferDocDto, reporter, assignee, collaborators);
+    List<OutgoingDocument> outgoingDocuments = outgoingDocumentRepository
+        .getOutgoingDocumentsByIds(transferDocDto.getDocumentIds());
+
+    List<OutgoingDocument> unprocessedOutgoingDocuments = outgoingDocuments.stream()
+        .filter(outgoingDocument -> OutgoingDocumentStatusEnum.UNPROCESSED.equals(outgoingDocument.getStatus()))
+        .toList();
+
+    List<OutgoingDocument> inprogressOutgoingDocuments = outgoingDocuments.stream()
+        .filter(outgoingDocument -> OutgoingDocumentStatusEnum.IN_PROGRESS.equals(outgoingDocument.getStatus()))
+        .toList();
+
+    if (!unprocessedOutgoingDocuments.isEmpty() && !inprogressOutgoingDocuments.isEmpty()) {
+      transferNewDocuments(transferDocDto, reporter, assignee, collaborators, unprocessedOutgoingDocuments);
+      transferExistedDocuments(transferDocDto, reporter, assignee, collaborators, inprogressOutgoingDocuments);
     } else {
-      transferExistedDocuments(transferDocDto, reporter, assignee, collaborators);
+      if(unprocessedOutgoingDocuments.isEmpty()){
+        transferExistedDocuments(transferDocDto, reporter, assignee, collaborators, outgoingDocuments);
+      } else {
+        transferNewDocuments(transferDocDto, reporter, assignee, collaborators, outgoingDocuments);
+      }
     }
   }
 
   private void transferNewDocuments(TransferDocDto transferDocDto, User reporter,
-      User assignee, List<User> collaborators) {
-
-    List<OutgoingDocument> outgoingDocuments = outgoingDocumentRepository
-        .getOutgoingDocumentsByIds(transferDocDto.getDocumentIds());
-
+      User assignee, List<User> collaborators, List<OutgoingDocument> outgoingDocuments) {
     ReturnRequest returnRequest = returnRequestRepository.findById(1L).orElseThrow(
         () -> new RuntimeException("Return request not found")
     );
@@ -287,9 +296,11 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   }
 
   private void transferExistedDocuments(TransferDocDto transferDocDto, User reporter,
-      User assignee, List<User> collaborators) {
+      User assignee, List<User> collaborators, List<OutgoingDocument> outgoingDocuments) {
     int step = getStepOutgoingDocument(reporter, true);
-    List<ProcessingDocument> processingDocuments = processingDocumentRepository.findAllOutgoingByIds(transferDocDto.getDocumentIds());
+    List<ProcessingDocument> processingDocuments = processingDocumentRepository.findAllOutgoingByIds(outgoingDocuments.stream()
+        .map(OutgoingDocument::getId)
+        .toList());
 
     ReturnRequest returnRequest = returnRequestRepository.findById(1L).orElseThrow(
         () -> new RuntimeException("Return request not found")

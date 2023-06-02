@@ -12,15 +12,19 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentD
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
+import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
+import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
+import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
+import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingUserRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
@@ -33,6 +37,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate.RabbitConverterFuture;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,6 +58,8 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
   private final AsyncRabbitTemplate asyncRabbitTemplate;
 
   private final UserRepository userRepository;
+
+  private final OutgoingDocumentRepository outgoingDocumentRepository;
 
   @Value("${spring.rabbitmq.template.exchange}")
   private String exchange;
@@ -276,11 +283,6 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
     response.setMessage("");
     response.setIsValid(true);
 
-    // neu la chuyen vien, khong can kiem tra
-    if (currentUser.getRole() == DocSystemRoleEnum.CHUYEN_VIEN) {
-      return response;
-    }
-
     // neu la van thu, khong duoc phep chuyen van ban
     if(currentUser.getRole() == DocSystemRoleEnum.VAN_THU){
       Object[] arguments = {currentUser.getUsername()};
@@ -289,61 +291,76 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
       return response;
     }
 
-    // current user phai la assignee thi moi duoc phep transfer
     for (Long outgoingDocId : Objects.requireNonNull(transferDocDto.getDocumentIds())) {
-      Boolean currentUserCheck = isUserWorkingOnOutgoingDocumentWithSpecificRole(
-          GetTransferDocumentDetailRequest.builder()
-              .documentId(outgoingDocId)
-              .step(step)
-              .userId(currentUser.getId())
-              .role(ProcessingDocumentRoleEnum.ASSIGNEE)
-              .build()
-      );
-      if (!currentUserCheck) {
+
+      OutgoingDocument outgoingDocument = outgoingDocumentRepository.getOutgoingDocumentById(outgoingDocId);
+
+      if (ObjectUtils.isEmpty(outgoingDocument)) {
+        throw new DocumentNotFoundException(DocumentNotFoundException.DOCUMENT_NOT_FOUND);
+      }
+
+      // current user phai la assignee thi moi duoc phep transfer van ban dang xu ly
+      if(OutgoingDocumentStatusEnum.IN_PROGRESS.equals(outgoingDocument.getStatus())) {
+        Boolean currentUserCheck = isUserWorkingOnOutgoingDocumentWithSpecificRole(
+            GetTransferDocumentDetailRequest.builder()
+                .documentId(outgoingDocId)
+                .step(step)
+                .userId(currentUser.getId())
+                .role(ProcessingDocumentRoleEnum.ASSIGNEE)
+                .build()
+        );
+        if (!currentUserCheck) {
+          Object[] arguments = {outgoingDocId};
+          response.setIsValid(false);
+          response.setMessage(ResourceBundleUtils.getDynamicContent(
+              MESSAGE.user_not_have_permission_to_transfer_this_document, arguments));
+          break;
+        }
+
+        // kiem tra xem tai step hien tai, assignee, reporter, collaborator co dang xu ly van ban nay khong
+        Boolean assigneeCheck = isUserWorkingOnOutgoingDocumentWithSpecificRole(
+            GetTransferDocumentDetailRequest.builder()
+                .documentId(outgoingDocId)
+                .step(step)
+                .userId(assignee.getId())
+                .role(ProcessingDocumentRoleEnum.ASSIGNEE)
+                .build()
+        );
+        if (assigneeCheck) {
+          Object[] arguments = {assignee.getFullName(), outgoingDocId};
+          response.setIsValid(false);
+          response.setMessage(ResourceBundleUtils.getDynamicContent(
+              MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
+          break;
+        }
+        StringBuilder collaboratorNames = new StringBuilder();
+        boolean isCollaboratorsValid = true;
+        for (User collaborator : collaborators) {
+          Boolean collaboratorCheck = isUserWorkingOnOutgoingDocumentWithSpecificRole(
+              GetTransferDocumentDetailRequest.builder()
+                  .documentId(outgoingDocId)
+                  .step(step)
+                  .userId(collaborator.getId())
+                  .role(ProcessingDocumentRoleEnum.COLLABORATOR)
+                  .build()
+          );
+          if (collaboratorCheck) {
+            isCollaboratorsValid = false;
+            collaboratorNames.append(collaborator.getFullName()).append(", ");
+          }
+        }
+        if (!isCollaboratorsValid) {
+          Object[] arguments = {collaboratorNames.substring(0, collaboratorNames.length() - 2)};
+          response.setIsValid(false);
+          response.setMessage(ResourceBundleUtils.getDynamicContent(
+              MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
+          break;
+        }
+      } else if(OutgoingDocumentStatusEnum.RELEASED.equals(outgoingDocument.getStatus())) {
         Object[] arguments = {outgoingDocId};
         response.setIsValid(false);
         response.setMessage(ResourceBundleUtils.getDynamicContent(
             MESSAGE.user_not_have_permission_to_transfer_this_document, arguments));
-        break;
-      }
-
-      // kiem tra xem tai step hien tai, assignee, reporter, collaborator co dang xu ly van ban nay khong
-      Boolean assigneeCheck = isUserWorkingOnOutgoingDocumentWithSpecificRole(
-          GetTransferDocumentDetailRequest.builder()
-              .documentId(outgoingDocId)
-              .step(step)
-              .userId(assignee.getId())
-              .role(ProcessingDocumentRoleEnum.ASSIGNEE)
-              .build()
-      );
-      if (assigneeCheck) {
-        Object[] arguments = {assignee.getFullName(), outgoingDocId};
-        response.setIsValid(false);
-        response.setMessage(ResourceBundleUtils.getDynamicContent(
-            MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
-        break;
-      }
-      StringBuilder collaboratorNames = new StringBuilder();
-      boolean isCollaboratorsValid = true;
-      for (User collaborator : collaborators) {
-        Boolean collaboratorCheck = isUserWorkingOnOutgoingDocumentWithSpecificRole(
-            GetTransferDocumentDetailRequest.builder()
-                .documentId(outgoingDocId)
-                .step(step)
-                .userId(collaborator.getId())
-                .role(ProcessingDocumentRoleEnum.COLLABORATOR)
-                .build()
-        );
-        if (collaboratorCheck) {
-          isCollaboratorsValid = false;
-          collaboratorNames.append(collaborator.getFullName()).append(", ");
-        }
-      }
-      if (!isCollaboratorsValid) {
-        Object[] arguments = {collaboratorNames.substring(0, collaboratorNames.length() - 2)};
-        response.setIsValid(false);
-        response.setMessage(ResourceBundleUtils.getDynamicContent(
-            MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
         break;
       }
     }

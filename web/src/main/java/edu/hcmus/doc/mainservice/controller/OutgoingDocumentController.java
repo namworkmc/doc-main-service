@@ -18,7 +18,6 @@ import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,7 +61,6 @@ public class OutgoingDocumentController extends DocAbstractController {
 
   @SneakyThrows
   @PostMapping("/create")
-  @PreAuthorize("hasAuthority('CHUYEN_VIEN')")
   public OutgoingDocumentGetDto createIncomingDocument(
           @ModelAttribute OutgoingDocumentWithAttachmentPostDto outgoingDocumentWithAttachmentPostDto) {
     return outgoingDecoratorDocumentMapper.toDto(
