@@ -33,4 +33,7 @@ public abstract class DocAbstractController {
 
   @Autowired
   protected PaginationMapper paginationMapper;
+
+  @Autowired
+  protected TransferHistoryMapper transferHistoryMapper;
 }

@@ -1,5 +1,7 @@
 package edu.hcmus.doc.mainservice.service;
 
+import edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistoryDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistorySearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
 import edu.hcmus.doc.mainservice.model.dto.UserDto;
 import edu.hcmus.doc.mainservice.model.dto.UserSearchCriteria;
@@ -34,4 +36,6 @@ public interface UserService extends SearchService<UserDto, UserSearchCriteria> 
   Long updateCurrentUserPassword(String oldPassword, String newPassword);
 
   void deleteUsers(List<Long> userIds);
+
+  List<TransferHistoryDto> getTransferHistoryByUser(TransferHistorySearchCriteriaDto criteriaDto, int offset, int limit);
 }

@@ -1,6 +1,8 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
 import edu.hcmus.doc.mainservice.model.dto.DocPaginationDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistoryDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistorySearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
 import edu.hcmus.doc.mainservice.model.dto.UserDto;
 import edu.hcmus.doc.mainservice.model.dto.UserSearchCriteria;
@@ -10,16 +12,20 @@ import edu.hcmus.doc.mainservice.model.exception.EmailExistedException;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserPasswordIncorrectException;
 import edu.hcmus.doc.mainservice.model.exception.UsernameExistedException;
+import edu.hcmus.doc.mainservice.repository.TransferHistoryRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.UserService;
 import edu.hcmus.doc.mainservice.util.mapper.PaginationMapper;
+import edu.hcmus.doc.mainservice.util.mapper.TransferHistoryMapper;
 import edu.hcmus.doc.mainservice.util.mapper.UserMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 @Service
@@ -30,6 +36,8 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserMapper userMapper;
   private final PaginationMapper paginationMapper;
+  private final TransferHistoryRepository transferHistoryRepository;
+  private final TransferHistoryMapper transferHistoryMapper;
 
   @Override
   public List<User> getUsers(String query, long first, long max) {
@@ -125,7 +133,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public DocPaginationDto<UserDto> search(UserSearchCriteria userSearchCriteria, int page, int pageSize) {
+  public DocPaginationDto<UserDto> search(UserSearchCriteria userSearchCriteria, int page,
+      int pageSize) {
     long totalElements = userRepository.getTotalElements(userSearchCriteria);
     long totalPages = (totalElements / pageSize) + (totalElements % pageSize == 0 ? 0 : 1);
     List<UserDto> users = userRepository
@@ -144,5 +153,14 @@ public class UserServiceImpl implements UserService {
         .filter(user -> user.getRole() != DocSystemRoleEnum.DOC_ADMIN)
         .forEach(user -> user.setDeleted(true));
     userRepository.saveAll(users);
+  }
+
+  @Override
+  @Transactional
+  public List<TransferHistoryDto> getTransferHistoryByUser(
+      TransferHistorySearchCriteriaDto criteriaDto, int offset, int limit) {
+    Pageable pageable = PageRequest.of(offset, limit);
+    return transferHistoryRepository.findAllByUserId(criteriaDto.getUserId(), pageable)
+        .map(transferHistoryMapper::toDto).toList();
   }
 }

@@ -27,6 +27,7 @@ import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUserRole;
 import edu.hcmus.doc.mainservice.model.entity.ReturnRequest;
+import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
@@ -44,6 +45,7 @@ import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingUserRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingUserRoleRepository;
 import edu.hcmus.doc.mainservice.repository.ReturnRequestRepository;
+import edu.hcmus.doc.mainservice.repository.TransferHistoryRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
@@ -56,6 +58,7 @@ import edu.hcmus.doc.mainservice.util.mapper.IncomingDocumentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -97,6 +100,8 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
   private final DocumentReminderService documentReminderService;
 
+  private final TransferHistoryRepository transferHistoryRepository;
+
   @Override
   public long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
     return processingDocumentRepository.getTotalElements(searchCriteriaDto);
@@ -126,7 +131,8 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   }
 
   @Override
-  public List<ProcessingDocument> searchIncomingDocuments(SearchCriteriaDto searchCriteria, int page, int pageSize) {
+  public List<ProcessingDocument> searchIncomingDocuments(SearchCriteriaDto searchCriteria,
+      int page, int pageSize) {
     return processingDocumentRepository.searchByCriteria(searchCriteria, page, pageSize);
   }
 
@@ -170,13 +176,32 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     User reporter = getUserByIdOrThrow(transferDocDto.getReporterId());
     User assignee = getUserByIdOrThrow(transferDocDto.getAssigneeId());
 
+    // set transfer history info
+    TransferHistory transferHistory = new TransferHistory();
+    transferHistory.setSender(reporter);
+    transferHistory.setReceiver(assignee);
+    transferHistory.setIncomingDocumentIds(transferDocDto.getDocumentIds());
+    transferHistory.setIsTransferToSameLevel(transferDocDto.getIsTransferToSameLevel());
+
     if (transferDocDto.getIsTransferToSameLevel()) {
       transferToSameLevel(transferDocDto, reporter, assignee, currentUser.getRole());
+
+      // save transfer history and return
+      transferHistoryRepository.save(transferHistory);
       return;
     }
 
     List<User> collaborators = userRepository.findAllById(
         Objects.requireNonNull(transferDocDto.getCollaboratorIds()));
+
+    // set transfer history info
+    transferHistory.setIsInfiniteProcessingTime(transferDocDto.getIsInfiniteProcessingTime());
+    transferHistory.setProcessMethod(transferDocDto.getProcessMethod());
+    if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
+      transferHistory.setProcessingDuration(LocalDate.parse(
+          Objects.requireNonNull(transferDocDto.getProcessingTime()),
+          DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    }
 
     if (transferDocDto.getTransferDocumentType() == TransferDocumentType.TRANSFER_TO_GIAM_DOC
         && currentUser.getRole() == VAN_THU) {
@@ -185,6 +210,9 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     } else {
       transferExistedDocuments(transferDocDto, reporter, assignee, collaborators);
     }
+
+    // save transfer history
+    transferHistoryRepository.save(transferHistory);
   }
 
   private void transferToSameLevel(TransferDocDto transferDocDto, User reporter, User assignee,
@@ -230,7 +258,8 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     // TODO: validate incomingDocuments to make sure they are not processed yet.
     // save processing documents with status IN_PROGRESS
     incomingDocuments.forEach(incomingDocument -> {
-      ProcessingDocument processingDocument = createProcessingDocument(incomingDocument, null, ProcessingStatus.IN_PROGRESS);
+      ProcessingDocument processingDocument = createProcessingDocument(incomingDocument, null,
+          ProcessingStatus.IN_PROGRESS);
 
       ProcessingDocument savedProcessingDocument = processingDocumentRepository.save(
           processingDocument);
@@ -272,10 +301,11 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   public void saveCollaboratorList(ProcessingDocument processingDocument, List<User> collaborators,
       ReturnRequest returnRequest, TransferDocDto transferDocDto, Integer step) {
     collaborators.forEach(collaborator -> {
-      ProcessingUser processingUser1 = createProcessingUser(processingDocument, collaborator, step, returnRequest, transferDocDto);
+      ProcessingUser processingUser1 = createProcessingUser(processingDocument, collaborator, step,
+          returnRequest, transferDocDto);
       ProcessingUser savedProcessingUser1 = processingUserRepository.save(processingUser1);
 
-      if(Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())){
+      if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
         documentReminderService.createdDocumentReminder(processingUser1);
       }
 
@@ -289,12 +319,14 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   public void saveReporterOrAssignee(ProcessingDocument processingDocument, User user,
       ReturnRequest returnRequest, TransferDocDto transferDocDto, Integer step,
       ProcessingDocumentRoleEnum role) {
-    ProcessingUser processingUser = createProcessingUser(processingDocument, user, step, returnRequest, transferDocDto);
+    ProcessingUser processingUser = createProcessingUser(processingDocument, user, step,
+        returnRequest, transferDocDto);
     ProcessingUser savedProcessingUser = processingUserRepository.save(processingUser);
 
-    if(Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
+    if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
       documentReminderService.createdDocumentReminder(processingUser);
     }
+
     ProcessingUserRole processingUserRole = createProcessingUserRole(savedProcessingUser, role);
     processingUserRoleRepository.save(processingUserRole);
   }
@@ -407,7 +439,8 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
   @Override
   public StatisticsWrapperDto getCurrentUserStatistics() {
-    Map<String, Set<Long>> incomingDocumentStatistics = incomingDocumentRepository.getQuarterProcessingStatisticsByUserId(SecurityUtils.getCurrentUserId());
+    Map<String, Set<Long>> incomingDocumentStatistics = incomingDocumentRepository.getQuarterProcessingStatisticsByUserId(
+        SecurityUtils.getCurrentUserId());
     IncomingDocumentStatisticsDto incomingDocumentStatisticsDto = new IncomingDocumentStatisticsDto();
     incomingDocumentStatisticsDto.setNumberOfUnprocessedDocument(
         Optional.ofNullable(incomingDocumentStatistics.get(ProcessingStatus.UNPROCESSED.value))
@@ -422,9 +455,11 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
             .orElse(Collections.emptySet())
             .size());
 
-    Map<String, Set<Long>> documentTypeStatistics = incomingDocumentRepository.getQuarterProcessingDocumentTypeStatisticsByUserId(SecurityUtils.getCurrentUserId());
+    Map<String, Set<Long>> documentTypeStatistics = incomingDocumentRepository.getQuarterProcessingDocumentTypeStatisticsByUserId(
+        SecurityUtils.getCurrentUserId());
     DocumentTypeStatisticsWrapperDto documentTypeStatisticsWrapperDto = new DocumentTypeStatisticsWrapperDto();
-    documentTypeStatisticsWrapperDto.setXAxisData(documentTypeStatistics.keySet().stream().toList());
+    documentTypeStatisticsWrapperDto.setXAxisData(
+        documentTypeStatistics.keySet().stream().toList());
     documentTypeStatisticsWrapperDto.setSeriesData(documentTypeStatistics.entrySet()
         .stream()
         .map(entry -> new DocumentTypeStatisticsDto(entry.getKey(), entry.getValue().size()))

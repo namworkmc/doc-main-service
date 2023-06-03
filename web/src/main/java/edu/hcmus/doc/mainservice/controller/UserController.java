@@ -1,8 +1,12 @@
 package edu.hcmus.doc.mainservice.controller;
 
 import edu.hcmus.doc.mainservice.DocURL;
+import edu.hcmus.doc.mainservice.model.dto.TransferHistory.GetTransferDocumentHistoryResponse;
+import edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistoryDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistorySearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
 import edu.hcmus.doc.mainservice.model.dto.UserDto;
+import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
@@ -11,6 +15,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,5 +58,14 @@ public class UserController extends DocAbstractController {
   public Long updateCurrentUser(@RequestBody UserDto userDto) {
     User user = userDecoratorMapper.partialUpdate(userDto, userService.getCurrentUserFromDB());
     return userService.updateUser(user);
+  }
+
+  @PostMapping("/get-transfer-history")
+  public List<TransferHistoryDto> getTransferDocumentHistory(
+      @RequestBody(required = false)TransferHistorySearchCriteriaDto searchCriteria,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "3") int pageSize) {
+    return userService.getTransferHistoryByUser(
+        searchCriteria, page, pageSize);
   }
 }
