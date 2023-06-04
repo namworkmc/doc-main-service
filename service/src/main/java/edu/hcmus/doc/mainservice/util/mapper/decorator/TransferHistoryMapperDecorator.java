@@ -24,11 +24,15 @@ public abstract class TransferHistoryMapperDecorator implements TransferHistoryM
       dto.setDocumentIds(entity.getOutgoingDocumentIds());
     }
     dto.setId(entity.getId());
-    dto.setCreatedDate(entity.getCreatedDate());
+    dto.setCreatedDate(entity.getCreatedDate().toLocalDate());
     dto.setProcessingDuration(entity.getProcessingDuration());
     dto.setIsInfiniteProcessingTime(entity.getIsInfiniteProcessingTime());
     dto.setIsTransferToSameLevel(entity.getIsTransferToSameLevel());
-    dto.setProcessMethod(entity.getProcessMethod());
+    if (entity.getProcessMethod() != null) {
+      dto.setProcessMethod(entity.getProcessMethod().value);
+    } else {
+      dto.setProcessMethod(null);
+    }
     dto.setSenderId(entity.getSender().getId());
     dto.setReceiverId(entity.getReceiver().getId());
     dto.setSenderName(entity.getSender().getFullName());

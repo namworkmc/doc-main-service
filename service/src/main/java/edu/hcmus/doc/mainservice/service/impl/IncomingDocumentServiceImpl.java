@@ -187,6 +187,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
       transferToSameLevel(transferDocDto, reporter, assignee, currentUser.getRole());
 
       // save transfer history and return
+      transferHistory.setIsInfiniteProcessingTime(true);
       transferHistoryRepository.save(transferHistory);
       return;
     }
