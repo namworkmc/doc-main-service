@@ -66,6 +66,9 @@ public class IncomingDocument extends DocAbstractIdEntity {
   @JoinColumn(name = "publishing_department_id", referencedColumnName = "id", nullable = false)
   private Department publishingDepartment;
 
+  @Column(name = "name", columnDefinition = "VARCHAR(255)")
+  private String name;
+
   public void initSendingLevel() {
     if (this.sendingLevel == null) {
       this.sendingLevel = new SendingLevel();

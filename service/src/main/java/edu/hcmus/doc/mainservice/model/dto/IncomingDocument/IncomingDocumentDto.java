@@ -20,6 +20,7 @@ import lombok.Data;
  */
 @Data
 public class IncomingDocumentDto extends DocAbstractDto {
+    private String name;
     private ProcessingStatus status;
     private LocalDate processingDuration;
     private String incomingNumber;

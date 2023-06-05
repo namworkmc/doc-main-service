@@ -16,6 +16,7 @@ import java.time.LocalDate;
 
 @Data
 public class OutgoingDocumentGetDto extends DocAbstractDto {
+    private String name;
     private String outgoingNumber;
     private String originalSymbolNumber;
     private String recipient;

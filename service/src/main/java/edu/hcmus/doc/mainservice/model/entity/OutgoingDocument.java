@@ -60,4 +60,7 @@ public class OutgoingDocument extends DocAbstractIdEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "folder_id", referencedColumnName = "id")
   private Folder folder;
+
+  @Column(name = "name", columnDefinition = "VARCHAR(255)")
+  private String name;
 }

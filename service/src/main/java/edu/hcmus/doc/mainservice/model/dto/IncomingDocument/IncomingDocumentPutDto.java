@@ -10,6 +10,7 @@ import java.time.LocalTime;
 
 @Data
 public class IncomingDocumentPutDto extends DocAbstractDto {
+    private String name;
     private String incomingNumber;
     private Long documentType;
     private String originalSymbolNumber;

@@ -69,6 +69,7 @@ public class CustomProcessingDocumentRepositoryImpl
                 processingDocument.id,
                 processingStatusCases,
                 incomingDocument.id,
+                incomingDocument.name,
                 incomingDocument.incomingNumber,
                 incomingDocument.originalSymbolNumber,
                 incomingDocument.arrivingDate,
@@ -91,6 +92,7 @@ public class CustomProcessingDocumentRepositoryImpl
                   ProcessingStatus.valueOf(tuple.get(processingStatusCases)));
               processingDocument.initIncomingDocument();
               processingDocument.getIncomingDoc().setId(tuple.get(incomingDocument.id));
+              processingDocument.getIncomingDoc().setName(tuple.get(incomingDocument.name));
               processingDocument.getIncomingDoc()
                   .setIncomingNumber(tuple.get(incomingDocument.incomingNumber));
               processingDocument.getIncomingDoc()

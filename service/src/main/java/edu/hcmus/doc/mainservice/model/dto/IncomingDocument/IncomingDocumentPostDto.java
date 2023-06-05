@@ -9,6 +9,7 @@ import java.time.LocalTime;
 
 @Data
 public class IncomingDocumentPostDto {
+    private String name;
     private String incomingNumber;
     private Long documentType;
     private String originalSymbolNumber;
