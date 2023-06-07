@@ -44,9 +44,7 @@ public abstract class AttachmentMapperDecorator implements AttachmentMapper {
 
   @Override
   public Attachment toEntity(AttachmentDto attachmentDto) {
-    Attachment entity = delegate.toEntity(attachmentDto);
-
-    return entity;
+    return delegate.toEntity(attachmentDto);
   }
 
   @Override

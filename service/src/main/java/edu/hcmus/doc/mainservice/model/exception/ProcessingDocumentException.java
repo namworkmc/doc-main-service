@@ -1,6 +1,6 @@
 package edu.hcmus.doc.mainservice.model.exception;
 
-public class ProcessingDocumentException extends DocException {
+public class ProcessingDocumentException extends DocMainServiceRuntimeException {
 
   public static final String ILLEGAL_ROLE = "processing_document.illegal_role";
   public static final String ILLEGAL_STEP = "processing_document.illegal_step";

@@ -58,8 +58,8 @@ public class ExceptionController {
             .body(new ExceptionDto(exception.getMessage()));
   }
 
-  @ExceptionHandler(DocException.class)
-  public ResponseEntity<ExceptionDto> handleDocException(DocException exception) {
+  @ExceptionHandler(DocMainServiceRuntimeException.class)
+  public ResponseEntity<ExceptionDto> handleDocException(DocMainServiceRuntimeException exception) {
     return ResponseEntity
         .badRequest()
         .body(new ExceptionDto(exception.getMessage()));
@@ -80,13 +80,15 @@ public class ExceptionController {
     log.error(exception.getMessage());
     return ResponseEntity
         .status(HttpStatus.CONFLICT)
-        .body(new ExceptionDto(DocException.CONCURRENT_UPDATE));
+        .body(new ExceptionDto(DocMainServiceRuntimeException.CONCURRENT_UPDATE));
   }
 
   @ExceptionHandler(Throwable.class)
   public ResponseEntity<ExceptionDto> handleInternalErrorException(Throwable throwable) {
+    log.error(throwable.getMessage());
+
     return ResponseEntity
         .internalServerError()
-        .body(new ExceptionDto(throwable.getMessage()));
+        .body(new ExceptionDto(DocMainServiceRuntimeException.INTERNAL_SERVER_ERROR));
   }
 }

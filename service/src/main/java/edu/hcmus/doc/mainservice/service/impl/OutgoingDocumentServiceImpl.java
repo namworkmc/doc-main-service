@@ -20,6 +20,7 @@ import edu.hcmus.doc.mainservice.model.entity.ReturnRequest;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
+import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.model.enums.TransferDocumentComponent;
@@ -107,7 +108,7 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
       AttachmentPostDto attachmentPostDto = attachmentMapperDecorator.toAttachmentPostDto(
           savedOutgoingDocument.getId(), outgoingDocumentWithAttachmentPostDto.getAttachments());
 
-      attachmentService.saveAttachmentsByOutgoingDocId(attachmentPostDto);
+      attachmentService.saveAttachmentsByProcessingDocumentTypeAndDocId(ParentFolderEnum.OGD, attachmentPostDto);
     }
 
     return savedOutgoingDocument;

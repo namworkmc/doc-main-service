@@ -1,6 +1,6 @@
 package edu.hcmus.doc.mainservice.model.exception;
 
-public class DocStatusViolatedException extends DocException {
+public class DocStatusViolatedException extends DocMainServiceRuntimeException {
 
   public static final String STATUS_VIOLATED = "doc.status.violated";
 

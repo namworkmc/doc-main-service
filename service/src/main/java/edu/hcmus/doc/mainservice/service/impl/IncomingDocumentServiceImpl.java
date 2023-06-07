@@ -31,6 +31,7 @@ import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
+import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.model.enums.TransferDocumentComponent;
@@ -162,11 +163,13 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     folder.setNextNumber(folder.getNextNumber() + 1);
     IncomingDocument savedIncomingDocument = incomingDocumentRepository.save(incomingDocument);
 
-    AttachmentPostDto attachmentPostDto = attachmentMapperDecorator.toAttachmentPostDto(
-        savedIncomingDocument.getId(), incomingDocumentWithAttachmentPostDto.getAttachments());
+    AttachmentPostDto attachmentPostDto =
+        attachmentMapperDecorator.toAttachmentPostDto(
+            savedIncomingDocument.getId(),
+            incomingDocumentWithAttachmentPostDto.getAttachments()
+        );
 
-    attachmentService.saveAttachmentsByIncomingDocId(
-        attachmentPostDto);
+    attachmentService.saveAttachmentsByProcessingDocumentTypeAndDocId(ParentFolderEnum.ICD, attachmentPostDto);
     return savedIncomingDocument;
   }
 

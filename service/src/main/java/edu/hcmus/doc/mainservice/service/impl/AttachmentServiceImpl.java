@@ -3,6 +3,8 @@ package edu.hcmus.doc.mainservice.service.impl;
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentDto;
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.FileDto;
+import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
+import edu.hcmus.doc.mainservice.model.exception.DocMainServiceRuntimeException;
 import edu.hcmus.doc.mainservice.repository.AttachmentRepository;
 import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
@@ -13,6 +15,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate.RabbitConverterFuture;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +34,7 @@ public class AttachmentServiceImpl implements AttachmentService {
   private String exchange;
 
   @Value("${spring.rabbitmq.template.attachment-routing-key}")
-  private String routingkey;
+  private String routingKey;
 
   private final AttachmentRepository attachmentRepository;
 
@@ -39,7 +42,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 
   private final OutgoingDocumentRepository outgoingDocumentRepository;
 
-    private final AsyncRabbitTemplate asyncRabbitTemplate;
+  private final AsyncRabbitTemplate asyncRabbitTemplate;
 
   private final AttachmentMapperDecorator attachmentMapperDecorator;
 
@@ -51,13 +54,15 @@ public class AttachmentServiceImpl implements AttachmentService {
 
   @SneakyThrows
   @Override
-  public List<AttachmentDto> saveAttachmentsByIncomingDocId(AttachmentPostDto attachmentPostDto) {
-    if (attachmentPostDto.getAttachments().size() == 0) {
-      return List.of();
+  public void saveAttachmentsByProcessingDocumentTypeAndDocId(
+      ParentFolderEnum parentFolder, AttachmentPostDto attachmentPostDto) {
+    if (CollectionUtils.isEmpty(attachmentPostDto.getAttachments())) {
+      return;
     }
 
+    attachmentPostDto.setParentFolder(ParentFolderEnum.ICD);
     RabbitConverterFuture<List<FileDto>> rabbitConverterFuture = asyncRabbitTemplate
-        .convertSendAndReceiveAsType(exchange, routingkey, attachmentPostDto,
+        .convertSendAndReceiveAsType(exchange, routingKey, attachmentPostDto,
             new ParameterizedTypeReference<>() {
             }
         );
@@ -66,11 +71,13 @@ public class AttachmentServiceImpl implements AttachmentService {
         new ListenableFutureCallback<>() {
           @Override
           public void onFailure(Throwable ex) {
-            throw new RuntimeException(ex);
+            log.error("Error when saving attachments", ex);
+            throw new DocMainServiceRuntimeException("Error when saving attachments", ex);
           }
 
           @Override
           public void onSuccess(List<FileDto> result) {
+            log.info("Save attachments successfully");
           }
         }
     );
@@ -82,58 +89,22 @@ public class AttachmentServiceImpl implements AttachmentService {
         .map(fileDto -> attachmentMapperDecorator.convertFileDtoToAttachmentDto(
             attachmentPostDto.getDocId(), fileDto)).toList();
 
-    incomingDocumentRepository.findById(attachmentPostDto.getDocId())
-        .ifPresent(incomingDoc -> {
-          attachmentDtos.stream().map(attachmentMapperDecorator::toEntity).forEach(attachment -> {
-            attachment.setIncomingDoc(incomingDoc);
-            attachmentRepository.save(attachment);
-          });
-        });
-
-    return attachmentDtos;
-  }
-
-    @SneakyThrows
-    @Override
-    public List<AttachmentDto> saveAttachmentsByOutgoingDocId(AttachmentPostDto attachmentPostDto) {
-        if (attachmentPostDto.getAttachments().size() == 0) {
-            return List.of();
-        }
-
-        RabbitConverterFuture<List<FileDto>> rabbitConverterFuture = asyncRabbitTemplate
-                .convertSendAndReceiveAsType(exchange, routingkey, attachmentPostDto,
-                        new ParameterizedTypeReference<>() {
-                        }
-                );
-
-        rabbitConverterFuture.addCallback(
-                new ListenableFutureCallback<>() {
-                    @Override
-                    public void onFailure(Throwable ex) {
-                        throw new RuntimeException(ex);
-                    }
-
-                    @Override
-                    public void onSuccess(List<FileDto> result) {
-                    }
-                }
-        );
-
-        // save file info to db
-        List<FileDto> fileDtos = rabbitConverterFuture.get();
-
-        List<AttachmentDto> attachmentDtos = Objects.requireNonNull(fileDtos).stream()
-                .map(fileDto -> attachmentMapperDecorator.convertFileDtoToAttachmentDto(
-                        attachmentPostDto.getDocId(), fileDto)).toList();
-
-        outgoingDocumentRepository.findById(attachmentPostDto.getDocId())
-                .ifPresent(doc -> {
-                    attachmentDtos.stream().map(attachmentMapperDecorator::toEntity).forEach(attachment -> {
-                        attachment.setOutgoingDocument(doc);
-                        attachmentRepository.save(attachment);
-                    });
-                });
-
-        return attachmentDtos;
+    if (parentFolder == ParentFolderEnum.ICD) {
+      incomingDocumentRepository.findById(attachmentPostDto.getDocId())
+          .ifPresent(incomingDoc ->
+              attachmentDtos.stream().map(attachmentMapperDecorator::toEntity)
+                  .forEach(attachment -> {
+                    attachment.setIncomingDoc(incomingDoc);
+                    attachmentRepository.save(attachment);
+                  }));
+    } else {
+      outgoingDocumentRepository.findById(attachmentPostDto.getDocId())
+          .ifPresent(doc -> attachmentDtos.stream().map(attachmentMapperDecorator::toEntity)
+              .forEach(attachment -> {
+                attachment.setOutgoingDocument(doc);
+                attachmentRepository.save(attachment);
+              }));
     }
+
+  }
 }

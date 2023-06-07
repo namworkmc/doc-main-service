@@ -2,13 +2,13 @@ package edu.hcmus.doc.mainservice.service;
 
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentDto;
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
+import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
 import java.util.List;
 
 public interface AttachmentService {
 
-  List<AttachmentDto> saveAttachmentsByIncomingDocId(AttachmentPostDto attachmentPostDto);
-
-  List<AttachmentDto> saveAttachmentsByOutgoingDocId(AttachmentPostDto attachmentPostDto);
+  void saveAttachmentsByProcessingDocumentTypeAndDocId(ParentFolderEnum parentFolder,
+      AttachmentPostDto attachmentPostDto);
 
   List<AttachmentDto> getAttachmentsByIncomingDocId(Long incomingDocId);
 }
