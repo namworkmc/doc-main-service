@@ -40,6 +40,7 @@ services:
       - local-deployment
     container_name: doc-main-service
     image: hcmusdoc/doc-main-service:latest
+    pull_policy: never
     build:
       context: ../../
       dockerfile: Dockerfile
