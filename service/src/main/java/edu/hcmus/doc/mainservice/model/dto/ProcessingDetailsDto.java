@@ -6,6 +6,7 @@ import lombok.Data;
 public class ProcessingDetailsDto {
 
   private String incomingNumber;
+  private String outgoingNumber;
   private Integer step;
   private ProcessingUserDto processingUser;
 }
