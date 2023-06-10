@@ -1,14 +1,14 @@
 package edu.hcmus.doc.mainservice.model.dto.IncomingDocument;
 
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentDto;
-import edu.hcmus.doc.mainservice.model.enums.Confidentiality;
-import edu.hcmus.doc.mainservice.model.enums.Urgency;
 import edu.hcmus.doc.mainservice.model.dto.DistributionOrganizationDto;
 import edu.hcmus.doc.mainservice.model.dto.DocAbstractDto;
 import edu.hcmus.doc.mainservice.model.dto.DocumentTypeDto;
 import edu.hcmus.doc.mainservice.model.dto.FolderDto;
 import edu.hcmus.doc.mainservice.model.dto.SendingLevelDto;
+import edu.hcmus.doc.mainservice.model.enums.Confidentiality;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
+import edu.hcmus.doc.mainservice.model.enums.Urgency;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ import lombok.Data;
  */
 @Data
 public class IncomingDocumentDto extends DocAbstractDto {
+    private Integer ordinalNumber;
     private String name;
     private ProcessingStatus status;
     private LocalDate processingDuration;
