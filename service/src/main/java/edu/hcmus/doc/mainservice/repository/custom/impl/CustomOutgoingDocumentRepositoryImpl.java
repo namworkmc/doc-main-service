@@ -1,23 +1,20 @@
 package edu.hcmus.doc.mainservice.repository.custom.impl;
 
-import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
-import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
-import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
-
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
-import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
-import edu.hcmus.doc.mainservice.model.entity.QDepartment;
-import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
-import edu.hcmus.doc.mainservice.model.entity.QFolder;
-import edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument;
-import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.entity.*;
 import edu.hcmus.doc.mainservice.repository.custom.CustomOutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
-import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static edu.hcmus.doc.mainservice.model.entity.QLinkedDocument.linkedDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
 
 public class CustomOutgoingDocumentRepositoryImpl
     extends DocAbstractCustomRepository<OutgoingDocument>
@@ -89,9 +86,6 @@ public class CustomOutgoingDocumentRepositoryImpl
       where.and(outgoingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
     }
 
-    User currUser = SecurityUtils.getCurrentUser();
-    where.and(outgoingDocument.createdBy.eq(currUser.getUsername()).or(processingUser.user.id.eq(currUser.getId())));
-
     return selectFrom(outgoingDocument)
         .leftJoin(processingDocument)
         .on(outgoingDocument.id.eq(processingDocument.outgoingDocument.id))
@@ -114,5 +108,14 @@ public class CustomOutgoingDocumentRepositoryImpl
     return selectFrom(outgoingDocument)
         .where(outgoingDocument.id.in(ids))
         .fetch();
+  }
+
+  @Override
+  public List<OutgoingDocument> getDocumentsLinkedToIncomingDocument(Long sourceDocumentId) {
+    return selectFrom(linkedDocument)
+            .where(linkedDocument.incomingDocument.id.eq(sourceDocumentId))
+            .stream()
+            .map(linkedDocument -> getOutgoingDocumentById(linkedDocument.getOutgoingDocument().getId()))
+            .collect(Collectors.toList());
   }
 }

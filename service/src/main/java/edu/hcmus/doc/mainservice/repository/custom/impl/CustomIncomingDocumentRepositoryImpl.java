@@ -4,25 +4,21 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
 import static edu.hcmus.doc.mainservice.model.entity.QDocumentType.documentType;
 import static edu.hcmus.doc.mainservice.model.entity.QIncomingDocument.incomingDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QLinkedDocument.linkedDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
 
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
-import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
-import edu.hcmus.doc.mainservice.model.entity.QDistributionOrganization;
-import edu.hcmus.doc.mainservice.model.entity.QFolder;
-import edu.hcmus.doc.mainservice.model.entity.QIncomingDocument;
-import edu.hcmus.doc.mainservice.model.entity.QProcessingDocument;
-import edu.hcmus.doc.mainservice.model.entity.QProcessingUser;
-import edu.hcmus.doc.mainservice.model.entity.QSendingLevel;
+import edu.hcmus.doc.mainservice.model.entity.*;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomIncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CustomIncomingDocumentRepositoryImpl
     extends DocAbstractCustomRepository<IncomingDocument>
@@ -139,4 +135,13 @@ public class CustomIncomingDocumentRepositoryImpl
             .eq(2))
         .transform(groupBy(documentType.type).as(set(incomingDocument.id)));
   }
+
+    @Override
+    public List<IncomingDocument> getDocumentsLinkedToOutgoingDocument(Long sourceDocumentId) {
+        return selectFrom(linkedDocument)
+                .where(linkedDocument.outgoingDocument.id.eq(sourceDocumentId))
+                .stream()
+                .map(linkedDocument -> getIncomingDocumentById(linkedDocument.getIncomingDocument().getId()))
+                .collect(Collectors.toList());
+    }
 }

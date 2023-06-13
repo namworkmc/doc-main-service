@@ -71,3 +71,5 @@ ALTER TABLE linked_document
 ALTER TABLE linked_document
     ADD COLUMN id SERIAL
         CONSTRAINT linked_document_pk PRIMARY KEY;
+ALTER TABLE linked_document
+    ADD UNIQUE (incoming_doc_id, outgoing_doc_id);

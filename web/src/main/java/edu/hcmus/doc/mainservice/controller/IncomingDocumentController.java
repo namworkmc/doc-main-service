@@ -7,6 +7,7 @@ import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
 import edu.hcmus.doc.mainservice.model.dto.ProcessingDetailsDto;
 import edu.hcmus.doc.mainservice.model.dto.ProcessingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
@@ -16,24 +17,20 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentD
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
+import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
+import edu.hcmus.doc.mainservice.model.exception.DocMainServiceRuntimeException;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingUserRoleService;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -56,7 +53,6 @@ public class IncomingDocumentController extends DocAbstractController {
       @RequestParam(required = false) boolean onlyAssignee) {
     return processingUserRoleService.getProcessingUserRolesByDocumentId(processingDocumentType, documentId, onlyAssignee);
   }
-
 
   @PostMapping("/search")
   public DocPaginationDto<IncomingDocumentDto> getIncomingDocuments(
@@ -141,5 +137,40 @@ public class IncomingDocumentController extends DocAbstractController {
   @PutMapping("/close-document/{id}")
   public String closeDocument(@PathVariable Long id) {
     return incomingDocumentService.closeDocument(id);
+  }
+
+  @PostMapping("/link-documents/{targetDocumentId}")
+  public void linkDocuments(@PathVariable Long targetDocumentId,
+                            @RequestBody List<OutgoingDocumentGetDto> documents) {
+    if (documents.isEmpty()) {
+      throw new DocMainServiceRuntimeException(DocMainServiceRuntimeException.DOCUMENT_REQUIRED);
+    }
+
+    incomingDocumentService.linkDocuments(targetDocumentId, documents);
+  }
+
+  @GetMapping("/link-documents/{targetDocumentId}")
+  public List<OutgoingDocumentGetDto> getLinkedDocuments(@PathVariable Long targetDocumentId) {
+    return incomingDocumentService
+            .getLinkedDocuments(targetDocumentId)
+            .stream()
+            .map(outgoingDecoratorDocumentMapper::toDto)
+            .collect(Collectors.toList());
+  }
+
+  @PutMapping("/link-documents/{targetDocumentId}")
+  public void updateLinkedDocuments(@PathVariable Long targetDocumentId,
+                                    @RequestBody List<OutgoingDocumentGetDto> documents) {
+    if (documents.isEmpty()) {
+      throw new DocMainServiceRuntimeException(DocMainServiceRuntimeException.DOCUMENT_REQUIRED);
+    }
+
+    incomingDocumentService.updateLinkedDocuments(targetDocumentId, documents);
+  }
+
+  @DeleteMapping("/link-documents/{targetDocumentId}")
+  public void deleteLinkedDocuments(@PathVariable Long targetDocumentId,
+                                    @RequestParam Long linkedDocumentId) {
+    incomingDocumentService.deleteLinkedDocuments(targetDocumentId, linkedDocumentId);
   }
 }

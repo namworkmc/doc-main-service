@@ -1,11 +1,5 @@
 package edu.hcmus.doc.mainservice.repository.custom.impl;
 
-import static edu.hcmus.doc.mainservice.model.entity.QIncomingDocument.incomingDocument;
-import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
-import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
-import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
-import static edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole.processingUserRole;
-
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
@@ -15,24 +9,23 @@ import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
-import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
-import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
-import edu.hcmus.doc.mainservice.model.entity.QDistributionOrganization;
-import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
-import edu.hcmus.doc.mainservice.model.entity.QProcessingDocument;
-import edu.hcmus.doc.mainservice.model.entity.QSendingLevel;
-import edu.hcmus.doc.mainservice.model.entity.User;
-import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
+import edu.hcmus.doc.mainservice.model.entity.*;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
-import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import org.apache.commons.lang3.StringUtils;
+
+import static edu.hcmus.doc.mainservice.model.entity.QIncomingDocument.incomingDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
+import static edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole.processingUserRole;
 
 public class CustomProcessingDocumentRepositoryImpl
     extends DocAbstractCustomRepository<ProcessingDocument>
@@ -230,8 +223,6 @@ public class CustomProcessingDocumentRepositoryImpl
       where.and(incomingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
     }
 
-    User currUser = SecurityUtils.getCurrentUser();
-
     JPAQuery<IncomingDocument> query = selectFrom(incomingDocument)
         .leftJoin(processingDocument)
         .on(incomingDocument.id.eq(processingDocument.incomingDoc.id))
@@ -241,12 +232,6 @@ public class CustomProcessingDocumentRepositoryImpl
             QDistributionOrganization.distributionOrganization)
         .distinct()
         .where(where);
-
-    if (currUser.getRole() != DocSystemRoleEnum.VAN_THU) {
-      query.innerJoin(processingUser)
-          .on(processingUser.processingDocument.id.eq(processingDocument.id)
-              .and(processingUser.user.id.eq(currUser.getId())));
-    }
 
     return query;
   }

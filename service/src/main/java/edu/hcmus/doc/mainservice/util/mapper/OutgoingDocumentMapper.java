@@ -31,6 +31,12 @@ public interface OutgoingDocumentMapper {
   @Mapping(target = "folder", ignore = true)
   @Mapping(target = "documentType", ignore = true)
   @Mapping(target = "publishingDepartment", ignore = true)
+  OutgoingDocument toEntity(OutgoingDocumentGetDto outgoingDocumentDto);
+
+  @Mapping(target = "status", ignore = true)
+  @Mapping(target = "folder", ignore = true)
+  @Mapping(target = "documentType", ignore = true)
+  @Mapping(target = "publishingDepartment", ignore = true)
   OutgoingDocument toEntity(OutgoingDocumentPostDto outgoingDocumentDto);
 
   @Mapping(target = "folder", ignore = true)

@@ -2,6 +2,7 @@ package edu.hcmus.doc.mainservice.controller;
 
 import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.dto.DocPaginationDto;
+import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
@@ -14,19 +15,16 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
+import edu.hcmus.doc.mainservice.model.exception.DocMainServiceRuntimeException;
+import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class OutgoingDocumentController extends DocAbstractController {
   private final OutgoingDocumentService outgoingDocumentService;
   private final ProcessingDocumentService processingDocumentService;
+  private final IncomingDocumentService incomingDocumentService;
 
   @GetMapping("/{id}")
   public OutgoingDocumentGetDto getOutgoingDocument(@PathVariable Long id) {
@@ -101,5 +100,30 @@ public class OutgoingDocumentController extends DocAbstractController {
   @PostMapping("/get-transfer-documents-detail")
   public GetTransferDocumentDetailCustomResponse getTransferDocumentsDetail(@RequestBody GetTransferDocumentDetailRequest request) {
     return processingDocumentService.getTransferDocumentDetail(request, ProcessingDocumentType.OUTGOING_DOCUMENT);
+  }
+
+  @PostMapping("/link-documents/{targetDocumentId}")
+  public void linkDocuments(@PathVariable Long targetDocumentId,
+                            @RequestBody List<IncomingDocumentDto> documents) {
+    if (documents.isEmpty()) {
+      throw new DocMainServiceRuntimeException(DocMainServiceRuntimeException.DOCUMENT_REQUIRED);
+    }
+
+    outgoingDocumentService.linkDocuments(targetDocumentId, documents);
+  }
+
+  @GetMapping("/link-documents/{targetDocumentId}")
+  public List<IncomingDocumentDto> getLinkedDocuments(@PathVariable Long targetDocumentId) {
+    return outgoingDocumentService
+            .getLinkedDocuments(targetDocumentId)
+            .stream()
+            .map(incomingDecoratorDocumentMapper::toDto)
+            .collect(Collectors.toList());
+  }
+
+  @DeleteMapping("/link-documents/{targetDocumentId}")
+  public void deleteLinkedDocuments(@PathVariable Long targetDocumentId,
+                                    @RequestParam Long linkedDocumentId) {
+    outgoingDocumentService.deleteLinkedDocuments(targetDocumentId, linkedDocumentId);
   }
 }

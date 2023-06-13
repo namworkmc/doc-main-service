@@ -18,17 +18,11 @@ import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWith
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentMenuConfig;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentStatisticsDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.StatisticsWrapperDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
-import edu.hcmus.doc.mainservice.model.entity.Folder;
-import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
-import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
-import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
-import edu.hcmus.doc.mainservice.model.entity.ProcessingUserRole;
-import edu.hcmus.doc.mainservice.model.entity.ReturnRequest;
-import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
-import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.entity.*;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
@@ -36,18 +30,8 @@ import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.model.enums.TransferDocumentComponent;
 import edu.hcmus.doc.mainservice.model.enums.TransferDocumentType;
-import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
-import edu.hcmus.doc.mainservice.model.exception.IncomingDocumentNotFoundException;
-import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentException;
-import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentNotFoundException;
-import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
-import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
-import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
-import edu.hcmus.doc.mainservice.repository.ProcessingUserRepository;
-import edu.hcmus.doc.mainservice.repository.ProcessingUserRoleRepository;
-import edu.hcmus.doc.mainservice.repository.ReturnRequestRepository;
-import edu.hcmus.doc.mainservice.repository.TransferHistoryRepository;
-import edu.hcmus.doc.mainservice.repository.UserRepository;
+import edu.hcmus.doc.mainservice.model.exception.*;
+import edu.hcmus.doc.mainservice.repository.*;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.DocumentReminderService;
@@ -67,8 +51,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,6 +89,10 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   private final DocumentReminderService documentReminderService;
 
   private final TransferHistoryRepository transferHistoryRepository;
+
+  private final OutgoingDocumentRepository outgoingDocumentRepository;
+
+  private final LinkedDocumentRepository linkedDocumentRepository;
 
   @Override
   public long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
@@ -339,6 +330,63 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   public User getUserByIdOrThrow(Long userId) {
     return userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException(UserNotFoundException.USER_NOT_FOUND));
+  }
+
+  @Override
+  public void linkDocuments(Long targetDocumentId, List<OutgoingDocumentGetDto> outgoingDocuments) {
+    try {
+      List<OutgoingDocument> outgoingDocumentList = outgoingDocumentRepository
+              .findAllById(outgoingDocuments.stream().map(OutgoingDocumentGetDto::getId)
+                      .collect(Collectors.toList()));
+
+      IncomingDocument targetDocument = findById(targetDocumentId);
+
+      for (OutgoingDocument outgoingDocument : outgoingDocumentList) {
+        LinkedDocument linkedDocument = new LinkedDocument();
+        linkedDocument.setIncomingDocument(targetDocument);
+        linkedDocument.setOutgoingDocument(outgoingDocument);
+        linkedDocumentRepository.save(linkedDocument);
+      }
+    } catch (DataIntegrityViolationException e) {
+        throw new LinkedDocumentExistedException();
+    }
+  }
+
+  @Override
+  public List<OutgoingDocument> getLinkedDocuments(Long sourceDocumentId) {
+    return outgoingDocumentRepository.getDocumentsLinkedToIncomingDocument(sourceDocumentId);
+  }
+
+  @Override
+  public void updateLinkedDocuments(Long targetDocumentId, List<OutgoingDocumentGetDto> outgoingDocuments) {
+    List<OutgoingDocument> outgoingDocumentList = outgoingDocumentRepository
+            .findAllById(outgoingDocuments.stream().map(OutgoingDocumentGetDto::getId)
+                    .collect(Collectors.toList()));
+
+    IncomingDocument targetDocument = findById(targetDocumentId);
+
+    List<OutgoingDocument> linkedDocuments = outgoingDocumentRepository
+            .getDocumentsLinkedToIncomingDocument(targetDocumentId);
+
+    for (OutgoingDocument outgoingDocument : outgoingDocumentList) {
+        if (linkedDocuments.contains(outgoingDocument)) {
+          continue;
+        }
+
+        LinkedDocument linkedDocument = new LinkedDocument();
+        linkedDocument.setIncomingDocument(targetDocument);
+        linkedDocument.setOutgoingDocument(outgoingDocument);
+        linkedDocumentRepository.save(linkedDocument);
+    }
+  }
+
+  @Override
+  public void deleteLinkedDocuments(Long targetDocumentId, Long linkedDocumentId) {
+    LinkedDocument linkedDocument = linkedDocumentRepository.getLinkedDocument(targetDocumentId, linkedDocumentId);
+    if (linkedDocument == null) {
+      throw new DocumentNotFoundException(DocumentNotFoundException.DOCUMENT_NOT_FOUND);
+    }
+    linkedDocumentRepository.delete(linkedDocument);
   }
 
   @Override
