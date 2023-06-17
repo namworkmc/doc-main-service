@@ -6,6 +6,7 @@ import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.entity.*;
 import edu.hcmus.doc.mainservice.repository.custom.CustomOutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
+import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -85,6 +86,10 @@ public class CustomOutgoingDocumentRepositoryImpl
     if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getSummary())) {
       where.and(outgoingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
     }
+
+    User currUser = SecurityUtils.getCurrentUser();
+    where.and(outgoingDocument.createdBy.eq(currUser.getUsername()).or(processingUser.user.id.eq(currUser.getId())));
+
 
     return selectFrom(outgoingDocument)
         .leftJoin(processingDocument)

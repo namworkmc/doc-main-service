@@ -10,10 +10,12 @@ import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
 import edu.hcmus.doc.mainservice.model.entity.*;
+import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
+import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
@@ -67,8 +69,6 @@ public class CustomProcessingDocumentRepositoryImpl
                 incomingDocument.originalSymbolNumber,
                 incomingDocument.arrivingDate,
                 incomingDocument.summary,
-                incomingDocument.sendingLevel.id,
-                incomingDocument.sendingLevel.level,
                 incomingDocument.documentType.id,
                 incomingDocument.documentType.type,
                 incomingDocument.distributionOrg.id,
@@ -94,10 +94,7 @@ public class CustomProcessingDocumentRepositoryImpl
                   .setArrivingDate(tuple.get(incomingDocument.arrivingDate));
               processingDocument.getIncomingDoc().setSummary(tuple.get(incomingDocument.summary));
               processingDocument.getIncomingDoc().initSendingLevel();
-              processingDocument.getIncomingDoc().getSendingLevel()
-                  .setId(tuple.get(incomingDocument.sendingLevel.id));
-              processingDocument.getIncomingDoc().getSendingLevel()
-                  .setLevel(tuple.get(incomingDocument.sendingLevel.level));
+              processingDocument.getIncomingDoc().setSendingLevel(null);
               processingDocument.getIncomingDoc().initDocumentType();
               processingDocument.getIncomingDoc().getDocumentType()
                   .setId(tuple.get(incomingDocument.documentType.id));
@@ -223,15 +220,22 @@ public class CustomProcessingDocumentRepositoryImpl
       where.and(incomingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
     }
 
+    User currUser = SecurityUtils.getCurrentUser();
+
     JPAQuery<IncomingDocument> query = selectFrom(incomingDocument)
         .leftJoin(processingDocument)
         .on(incomingDocument.id.eq(processingDocument.incomingDoc.id))
-        .innerJoin(incomingDocument.sendingLevel, QSendingLevel.sendingLevel)
         .innerJoin(incomingDocument.documentType, QDocumentType.documentType)
         .innerJoin(incomingDocument.distributionOrg,
             QDistributionOrganization.distributionOrganization)
         .distinct()
         .where(where);
+
+    if (currUser.getRole() != DocSystemRoleEnum.VAN_THU) {
+      query.innerJoin(processingUser)
+          .on(processingUser.processingDocument.id.eq(processingDocument.id)
+              .and(processingUser.user.id.eq(currUser.getId())));
+    }
 
     return query;
   }

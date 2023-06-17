@@ -31,6 +31,7 @@ public interface IncomingDocumentMapper {
   @Mapping(source = "distributionDate", target = "distributionDate")
   @Mapping(source = "arrivingDate", target = "arrivingDate")
   @Mapping(source = "arrivingTime", target = "arrivingTime")
+  @Mapping(source = "sendingLevel", target = "sendingLevel", ignore = true)
   IncomingDocumentDto toDto(IncomingDocument incomingDocument);
 
   @Mapping(target = "summary", ignore = true)
