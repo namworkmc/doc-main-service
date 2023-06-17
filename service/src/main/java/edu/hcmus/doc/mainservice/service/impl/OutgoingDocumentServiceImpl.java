@@ -35,6 +35,8 @@ import edu.hcmus.doc.mainservice.util.DocObjectUtils;
 import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
 import edu.hcmus.doc.mainservice.util.mapper.OutgoingDocumentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -62,6 +64,8 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   private final ProcessingDocumentService processingDocumentService;
   private final IncomingDocumentRepository incomingDocumentRepository;
   private final LinkedDocumentRepository linkedDocumentRepository;
+  private final TransferHistoryRepository transferHistoryRepository;
+
 
   @Override
   public OutgoingDocument getOutgoingDocumentById(Long id) {
@@ -262,6 +266,21 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
         transferNewDocuments(transferDocDto, reporter, assignee, collaborators, outgoingDocuments);
       }
     }
+
+    TransferHistory transferHistory = new TransferHistory();
+    transferHistory.setSender(reporter);
+    transferHistory.setReceiver(assignee);
+    transferHistory.setOutgoingDocumentIds(transferDocDto.getDocumentIds());
+    transferHistory.setIsTransferToSameLevel(transferDocDto.getIsTransferToSameLevel());
+    transferHistory.setIsInfiniteProcessingTime(transferDocDto.getIsInfiniteProcessingTime());
+    transferHistory.setProcessMethod(transferDocDto.getProcessMethod());
+    if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
+      transferHistory.setProcessingDuration(LocalDate.parse(
+          Objects.requireNonNull(transferDocDto.getProcessingTime()),
+          DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    }
+    // save transfer history
+    transferHistoryRepository.save(transferHistory);
   }
 
   @Override
