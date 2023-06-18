@@ -10,14 +10,11 @@ import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
 import edu.hcmus.doc.mainservice.model.entity.*;
-import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
-import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -220,8 +217,6 @@ public class CustomProcessingDocumentRepositoryImpl
       where.and(incomingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
     }
 
-    User currUser = SecurityUtils.getCurrentUser();
-
     JPAQuery<IncomingDocument> query = selectFrom(incomingDocument)
         .leftJoin(processingDocument)
         .on(incomingDocument.id.eq(processingDocument.incomingDoc.id))
@@ -230,12 +225,6 @@ public class CustomProcessingDocumentRepositoryImpl
             QDistributionOrganization.distributionOrganization)
         .distinct()
         .where(where);
-
-    if (currUser.getRole() != DocSystemRoleEnum.VAN_THU) {
-      query.innerJoin(processingUser)
-          .on(processingUser.processingDocument.id.eq(processingDocument.id)
-              .and(processingUser.user.id.eq(currUser.getId())));
-    }
 
     return query;
   }

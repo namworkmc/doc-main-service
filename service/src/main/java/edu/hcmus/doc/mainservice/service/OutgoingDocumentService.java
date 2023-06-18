@@ -31,7 +31,7 @@ public interface OutgoingDocumentService {
 
   void transferDocuments(TransferDocDto transferDocDto);
 
-  void linkDocuments(Long targetDocumentId, List<IncomingDocumentDto> documents);
+  void linkDocuments(Long targetDocumentId, List<Long> documents);
 
   List<IncomingDocument> getLinkedDocuments(Long targetDocumentId);
 

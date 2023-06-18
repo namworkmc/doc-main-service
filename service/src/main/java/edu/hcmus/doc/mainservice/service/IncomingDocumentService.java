@@ -48,7 +48,7 @@ public interface IncomingDocumentService {
 
   User getUserByIdOrThrow(Long userId);
 
-  void linkDocuments(Long targetDocumentId, List<OutgoingDocumentGetDto> outgoingDocuments);
+  void linkDocuments(Long targetDocumentId, List<Long> outgoingDocuments);
 
   List<OutgoingDocument> getLinkedDocuments(Long sourceDocumentId);
 

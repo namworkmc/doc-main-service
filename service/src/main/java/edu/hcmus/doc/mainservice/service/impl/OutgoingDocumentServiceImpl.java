@@ -1,29 +1,17 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
-import static edu.hcmus.doc.mainservice.model.enums.MESSAGE.user_has_already_exists_in_the_flow_of_document;
-import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcessingDocument;
-import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.getStepOutgoingDocument;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
-import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentMenuConfig;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
-import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.*;
-import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
-import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
-import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
-import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
-import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
-import edu.hcmus.doc.mainservice.model.enums.TransferDocumentComponent;
-import edu.hcmus.doc.mainservice.model.enums.TransferDocumentType;
+import edu.hcmus.doc.mainservice.model.enums.*;
 import edu.hcmus.doc.mainservice.model.exception.*;
 import edu.hcmus.doc.mainservice.repository.*;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
@@ -35,18 +23,19 @@ import edu.hcmus.doc.mainservice.util.DocObjectUtils;
 import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
 import edu.hcmus.doc.mainservice.util.mapper.OutgoingDocumentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import static edu.hcmus.doc.mainservice.model.enums.MESSAGE.user_has_already_exists_in_the_flow_of_document;
+import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcessingDocument;
+import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.getStepOutgoingDocument;
 
 @RequiredArgsConstructor
 @Service
@@ -64,8 +53,6 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   private final ProcessingDocumentService processingDocumentService;
   private final IncomingDocumentRepository incomingDocumentRepository;
   private final LinkedDocumentRepository linkedDocumentRepository;
-  private final TransferHistoryRepository transferHistoryRepository;
-
 
   @Override
   public OutgoingDocument getOutgoingDocumentById(Long id) {
@@ -266,29 +253,13 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
         transferNewDocuments(transferDocDto, reporter, assignee, collaborators, outgoingDocuments);
       }
     }
-
-    TransferHistory transferHistory = new TransferHistory();
-    transferHistory.setSender(reporter);
-    transferHistory.setReceiver(assignee);
-    transferHistory.setOutgoingDocumentIds(transferDocDto.getDocumentIds());
-    transferHistory.setIsTransferToSameLevel(transferDocDto.getIsTransferToSameLevel());
-    transferHistory.setIsInfiniteProcessingTime(transferDocDto.getIsInfiniteProcessingTime());
-    transferHistory.setProcessMethod(transferDocDto.getProcessMethod());
-    if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
-      transferHistory.setProcessingDuration(LocalDate.parse(
-          Objects.requireNonNull(transferDocDto.getProcessingTime()),
-          DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-    }
-    // save transfer history
-    transferHistoryRepository.save(transferHistory);
   }
 
   @Override
-  public void linkDocuments(Long targetDocumentId, List<IncomingDocumentDto> documents) {
+  public void linkDocuments(Long targetDocumentId, List<Long> documents) {
     try {
       List<IncomingDocument> incomingDocumentList = incomingDocumentRepository
-              .findAllById(documents.stream().map(IncomingDocumentDto::getId)
-                      .collect(Collectors.toList()));
+              .findAllById(documents);
 
       OutgoingDocument targetDocument = getOutgoingDocumentById(targetDocumentId);
 

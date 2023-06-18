@@ -333,11 +333,10 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   }
 
   @Override
-  public void linkDocuments(Long targetDocumentId, List<OutgoingDocumentGetDto> outgoingDocuments) {
+  public void linkDocuments(Long targetDocumentId, List<Long> outgoingDocuments) {
     try {
       List<OutgoingDocument> outgoingDocumentList = outgoingDocumentRepository
-              .findAllById(outgoingDocuments.stream().map(OutgoingDocumentGetDto::getId)
-                      .collect(Collectors.toList()));
+              .findAllById(outgoingDocuments);
 
       IncomingDocument targetDocument = findById(targetDocumentId);
 

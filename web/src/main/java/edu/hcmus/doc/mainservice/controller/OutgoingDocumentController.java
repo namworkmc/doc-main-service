@@ -104,7 +104,7 @@ public class OutgoingDocumentController extends DocAbstractController {
 
   @PostMapping("/link-documents/{targetDocumentId}")
   public void linkDocuments(@PathVariable Long targetDocumentId,
-                            @RequestBody List<IncomingDocumentDto> documents) {
+                            @RequestBody List<Long> documents) {
     if (documents.isEmpty()) {
       throw new DocMainServiceRuntimeException(DocMainServiceRuntimeException.DOCUMENT_REQUIRED);
     }
