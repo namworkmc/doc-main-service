@@ -8,8 +8,10 @@ import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUserRole;
 import edu.hcmus.doc.mainservice.model.entity.ReturnRequest;
+import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -75,6 +77,44 @@ public class TransferDocumentUtils {
       default -> step = 1;
     }
     return step;
+  }
+
+  /**
+   * Create transfer history base on transfer type
+   *
+   * @param reporter User
+   * @param assignee User
+   * @param transferDocDto TransferDocDto
+   * @return TransferHistory
+   */
+  public static TransferHistory createTransferHistory(User reporter, User assignee,
+      TransferDocDto transferDocDto, ProcessingDocumentType transferType) {
+    TransferHistory transferHistory = new TransferHistory();
+    transferHistory.setSender(reporter);
+    transferHistory.setReceiver(assignee);
+    transferHistory.setIsTransferToSameLevel(transferDocDto.getIsTransferToSameLevel());
+
+    if (transferType == ProcessingDocumentType.INCOMING_DOCUMENT) {
+      transferHistory.setIncomingDocumentIds(transferDocDto.getDocumentIds());
+
+      if (transferDocDto.getIsTransferToSameLevel()) {
+        transferHistory.setIsInfiniteProcessingTime(true);
+        return transferHistory;
+      }
+    } else {
+      transferHistory.setOutgoingDocumentIds(transferDocDto.getDocumentIds());
+    }
+
+    // set transfer history info
+    transferHistory.setIsInfiniteProcessingTime(transferDocDto.getIsInfiniteProcessingTime());
+    transferHistory.setProcessMethod(transferDocDto.getProcessMethod());
+    if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
+      transferHistory.setProcessingDuration(LocalDate.parse(
+          Objects.requireNonNull(transferDocDto.getProcessingTime()),
+          DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    }
+
+    return transferHistory;
   }
 
   public static ProcessingDocument createProcessingDocument(IncomingDocument incomingDocument,
