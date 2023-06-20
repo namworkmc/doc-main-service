@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: doc-file-service-config
+data:
+  doc-file-service-server-port: "8081"
+  doc-file-service-data-source-url: "jdbc:postgresql://18.138.129.181:5432/alfresco"
+  alfresco-db-host: "18.138.129.181"
+  alfresco-database: "alfresco"
+  doc-file-service-datasource-username: "alfresco"
+  doc-file-service-datasource-password: "alfresco"
+  doc-file-service-broker-url: "tcp://18.138.129.181:61616"
+  doc-file-service-rabbitmq-host: "13.215.56.216"
+  doc-file-service-rabbitmq-port: "5672"
+  doc-file-service-rabbitmq-username: "guest"
+  doc-file-service-content-service-security-basicauth-username: "admin"
+  doc-file-service-content-service-url: "http://18.138.129.181:8181"
+  doc-file-service-content-service-path: "/alfresco/api/-default-/public/alfresco/versions/1"
+  doc-file-service-content-service-search-path: "/alfresco/api/-default-/public/search/versions/1"
+  doc-file-service-alfresco-default-site-id: "hcmus-k19-doc"
+  doc-file-service-alfresco-default-site-title: "HCMUS-K19-DOC"
+  doc-file-service-alfresco-default-site-description: "HCMUS-K19-DOC"
+  doc-file-service-alfresco-default-site-visibility: "PRIVATE"
+  doc-file-service-aws-s3-region: "ap-southeast-1"
+  doc-file-service-aws-s3-bucket-name: "prj-doc-attachments"

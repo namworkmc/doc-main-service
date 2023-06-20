@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: doc-db-config
+data:
+  host: "rds-terraform.cjdkg26tuejl.ap-southeast-1.rds.amazonaws.com"
+  port: "5432"
+  db-name: "doc"

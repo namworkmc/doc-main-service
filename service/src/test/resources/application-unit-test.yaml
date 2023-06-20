@@ -2,16 +2,13 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/doc?stringtype=unspecified
-    username: admin
-    password: admin
     driver-class-name: org.postgresql.Driver
 
   security:
@@ -29,6 +26,17 @@ spring:
       exchange: doc.exchange
       routing-key: doc.routingkey
       attachment-routing-key: doc.attachment-routing-key
+
+  main:
+    allow-circular-references: true
+
+  liquibase:
+    driver-class-name: org.postgresql.Driver
+    change-log: classpath:db.changelog-master.xml
+    database-change-log-lock-table: database_changelog_lock
+    database-change-log-table: database_changelog
+    enabled: true
+    drop-first: true
 
 logging:
   level:

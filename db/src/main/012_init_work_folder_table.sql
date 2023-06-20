@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:012
+
 SET SEARCH_PATH TO doc_main;
 
 CREATE TABLE "work_folder"

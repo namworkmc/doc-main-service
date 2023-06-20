@@ -1,0 +1,63 @@
+server:
+  port: ${DOC_MAIN_SERVICE_SERVER_PORT}
+
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  datasource:
+    url: jdbc:postgresql://${DOC_DB_HOST}:${DOC_DB_PORT}/${DOC_DATABASE}?stringtype=unspecified
+    username: ${DOC_MAIN_SERVICE_DATASOURCE_USERNAME}
+    password: ${DOC_MAIN_SERVICE_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${DOC_MAIN_SERVICE_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
+
+  rabbitmq:
+    host: ${DOC_MAIN_SERVICE_RABBITMQ_HOST}
+    port: ${DOC_MAIN_SERVICE_RABBITMQ_PORT}
+    username: ${DOC_MAIN_SERVICE_RABBITMQ_USERNAME}
+    password: ${DOC_MAIN_SERVICE_RABBITMQ_PASSWORD}
+    template:
+      exchange: ${DOC_MAIN_SERVICE_RABBITMQ_TEMPLATE_EXCHANGE}
+      routing-key: ${DOC_MAIN_SERVICE_RABBITMQ_TEMPLATE_ROUTING_KEY}
+      attachment-routing-key: ${DOC_MAIN_SERVICE_RABBITMQ_TEMPLATE_ATTACHMENT_ROUTING_KEY}
+
+  main:
+    allow-circular-references: true
+
+  liquibase:
+    url: jdbc:postgresql://${DOC_DB_HOST}:${DOC_DB_PORT}/${DOC_DATABASE}?stringtype=unspecified
+    user: ${DOC_MAIN_SERVICE_DATASOURCE_USERNAME}
+    password: ${DOC_MAIN_SERVICE_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    change-log: classpath:db.changelog-master.xml
+    database-change-log-lock-table: database_changelog_lock
+    database-change-log-table: database_changelog
+    enabled: ${DOC_MAIN_SERVICE_LIQUIBASE_ENABLED}
+    drop-first: ${DOC_MAIN_SERVICE_LIQUIBASE_DROP_FIRST}
+
+logging:
+  level:
+    sql: info
+
+doc:
+  http:
+    auth-token-header-name: DOC-Auth-Token
+    auth-token: ${DOC_MAIN_SERVICE_HTTP_AUTH_TOKEN}
+
+keycloak:
+  url: ${DOC_MAIN_SERVICE_KEYCLOAK_URL}
+  scope: ${DOC_MAIN_SERVICE_KEYCLOAK_SCOPE}
+  client-id: ${DOC_MAIN_SERVICE_KEYCLOAK_CLIENT_ID}
+  client-secret: ${DOC_MAIN_SERVICE_KEYCLOAK_CLIENT_SECRET}

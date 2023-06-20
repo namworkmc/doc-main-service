@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:033
+
 SET SEARCH_PATH TO doc_main;
 
 -- Update user5 to user10 password to 'user1'

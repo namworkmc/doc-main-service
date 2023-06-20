@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:009
+
 SET SEARCH_PATH TO doc_main;
 
 ALTER TABLE INCOMING_DOCUMENT ALTER COLUMN IS_DELETED DROP NOT NULL;

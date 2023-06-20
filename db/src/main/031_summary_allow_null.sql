@@ -1,3 +1,5 @@
+--liquibase formatted sql
+--changeset doc:031
 
 SET SEARCH_PATH TO doc_main;
 

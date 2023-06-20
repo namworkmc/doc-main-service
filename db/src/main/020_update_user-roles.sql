@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:020
+
 SET SEARCH_PATH TO doc_main;
 
 ALTER TABLE user_role

@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:038
+
 SET SEARCH_PATH TO doc_main;
 
 CREATE TABLE doc_main.transfer_history (

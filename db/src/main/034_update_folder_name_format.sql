@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:034
+
 SET SEARCH_PATH TO doc_main;
 
 UPDATE "folder" SET "folder_name" = 'Sổ văn bản đi' WHERE "id" = 1;

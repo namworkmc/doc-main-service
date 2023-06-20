@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:029
+
 SET SEARCH_PATH TO doc_main;
 
 DROP TABLE "user_role";

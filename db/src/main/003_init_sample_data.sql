@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:003
+
 SET SEARCH_PATH TO "doc_main";
 
 INSERT INTO "document_type" ("type", "created_by", "updated_by")

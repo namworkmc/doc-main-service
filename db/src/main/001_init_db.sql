@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:001
+
 DROP SCHEMA IF EXISTS doc_main CASCADE;
 
 CREATE SCHEMA doc_main;

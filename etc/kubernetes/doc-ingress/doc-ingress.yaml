@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: doc-ingress
+  annotations:
+    konghq.com/strip-path: "true"
+spec:
+  ingressClassName: kong
+  rules:
+    - host: prj-doc
+      http:
+        paths:
+#          - path: /
+#            pathType: Prefix
+#            backend:
+#              service:
+#                name: doc-keycloak
+#                port:
+#                  number: 8180
+
+          - path: /doc-rabbitmq
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: doc-rabbitmq
+                port:
+                  number: 15672
+
+          - path: /doc-main-service
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: doc-main-service
+                port:
+                  number: 8080
+
+          - path: /doc-front
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: doc-front
+                port:
+                  number: 3000

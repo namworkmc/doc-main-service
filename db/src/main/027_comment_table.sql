@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:027
+
 SET SEARCH_PATH TO doc_main;
 
 CREATE TABLE "comment"

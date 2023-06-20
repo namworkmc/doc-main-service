@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:016
+
 SET SEARCH_PATH TO doc_main;
 
 INSERT INTO "incoming_document"

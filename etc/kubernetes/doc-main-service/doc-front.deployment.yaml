@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doc-front
+  labels:
+    app: doc-front
+    tier: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doc-front
+  template:
+    metadata:
+      labels:
+        app: doc-front
+        tier: client
+    spec:
+      containers:
+        - name: doc-front
+          image: hcmusdoc/doc-front:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: doc-front
+  labels:
+    app: doc-front
+    tier: client
+spec:
+  selector:
+    app: doc-front
+  ports:
+    - port: 3000
+      targetPort: 3000

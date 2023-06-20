@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:013
+
 SET SEARCH_PATH TO doc_main;
 
 ALTER TABLE "user" ADD COLUMN "full_name" VARCHAR(255);

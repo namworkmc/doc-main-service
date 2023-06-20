@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pv-claim
+  name: doc-keycloak-pv-claim
   labels:
-    app: doc-main-postgres
+    app: doc-keycloak-db
     tier: database
 spec:
   accessModes:
@@ -17,9 +17,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: doc-main-data-pv-claim
+  name: doc-keycloak-data-pv-claim
   labels:
-    app: doc-main-postgres
+    app: doc-keycloak-db
     tier: database
 spec:
   accessModes:
@@ -33,26 +33,25 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: doc-main-postgres
+  name: doc-keycloak-db
   labels:
-    app: doc-main-postgres
+    app: doc-keycloak-db
     tier: database
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: doc-main-postgres
+      app: doc-keycloak-db
       tier: database
   template:
     metadata:
       labels:
-        app: doc-main-postgres
+        app: doc-keycloak-db
         tier: database
     spec:
       containers:
-        - name: doc-main-postgres
-          image: hcmusdoc/doc-main-postgres
-          imagePullPolicy: Never
+        - name: doc-keycloak-db
+          image: postgres:15.1-alpine3.17
           ports:
             - containerPort: 5432
               name: postgres
@@ -60,48 +59,51 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  key: doc-main-postgres-username
-                  name: doc-main-postgres-secret
+                  name: doc-keycloak-secret
+                  key: keycloak-db-username
 
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: doc-main-postgres-password
-                  name: doc-main-postgres-secret
+                  name: doc-keycloak-secret
+                  key: keycloak-db-password
 
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
-                  key: db-name
-                  name: doc-main-postgres-config
+                  name: doc-keycloak-config
+                  key: keycloak-database-name
 
             - name: PGDATA
               value: /data/postgres
+
           volumeMounts:
             - name: postgres-persistent-storage
               mountPath: /var/lib/postgresql
+
             - name: doc-main-data
               mountPath: /data/postgres
+
       volumes:
         - name: postgres-persistent-storage
           persistentVolumeClaim:
-            claimName: postgres-pv-claim
+            claimName: doc-keycloak-pv-claim
         - name: doc-main-data
           persistentVolumeClaim:
-            claimName: doc-main-data-pv-claim
+            claimName: doc-keycloak-data-pv-claim
 
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: doc-main-postgres # DNS
+  name: doc-keycloak-db # DNS
   labels:
-    app: doc-main-postgres
+    app: doc-keycloak-db
     tier: database
 spec:
   selector:
-    app: doc-main-postgres
+    app: doc-keycloak-db
     tier: database
   ports:
     - port: 5432

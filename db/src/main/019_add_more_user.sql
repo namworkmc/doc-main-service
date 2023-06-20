@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:019
+
 SET SEARCH_PATH TO "doc_main";
 
 INSERT INTO "user" ("username", "password", "email", "full_name", created_by, updated_by)

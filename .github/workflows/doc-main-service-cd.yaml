@@ -5,7 +5,7 @@ name: DOC build and push to Docker Hub
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, deployment ]
 
 jobs:
   build:

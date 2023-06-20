@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:008
+
 SET SEARCH_PATH TO "doc_main";
 
 UPDATE "incoming_document" SET "arriving_date" = CURRENT_DATE + "id";

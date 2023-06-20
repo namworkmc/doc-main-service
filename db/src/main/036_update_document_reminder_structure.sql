@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:036
+
 SET SEARCH_PATH TO doc_main;
 
 ALTER TABLE "document_reminder"

@@ -5,10 +5,11 @@ metadata:
   labels:
     deployment: local
 data:
-  doc-main-service-keycloak-url: http://doc-keycloak:8180/realms/doc-realm/protocol/openid-connect
-  doc-main-service-keycloak-scope: openid
-  doc-main-service-keycloak-client-id: doc-client
+  keycloak-url: "http://doc-keycloak:8180/realms/doc-realm/protocol/openid-connect"
+  keycloak-scope: "openid"
+  keycloak-client-id: "doc-client"
+  oauth2-resourceserver-jwt-issuer-uri: "http://doc-keycloak:8180/realms/doc-realm"
   keycloak-http-port: "8180"
-  keycloak-database-host: doc-main-postgres
-  keycloak-database-port: "5432"
-  keycloak-database-name: doc-keycloak-db
+  keycloak-db-host: "doc-keycloak-db"
+  keycloak-db-port: "5432"
+  keycloak-database-name: "doc-keycloak-db"

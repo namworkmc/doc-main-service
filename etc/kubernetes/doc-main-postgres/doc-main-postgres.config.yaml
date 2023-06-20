@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: doc-main-postgres-config
-data:
-  host: doc-main-postgres
-  db-name: doc

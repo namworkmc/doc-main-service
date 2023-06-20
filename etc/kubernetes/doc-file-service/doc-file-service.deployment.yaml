@@ -1,0 +1,221 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doc-file-service
+  labels:
+    app: doc-file-service
+    tier: service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doc-file-service
+  template:
+    metadata:
+      labels:
+        app: doc-file-service
+        tier: service
+    spec:
+      containers:
+        - name: doc-file-service
+          image: hcmusdoc/doc-file-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          env:
+            - name: DOC_FILE_SERVICE_SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-server-port
+
+            - name: DOC_FILE_SERVICE_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-keycloak-config
+                  key: oauth2-resourceserver-jwt-issuer-uri
+
+            - name: DOC_FILE_SERVICE_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-data-source-url
+
+            - name: ALFRESCO_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: alfresco-db-host
+
+            - name: ALFRESCO_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: alfresco-database
+
+            - name: DOC_FILE_SERVICE_DATASOURCE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-datasource-username
+
+            - name: DOC_FILE_SERVICE_DATASOURCE_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-datasource-password
+
+            - name: DOC_FILE_SERVICE_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-broker-url
+
+            - name: DOC_FILE_SERVICE_RABBITMQ_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-rabbitmq-config
+                  key: rabbitmq-host
+
+            - name: DOC_FILE_SERVICE_RABBITMQ_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-rabbitmq-config
+                  key: rabbitmq-port
+
+            - name: DOC_FILE_SERVICE_RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: doc-rabbitmq-secret
+                  key: username
+
+            - name: DOC_FILE_SERVICE_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: doc-rabbitmq-secret
+                  key: password
+
+            - name: DOC_FILE_SERVICE_RABBITMQ_TEMPLATE_EXCHANGE
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-rabbitmq-config
+                  key: rabbitmq-template-exchange
+
+            - name: DOC_FILE_SERVICE_RABBITMQ_TEMPLATE_ROUTING_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-rabbitmq-config
+                  key: rabbitmq-template-routing-key
+
+            - name: DOC_FILE_SERVICE_RABBITMQ_TEMPLATE_DEFAULT_RECEIVE_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: doc-file-service-secret
+                  key: doc-file-service-rabbitmq-template-default-receive-queue
+
+            - name: DOC_FILE_SERVICE_RABBITMQ_TEMPLATE_ATTACHMENT_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: doc-file-service-secret
+                  key: doc-file-service-rabbitmq-template-attachment-queue
+
+            - name: DOC_FILE_SERVICE_RABBITMQ_TEMPLATE_ATTACHMENT_ROUTING_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-rabbitmq-config
+                  key: rabbitmq-template-attachment-routing-key
+
+            - name: DOC_FILE_SERVICE_CONTENT_SERVICE_SECURITY_BASICAUTH_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-content-service-security-basicauth-username
+
+            - name: DOC_FILE_SERVICE_CONTENT_SERVICE_SECURITY_BASICAUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: doc-file-service-secret
+                  key: doc-file-service-content-service-security-basicauth-password
+
+            - name: DOC_FILE_SERVICE_CONTENT_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-content-service-url
+
+            - name: DOC_FILE_SERVICE_CONTENT_SERVICE_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-content-service-path
+
+            - name: DOC_FILE_SERVICE_CONTENT_SERVICE_SEARCH_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-content-service-search-path
+
+            - name: DOC_FILE_SERVICE_ALFRESCO_DEFAULT_SITE_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-alfresco-default-site-id
+
+            - name: DOC_FILE_SERVICE_ALFRESCO_DEFAULT_SITE_TITLE
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-alfresco-default-site-title
+
+            - name: DOC_FILE_SERVICE_ALFRESCO_DEFAULT_SITE_DESCRIPTION
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-alfresco-default-site-description
+
+            - name: DOC_FILE_SERVICE_ALFRESCO_DEFAULT_SITE_VISIBILITY
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-alfresco-default-site-visibility
+
+            - name: DOC_FILE_SERVICE_AWS_S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: doc-file-service-secret
+                  key: doc-file-service-aws-s3-access-key
+
+            - name: DOC_FILE_SERVICE_AWS_S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: doc-file-service-secret
+                  key: doc-file-service-aws-s3-secret-key
+
+            - name: DOC_FILE_SERVICE_AWS_S3_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-aws-s3-region
+
+            - name: DOC_FILE_SERVICE_AWS_S3_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-file-service-config
+                  key: doc-file-service-aws-s3-bucket-name
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: doc-file-service
+  labels:
+    app: doc-file-service
+    tier: service
+spec:
+  selector:
+    app: doc-file-service
+    tier: service
+  ports:
+    - port: 8081
+      targetPort: 8081

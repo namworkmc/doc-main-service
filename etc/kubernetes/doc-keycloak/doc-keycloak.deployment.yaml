@@ -18,48 +18,80 @@ spec:
     spec:
       containers:
         - name: doc-keycloak-service
-          image: hcmusdoc/doc-keycloak:bitnami-20.0.3
+          image: hcmusdoc/doc-keycloak:latest
           imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              port: 8180
+              path: /health/live
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          args: [ "start-dev", "--import-realm", "--cache-stack=kubernetes" ]
           ports:
             - containerPort: 8180
           env:
-            - name: KEYCLOAK_ADMIN_USER
-              value: admin
+            - name: KEYCLOAK_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: doc-keycloak-secret
+                  key: keycloak-admin-user
+
             - name: KEYCLOAK_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: doc-keycloak-secret
                   key: keycloak-admin-password
-            - name: KEYCLOAK_HTTP_PORT
+
+            - name: KC_FILE
+              value: /opt/keycloak/data/import/deployment-realm.json
+
+            - name: KC_HTTP_PORT
               valueFrom:
                 configMapKeyRef:
                   name: doc-keycloak-config
                   key: keycloak-http-port
-            - name: KEYCLOAK_DATABASE_HOST
+
+            - name: KC_DB_URL_HOST
               valueFrom:
                 configMapKeyRef:
                   name: doc-keycloak-config
-                  key: keycloak-database-host
-            - name: KEYCLOAK_DATABASE_PORT
+                  key: keycloak-db-host
+
+            - name: KC_DB_URL_PORT
               valueFrom:
                 configMapKeyRef:
                   name: doc-keycloak-config
-                  key: keycloak-database-port
-            - name: KEYCLOAK_DATABASE_NAME
+                  key: keycloak-db-port
+
+            - name: KC_DB_URL_DATABASE
               valueFrom:
                 configMapKeyRef:
                   name: doc-keycloak-config
                   key: keycloak-database-name
-            - name: KEYCLOAK_DATABASE_USER
+
+            - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: doc-keycloak-secret
-                  key: keycloak-database-user
-            - name: KEYCLOAK_DATABASE_PASSWORD
+                  key: keycloak-db-username
+
+            - name: KC_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: doc-keycloak-secret
-                  key: keycloak-database-password
+                  key: keycloak-db-password
+
+            - name: KC_DB_VENDOR
+              value: POSTGRES
+
+            - name: KC_DB
+              value: postgres
+
+            - name: KC_HEALTH_ENABLED
+              value: "true"
+
+            - name: KC_METRICS_ENABLED
+              value: "true"
 
 ---
 

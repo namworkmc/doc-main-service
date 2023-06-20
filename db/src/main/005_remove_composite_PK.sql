@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:005
+
 SET SEARCH_PATH TO doc_main;
 
 -- processing_user_role table

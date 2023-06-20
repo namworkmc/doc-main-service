@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:022
+
 SET SEARCH_PATH TO doc_main;
 
 ALTER TABLE "doc_base_table"

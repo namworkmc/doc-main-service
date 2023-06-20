@@ -1,4 +1,0 @@
-doc:
-  schedule:
-    # At 12:00 AM, on day 1 of the month, only in January
-    reset-folder-next-number-cron: 0 0 0 1 JAN ?

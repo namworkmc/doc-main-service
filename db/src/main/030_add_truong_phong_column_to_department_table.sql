@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:030
+
 SET SEARCH_PATH TO doc_main;
 
 ALTER TABLE "department" ADD COLUMN "truong_phong_id" BIGINT;
