@@ -12,16 +12,13 @@
   <include id="005" file="005_remove_composite_PK.sql" relativeToChangelogFile="true" />
   <include id="006" file="006_change_comment_col_name.sql" relativeToChangelogFile="true" />
   <include id="007" file="007_add_unprocessed_enum.sql" relativeToChangelogFile="true" />
-  <include id="008" file="008_update_income_doc_data.sql" relativeToChangelogFile="true" />
   <include id="009" file="009_allow_null_field_docin.sql" relativeToChangelogFile="true" />
   <include id="010" file="010_init_folder_table.sql" relativeToChangelogFile="true" />
   <include id="011" file="011_alter_docin_folder_col.sql" relativeToChangelogFile="true" />
   <include id="012" file="012_init_work_folder_table.sql" relativeToChangelogFile="true" />
   <include id="013" file="013_update_users_name.sql" relativeToChangelogFile="true" />
   <include id="014" file="014_init_attachment_table.sql" relativeToChangelogFile="true" />
-  <changeSet id="016" author="doc" dbms="postgresql">
-    <sqlFile path="/016_add_more_sample_data.sql" splitStatements="false" />
-  </changeSet>
+  <include id="016" file="016_change_type_to_vietnamese.sql" relativeToChangelogFile="true" />
   <include id="017" file="017_add_mime_type.sql" relativeToChangelogFile="true" />
   <include id="018" file="018_update_processing_document_role.sql" relativeToChangelogFile="true" />
   <include id="019" file="019_add_more_user.sql" relativeToChangelogFile="true" />
@@ -45,4 +42,6 @@
   <include id="037" file="037_update_incoming_folder.sql" relativeToChangelogFile="true" />
   <include id="038" file="038_create_transfer_history_table.sql" relativeToChangelogFile="true" />
   <include id="039" file="039_update_incoming_and_outgoing_document_table.sql" relativeToChangelogFile="true" />
+  <include id="041" file="040_update_users_test_info.sql" relativeToChangelogFile="true" />
+  <include id="041" file="041_add_title_col_for_user.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>

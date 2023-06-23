@@ -4,10 +4,10 @@
 SET SEARCH_PATH TO "doc_main";
 
 INSERT INTO "user" ("username", "password", "email", created_by, updated_by)
-VALUES ('user1', '$2a$10$fXwepveGHZt1poxgYBO7hecLyScDmnlV5c933nTGgN7bsUSk5RPb6', 'user1', 1, 1),
-       ('user2', '$2a$10$/Kwg1KTowgmtaFtatV6ljuxnI5Gk9AivN21tMgr/s25p0TPPf/RU2', 'user2', 1, 1),
-       ('user3', '$2a$10$eilqmQpAFBxreqDswnbrnOJ6Oxk2thKVOfNX0nuOqItztazfiL2fK', 'user3', 1, 1),
-       ('user4', '$2a$10$n0htghT1k.wKSyDsqRh9tOG2Fb6AOMJXkYMAl6WjBYXagyosr.cOG', 'user4', 1, 1);
+VALUES ('user1', '$2a$10$fXwepveGHZt1poxgYBO7hecLyScDmnlV5c933nTGgN7bsUSk5RPb6', 'user1', 'DOC_ADMIN', 'DOC_ADMIN'),
+       ('user2', '$2a$10$/Kwg1KTowgmtaFtatV6ljuxnI5Gk9AivN21tMgr/s25p0TPPf/RU2', 'user2', 'DOC_ADMIN', 'DOC_ADMIN'),
+       ('user3', '$2a$10$eilqmQpAFBxreqDswnbrnOJ6Oxk2thKVOfNX0nuOqItztazfiL2fK', 'user3', 'DOC_ADMIN', 'DOC_ADMIN'),
+       ('user4', '$2a$10$n0htghT1k.wKSyDsqRh9tOG2Fb6AOMJXkYMAl6WjBYXagyosr.cOG', 'user4', 'DOC_ADMIN', 'DOC_ADMIN');
 
 INSERT INTO "doc_system_role" ("name", created_by, updated_by)
 VALUES ('DIRECTOR', 1, 1),

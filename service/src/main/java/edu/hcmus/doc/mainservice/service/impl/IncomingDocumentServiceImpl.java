@@ -428,7 +428,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
         settings.setDefaultTransferDocumentType(TRANSFER_TO_GIAM_DOC);
         settings.setDefaultComponentKey(TransferDocumentComponent.TRANSFER_TO_GIAM_DOC.value);
       }
-      case GIAM_DOC -> {
+      case HIEU_TRUONG -> {
         menuConfigs.add(TransferDocumentMenuConfig.builder()
             .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
                 MESSAGE.transfer_document_to_giam_doc_type_label))

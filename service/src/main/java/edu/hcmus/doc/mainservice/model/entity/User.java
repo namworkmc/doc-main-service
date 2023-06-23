@@ -50,6 +50,9 @@ public class User extends DocAbstractIdEntity {
   @JoinColumn(name = "department_id", referencedColumnName = "id")
   private Department department;
 
+  @Column(name = "role_title")
+  private String roleTitle;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

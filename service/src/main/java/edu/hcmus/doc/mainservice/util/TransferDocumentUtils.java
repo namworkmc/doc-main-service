@@ -27,7 +27,7 @@ public class TransferDocumentUtils {
         step = 1;
 //        }
         break;
-      case GIAM_DOC:
+      case HIEU_TRUONG:
         if (isCreate) {
           step = 2;
         } else {
@@ -65,7 +65,7 @@ public class TransferDocumentUtils {
           step = 1;
         }
       }
-      case GIAM_DOC -> {
+      case HIEU_TRUONG -> {
         if (isCreate) {
           step = 3;
         } else {

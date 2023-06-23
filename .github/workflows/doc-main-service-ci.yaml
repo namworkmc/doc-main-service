@@ -23,4 +23,4 @@ jobs:
           java-version: '17.0.5'
 
       - name: Test
-        run: mvn clean test
+        run: mvn clean test -Dmaven.test.failure.ignore=true

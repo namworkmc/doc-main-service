@@ -4,6 +4,7 @@ import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -26,4 +27,8 @@ public class UserDto extends DocAbstractDto {
 
   @NotNull(message = "user.detail.department_required")
   private DepartmentDto department;
+
+  @NotNull(message = "user.detail.role_title_required")
+  @Size(min = 1, max = 200, message = "user.detail.role_title_invalid")
+  private String roleTitle;
 }

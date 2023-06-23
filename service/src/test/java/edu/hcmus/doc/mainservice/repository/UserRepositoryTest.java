@@ -23,7 +23,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setUsername("test");
     user.setEmail("test");
     user.setPassword(passwordEncoder.encode("test"));
-    user.setRole(DocSystemRoleEnum.GIAM_DOC);
+    user.setRole(DocSystemRoleEnum.HIEU_TRUONG);
     userRepository.save(user);
 
     // When
@@ -43,7 +43,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setUsername("test");
     user.setEmail("test");
     user.setPassword(passwordEncoder.encode("test"));
-    user.setRole(DocSystemRoleEnum.GIAM_DOC);
+    user.setRole(DocSystemRoleEnum.HIEU_TRUONG);
     userRepository.save(user);
 
     // When
@@ -87,7 +87,7 @@ class UserRepositoryTest extends DocAbstractRepositoryTest {
     user.setUsername(email);
     user.setEmail(email);
     user.setPassword(passwordEncoder.encode(email));
-    user.setRole(DocSystemRoleEnum.GIAM_DOC);
+    user.setRole(DocSystemRoleEnum.HIEU_TRUONG);
     userRepository.save(user);
 
     // When
