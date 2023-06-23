@@ -34,7 +34,15 @@ spec:
                 port:
                   number: 8080
 
-          - path: /doc-front
+          - path: /doc-file-service
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: doc-file-service
+                port:
+                  number: 8081
+
+          - path: /doc
             pathType: ImplementationSpecific
             backend:
               service:
