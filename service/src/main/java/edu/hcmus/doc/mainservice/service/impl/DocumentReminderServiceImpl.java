@@ -65,10 +65,10 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
                     DocumentReminderDetailsDto dto = new DocumentReminderDetailsDto();
                     dto.setId(processingDocument.getId());
                     dto.setVersion(processingDocument.getVersion());
-                    dto.setIncomingNumber(processingDocument.getIncomingDoc().getIncomingNumber());
+                    dto.setDocumentNumber(processingDocument.getIncomingDoc().getIncomingNumber());
                     dto.setSummary(processingDocument.getIncomingDoc().getSummary());
                     dto.setExpirationDate(processingEntry.getKey());
-                    dto.setIncomingDocumentId(processingDocument.getId());
+                    dto.setDocumentId(processingDocument.getId());
                     return dto;
                   })
                   .collect(Collectors.toSet()))

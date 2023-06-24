@@ -43,4 +43,12 @@ public class ProcessingDocument extends DocAbstractIdEntity {
       this.incomingDoc = new IncomingDocument();
     }
   }
+
+  public boolean isIncomingDocument() {
+    return this.incomingDoc != null;
+  }
+
+  public boolean isOutgoingDocument() {
+    return !isIncomingDocument();
+  }
 }

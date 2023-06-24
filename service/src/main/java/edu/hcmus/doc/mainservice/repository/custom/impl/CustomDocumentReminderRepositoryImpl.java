@@ -10,6 +10,10 @@ import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingU
 import edu.hcmus.doc.mainservice.model.entity.DocumentReminder;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.QDocumentReminder;
+import edu.hcmus.doc.mainservice.model.entity.QIncomingDocument;
+import edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument;
+import edu.hcmus.doc.mainservice.model.entity.QProcessingDocument;
+import edu.hcmus.doc.mainservice.model.entity.QProcessingUser;
 import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
 import edu.hcmus.doc.mainservice.repository.custom.CustomDocumentReminderRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
@@ -42,19 +46,23 @@ public class CustomDocumentReminderRepositoryImpl
 
   @Override
   public Map<DocumentReminderStatusEnum, Set<ProcessingDocument>> getDocumentReminderDetailByUserIdAndTime(Long userId, LocalDate date) {
-    return selectFrom(qDocumentReminder)
-        .innerJoin(processingUser)
-        .on(qDocumentReminder.processingUser.id.eq(processingUser.id))
+    QProcessingUser qProcessingUser = new QProcessingUser(qDocumentReminder.processingUser.getMetadata().getName());
+    QProcessingDocument qProcessingDocument = new QProcessingDocument(qProcessingUser.processingDocument.getMetadata().getName());
+    QIncomingDocument qIncomingDocument = new QIncomingDocument(qProcessingDocument.incomingDoc.getMetadata().getName());
+    QOutgoingDocument qOutgoingDocument = new QOutgoingDocument(qProcessingDocument.outgoingDocument.getMetadata().getName());
+
+    return selectFrom(qDocumentReminder, qIncomingDocument, qOutgoingDocument)
+        .innerJoin(qProcessingUser).on(qDocumentReminder.processingUser.id.eq(qProcessingUser.id))
         .fetchJoin()
-        .innerJoin(processingDocument)
-        .on(processingDocument.id.eq(processingUser.processingDocument.id))
+        .innerJoin(qProcessingDocument).on(qProcessingDocument.id.eq(qProcessingUser.processingDocument.id))
         .fetchJoin()
-        .innerJoin(incomingDocument)
-        .on(processingDocument.incomingDoc.id.eq(incomingDocument.id))
-        .fetchJoin()
-        .where(processingUser.user.id.eq(userId)
-            .and(qDocumentReminder.expirationDate.eq(date)))
-        .transform(groupBy(qDocumentReminder.status).as(set(processingDocument)));
+        .where(qProcessingUser.user.id.eq(userId)
+            .and(qDocumentReminder.expirationDate.eq(date))
+            .and(
+                qProcessingDocument.incomingDoc.id.eq(qIncomingDocument.id)
+                    .or(qProcessingDocument.outgoingDocument.id.eq(qOutgoingDocument.id))
+            ))
+        .transform(groupBy(qDocumentReminder.status).as(set(qProcessingDocument)));
   }
 
   @Override
