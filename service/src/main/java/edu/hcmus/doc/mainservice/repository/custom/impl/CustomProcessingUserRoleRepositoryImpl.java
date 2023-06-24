@@ -52,25 +52,27 @@ public class CustomProcessingUserRoleRepositoryImpl
 
     if (processingDocumentType == ProcessingDocumentTypeEnum.INCOMING_DOCUMENT) {
       criteria.and(qProcessingDocument.incomingDoc.id.eq(documentId));
-      selectExpressions = new Expression[]{
+      selectExpressions = new Expression[] {
           qProcessingDocument.incomingDoc.incomingNumber,
           qProcessingUser.step,
           qProcessingUser.user.id,
           qProcessingUser.user.fullName,
           qProcessingUser.user.role,
           qProcessingUserRole.role,
-          qProcessingUser.user.department.departmentName
+          qProcessingUser.user.department.departmentName,
+          qProcessingUser.user.roleTitle
       };
     } else {
       criteria.and(qProcessingDocument.outgoingDocument.id.eq(documentId));
-      selectExpressions = new Expression[]{
+      selectExpressions = new Expression[] {
           qProcessingDocument.outgoingDocument.outgoingNumber,
           qProcessingUser.step,
           qProcessingUser.user.id,
           qProcessingUser.user.fullName,
           qProcessingUser.user.role,
           qProcessingUserRole.role,
-          qProcessingUser.user.department.departmentName
+          qProcessingUser.user.department.departmentName,
+          qProcessingUser.user.roleTitle
       };
     }
 
@@ -101,6 +103,7 @@ public class CustomProcessingUserRoleRepositoryImpl
           processingUserDto.setDocSystemRole(tuple.get(qProcessingUser.user.role));
           processingUserDto.setDepartment(
               tuple.get(qProcessingUser.user.department.departmentName));
+          processingUserDto.setRoleTitle(tuple.get(qProcessingUser.user.roleTitle));
 
           processingDetailsDto.setProcessingUser(processingUserDto);
           return processingDetailsDto;

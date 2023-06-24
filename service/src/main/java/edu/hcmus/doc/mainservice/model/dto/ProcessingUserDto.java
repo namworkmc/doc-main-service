@@ -12,4 +12,5 @@ public class ProcessingUserDto {
   private ProcessingDocumentRoleEnum role;
   private String department;
   private DocSystemRoleEnum docSystemRole;
+  private String roleTitle;
 }
