@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class DocumentReminderDetailsDto extends DocAbstractDto {
 
+  private String documentName;
   private String incomingNumber;
   private String summary;
   private LocalDate expirationDate;

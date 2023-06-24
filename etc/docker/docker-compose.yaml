@@ -29,6 +29,7 @@ services:
   doc-keycloak:
     container_name: doc-keycloak
     image: hcmusdoc/doc-keycloak
+    restart: always
     ports:
       - "8180:8180"
     volumes:

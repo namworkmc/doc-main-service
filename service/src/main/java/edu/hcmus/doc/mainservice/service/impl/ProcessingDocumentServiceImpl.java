@@ -14,7 +14,6 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
-import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;

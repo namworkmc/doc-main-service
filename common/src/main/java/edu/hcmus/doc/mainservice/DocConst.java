@@ -1,8 +1,10 @@
 package edu.hcmus.doc.mainservice;
 
-public class DocConst {
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-  private DocConst() {}
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class DocConst {
 
   public static final String SCHEMA_NAME = "doc_main";
 

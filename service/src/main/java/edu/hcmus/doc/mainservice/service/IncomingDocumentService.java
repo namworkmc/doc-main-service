@@ -40,10 +40,10 @@ public interface IncomingDocumentService {
   String closeDocument(Long incomingDocumentId);
 
   void saveCollaboratorList(ProcessingDocument processingDocument, List<User> collaborators,
-      ReturnRequest returnRequest, TransferDocDto transferDocDto, Integer step);
+      TransferDocDto transferDocDto, Integer step);
 
   void saveReporterOrAssignee(ProcessingDocument processingDocument, User user,
-      ReturnRequest returnRequest, TransferDocDto transferDocDto, Integer step,
+      TransferDocDto transferDocDto, Integer step,
       ProcessingDocumentRoleEnum role);
 
   User getUserByIdOrThrow(Long userId);

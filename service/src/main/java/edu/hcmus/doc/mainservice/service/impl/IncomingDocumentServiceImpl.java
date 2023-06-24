@@ -31,7 +31,6 @@ import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUserRole;
-import edu.hcmus.doc.mainservice.model.entity.ReturnRequest;
 import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
@@ -53,7 +52,6 @@ import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingUserRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingUserRoleRepository;
-import edu.hcmus.doc.mainservice.repository.ReturnRequestRepository;
 import edu.hcmus.doc.mainservice.repository.TransferHistoryRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
@@ -106,8 +104,6 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   private final ProcessingUserRoleRepository processingUserRoleRepository;
 
   private final UserRepository userRepository;
-
-  private final ReturnRequestRepository returnRequestRepository;
 
   private final DocumentReminderService documentReminderService;
 
@@ -252,13 +248,9 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     List<IncomingDocument> incomingDocuments = incomingDocumentRepository
         .getIncomingDocumentsByIds(transferDocDto.getDocumentIds());
 
-    ReturnRequest returnRequest = returnRequestRepository.findById(1L).orElseThrow(
-        () -> new RuntimeException("Return request not found")
-    );
-
     int step = getStep(reporter, assignee, true);
 
-    // TODO: validate incomingDocuments to make sure they are not processed yet.
+    // validate incomingDocuments to make sure they are not processed yet.
     // save processing documents with status IN_PROGRESS
     incomingDocuments.forEach(incomingDocument -> {
       ProcessingDocument processingDocument = createProcessingDocument(incomingDocument, null,
@@ -267,13 +259,13 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
       ProcessingDocument savedProcessingDocument = processingDocumentRepository.save(
           processingDocument);
 
-      saveCollaboratorList(savedProcessingDocument, collaborators, returnRequest, transferDocDto,
+      saveCollaboratorList(savedProcessingDocument, collaborators, transferDocDto,
           step);
 
-      saveReporterOrAssignee(savedProcessingDocument, assignee, returnRequest, transferDocDto, step,
+      saveReporterOrAssignee(savedProcessingDocument, assignee, transferDocDto, step,
           ProcessingDocumentRoleEnum.ASSIGNEE);
 
-      saveReporterOrAssignee(savedProcessingDocument, reporter, returnRequest, transferDocDto, step,
+      saveReporterOrAssignee(savedProcessingDocument, reporter, transferDocDto, step,
           ProcessingDocumentRoleEnum.REPORTER);
     });
   }
@@ -284,28 +276,24 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     List<ProcessingDocument> processingDocuments = processingDocumentRepository.findAllByIds(
         transferDocDto.getDocumentIds());
 
-    ReturnRequest returnRequest = returnRequestRepository.findById(1L).orElseThrow(
-        () -> new RuntimeException("Return request not found")
-    );
-
     processingDocuments.forEach(processingDocument -> {
 
-      saveCollaboratorList(processingDocument, collaborators, returnRequest, transferDocDto, step);
+      saveCollaboratorList(processingDocument, collaborators, transferDocDto, step);
 
-      saveReporterOrAssignee(processingDocument, assignee, returnRequest, transferDocDto, step,
+      saveReporterOrAssignee(processingDocument, assignee, transferDocDto, step,
           ProcessingDocumentRoleEnum.ASSIGNEE);
 
-      saveReporterOrAssignee(processingDocument, reporter, returnRequest, transferDocDto, step,
+      saveReporterOrAssignee(processingDocument, reporter, transferDocDto, step,
           ProcessingDocumentRoleEnum.REPORTER);
     });
   }
 
   @Override
   public void saveCollaboratorList(ProcessingDocument processingDocument, List<User> collaborators,
-      ReturnRequest returnRequest, TransferDocDto transferDocDto, Integer step) {
+      TransferDocDto transferDocDto, Integer step) {
     collaborators.forEach(collaborator -> {
       ProcessingUser processingUser1 = createProcessingUser(processingDocument, collaborator, step,
-          returnRequest, transferDocDto);
+          transferDocDto);
       ProcessingUser savedProcessingUser1 = processingUserRepository.save(processingUser1);
 
       if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
@@ -320,10 +308,10 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
   @Override
   public void saveReporterOrAssignee(ProcessingDocument processingDocument, User user,
-      ReturnRequest returnRequest, TransferDocDto transferDocDto, Integer step,
+      TransferDocDto transferDocDto, Integer step,
       ProcessingDocumentRoleEnum role) {
     ProcessingUser processingUser = createProcessingUser(processingDocument, user, step,
-        returnRequest, transferDocDto);
+        transferDocDto);
     ProcessingUser savedProcessingUser = processingUserRepository.save(processingUser);
 
     if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {

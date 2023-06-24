@@ -7,7 +7,6 @@ import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUserRole;
-import edu.hcmus.doc.mainservice.model.entity.ReturnRequest;
 import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
@@ -133,12 +132,11 @@ public class TransferDocumentUtils {
 
   public static ProcessingUser createProcessingUser(ProcessingDocument processingDocument,
       User user,
-      Integer step, ReturnRequest returnRequest, TransferDocDto transferDocDto) {
+      Integer step, TransferDocDto transferDocDto) {
     ProcessingUser processingUser = new ProcessingUser();
     processingUser.setProcessingDocument(processingDocument);
     processingUser.setUser(user);
     processingUser.setStep(step);
-    processingUser.setReturnRequest(returnRequest);
     processingUser.setProcessMethod(transferDocDto.getProcessMethod());
 
     if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {

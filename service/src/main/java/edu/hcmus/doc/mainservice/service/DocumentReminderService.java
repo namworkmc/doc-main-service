@@ -1,6 +1,7 @@
 package edu.hcmus.doc.mainservice.service;
 
 import edu.hcmus.doc.mainservice.model.dto.DocumentReminderDetailsDto;
+import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ public interface DocumentReminderService {
 
   Map<LocalDate, Set<DocumentReminderStatusEnum>> getCurrentUserDocumentReminders(int year);
 
-  Map<DocumentReminderStatusEnum, Set<DocumentReminderDetailsDto>> getCurrentUserDocumentRemindersDetailsByTime(LocalDate date);
+  Map<DocumentReminderStatusEnum, Set<ProcessingDocument>> getCurrentUserDocumentRemindersDetailsByTime(LocalDate date);
 
   Map<DocumentReminderStatusEnum, Set<DocumentReminderDetailsDto>> getCurrentUserDocumentRemindersDetailsByTime(int year, int month);
 

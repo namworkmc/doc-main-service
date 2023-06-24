@@ -19,7 +19,6 @@ import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.LinkedDocument;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
-import edu.hcmus.doc.mainservice.model.entity.ReturnRequest;
 import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
@@ -38,7 +37,6 @@ import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.LinkedDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
-import edu.hcmus.doc.mainservice.repository.ReturnRequestRepository;
 import edu.hcmus.doc.mainservice.repository.TransferHistoryRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
@@ -64,13 +62,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(rollbackFor = Throwable.class)
 public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
+
   private final OutgoingDocumentRepository outgoingDocumentRepository;
   private final OutgoingDocumentMapper outgoingDecoratorDocumentMapper;
   private final AttachmentMapperDecorator attachmentMapperDecorator;
   private final AttachmentService attachmentService;
   private final ObjectMapper objectMapper;
   private final UserRepository userRepository;
-  private final ReturnRequestRepository returnRequestRepository;
   private final ProcessingDocumentRepository processingDocumentRepository;
   private final IncomingDocumentService incomingDocumentService;
   private final ProcessingDocumentService processingDocumentService;
@@ -319,9 +317,6 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
 
   private void transferNewDocuments(TransferDocDto transferDocDto, User reporter,
       User assignee, List<User> collaborators, List<OutgoingDocument> outgoingDocuments) {
-    ReturnRequest returnRequest = returnRequestRepository.findById(1L).orElseThrow(
-        () -> new RuntimeException("Return request not found")
-    );
 
     int step = getStepOutgoingDocument(reporter, true);
 
@@ -332,13 +327,16 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
       ProcessingDocument savedProcessingDocument = processingDocumentRepository.save(
           processingDocument);
 
-      incomingDocumentService.saveCollaboratorList(savedProcessingDocument, collaborators, returnRequest, transferDocDto,
+      incomingDocumentService.saveCollaboratorList(savedProcessingDocument, collaborators,
+          transferDocDto,
           step);
 
-      incomingDocumentService.saveReporterOrAssignee(savedProcessingDocument, assignee, returnRequest, transferDocDto, step,
+      incomingDocumentService.saveReporterOrAssignee(savedProcessingDocument, assignee,
+          transferDocDto, step,
           ProcessingDocumentRoleEnum.ASSIGNEE);
 
-      incomingDocumentService.saveReporterOrAssignee(savedProcessingDocument, reporter, returnRequest, transferDocDto, step,
+      incomingDocumentService.saveReporterOrAssignee(savedProcessingDocument, reporter,
+          transferDocDto, step,
           ProcessingDocumentRoleEnum.REPORTER);
 
       outgoingDocument.setStatus(OutgoingDocumentStatusEnum.IN_PROGRESS);
@@ -353,21 +351,17 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
         .map(OutgoingDocument::getId)
         .toList());
 
-    ReturnRequest returnRequest = returnRequestRepository.findById(1L).orElseThrow(
-        () -> new RuntimeException("Return request not found")
-    );
-
     processingDocuments.forEach(processingDocument -> {
       if(processingDocumentService.getCurrentStep(processingDocument.getId()) >= step) {
         throw new TransferDocumentException(user_has_already_exists_in_the_flow_of_document.toString());
       }
 
-      incomingDocumentService.saveCollaboratorList(processingDocument, collaborators, returnRequest, transferDocDto, step);
+      incomingDocumentService.saveCollaboratorList(processingDocument, collaborators, transferDocDto, step);
 
-      incomingDocumentService.saveReporterOrAssignee(processingDocument, assignee, returnRequest, transferDocDto, step,
+      incomingDocumentService.saveReporterOrAssignee(processingDocument, assignee, transferDocDto, step,
           ProcessingDocumentRoleEnum.ASSIGNEE);
 
-      incomingDocumentService.saveReporterOrAssignee(processingDocument, reporter, returnRequest, transferDocDto, step,
+      incomingDocumentService.saveReporterOrAssignee(processingDocument, reporter, transferDocDto, step,
           ProcessingDocumentRoleEnum.REPORTER);
     });
   }

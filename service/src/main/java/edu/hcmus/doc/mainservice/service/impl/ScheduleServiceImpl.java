@@ -3,18 +3,17 @@ package edu.hcmus.doc.mainservice.service.impl;
 import static edu.hcmus.doc.mainservice.model.enums.BatchJobEnum.RESET_FOLDER_NEXT_NUMBER_BATCH_JOB;
 import static edu.hcmus.doc.mainservice.model.enums.BatchJobEnum.UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB;
 
-import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
+import edu.hcmus.doc.mainservice.model.entity.DocumentReminder;
 import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
 import edu.hcmus.doc.mainservice.repository.DocumentReminderRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.ScheduleService;
-import java.time.Instant;
+import edu.hcmus.doc.mainservice.util.DocDateTimeUtils;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ScheduleServiceImpl implements ScheduleService {
 
   private final FolderService folderService;
-  private final TaskScheduler taskScheduler;
 
   private final DocumentReminderRepository documentReminderRepository;
 
@@ -35,23 +33,29 @@ public class ScheduleServiceImpl implements ScheduleService {
   public void resetFolderNextNumber() {
     log.info(RESET_FOLDER_NEXT_NUMBER_BATCH_JOB.info);
     SecurityUtils.setSecurityContextForBatchJob(RESET_FOLDER_NEXT_NUMBER_BATCH_JOB.value);
+
     folderService.resetFolderNextNumberAndUpdateYear();
   }
 
   @Override
-  public void changeDocumentReminderStatus(ProcessingUser processingUser, LocalDateTime timeExecution, DocumentReminderStatusEnum status) {
-    Instant toInstant = timeExecution.toInstant(ZoneId.systemDefault()
-            .getRules()
-            .getOffset(LocalDateTime.now()));
+  @Scheduled(cron = "${doc.schedule.update-document-reminder-status-cron}")
+  public void updateDocumentReminderStatus() {
+    log.info(UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB.info);
+    SecurityUtils.setSecurityContextForBatchJob(UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB.value);
 
-    taskScheduler.schedule(() -> {
-      log.info(UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB.info);
-      SecurityUtils.setSecurityContextForBatchJob(UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB.value);
-      documentReminderRepository.findByProcessingUserId(processingUser.getId())
-          .ifPresent(documentReminder -> {
-            documentReminder.setStatus(status);
-            documentReminderRepository.save(documentReminder);
-          });
-    }, toInstant);
+    List<DocumentReminder> reminders = documentReminderRepository.getDocumentRemindersByStatusIn(List.of(
+        DocumentReminderStatusEnum.ACTIVE, DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION));
+
+    reminders.forEach(reminder -> {
+      LocalDateTime expirationDateTime = DocDateTimeUtils.getAtEndOfDay(reminder.getExpirationDate());
+      if (expirationDateTime.isBefore(LocalDateTime.now())) {
+        reminder.setStatus(DocumentReminderStatusEnum.EXPIRED);
+      }
+      else if (DocDateTimeUtils.isBetween(LocalDateTime.now(), DocDateTimeUtils.getAtStartOf7DaysBefore(reminder.getExpirationDate()), expirationDateTime)) {
+        reminder.setStatus(DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION);
+      }
+    });
+
+    documentReminderRepository.saveAll(reminders);
   }
 }

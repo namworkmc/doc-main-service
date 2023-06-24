@@ -16,7 +16,7 @@ public enum BatchJobEnum {
   UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB(
       "Update document reminder status batch job is running",
       "UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB",
-      null
+      ScheduleService::updateDocumentReminderStatus
   );
 
   public final String info;

@@ -1,8 +1,14 @@
 package edu.hcmus.doc.mainservice.util.mapper;
 
 import edu.hcmus.doc.mainservice.model.dto.DocumentReminderDetailsDto;
+import edu.hcmus.doc.mainservice.model.dto.DocumentReminderWrapperDto;
 import edu.hcmus.doc.mainservice.model.entity.DocumentReminder;
+import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
+import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.DocumentReminderMapperDecorator;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.Set;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
@@ -23,6 +29,16 @@ public interface DocumentReminderMapper {
   DocumentReminder toEntity(DocumentReminderDetailsDto documentReminderDetailsDto);
 
   DocumentReminderDetailsDto toDto(DocumentReminder documentReminder);
+
+  @Mapping(target = "incomingDocumentId", source = "processingDocument.incomingDoc.id")
+  @Mapping(target = "incomingNumber", source = "processingDocument.incomingDoc.incomingNumber")
+  @Mapping(target = "documentName", source = "processingDocument.incomingDoc.name")
+  @Mapping(target = "summary", source = "processingDocument.incomingDoc.summary")
+  @Mapping(target = "expirationDate", source = "date")
+  @Mapping(target = "status", ignore = true)
+  DocumentReminderDetailsDto toDto(ProcessingDocument processingDocument, LocalDate date);
+
+  DocumentReminderWrapperDto toDto(Map<DocumentReminderStatusEnum, Set<ProcessingDocument>> processingDocumentReminderMap, LocalDate date);
 
   @Mapping(target = "updatedDate", ignore = true)
   @Mapping(target = "updatedBy", ignore = true)
