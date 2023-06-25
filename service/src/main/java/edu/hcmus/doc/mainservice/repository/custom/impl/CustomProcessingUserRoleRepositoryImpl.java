@@ -110,4 +110,11 @@ public class CustomProcessingUserRoleRepositoryImpl
         })
         .toList();
   }
+
+  @Override
+  public ProcessingUserRole findByProcessingUserId(Long processingUserId) {
+    return selectFrom(qProcessingUserRole)
+        .where(qProcessingUserRole.processingUser.id.eq(processingUserId))
+        .fetchFirst();
+  }
 }

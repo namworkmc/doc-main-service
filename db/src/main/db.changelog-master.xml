@@ -44,4 +44,5 @@
   <include id="039" file="039_update_incoming_and_outgoing_document_table.sql" relativeToChangelogFile="true" />
   <include id="041" file="040_update_users_test_info.sql" relativeToChangelogFile="true" />
   <include id="041" file="041_add_title_col_for_user.sql" relativeToChangelogFile="true" />
+  <include id="042" file="042_update_incoming_document_table.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>

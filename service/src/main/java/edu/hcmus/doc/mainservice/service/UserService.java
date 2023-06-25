@@ -1,5 +1,7 @@
 package edu.hcmus.doc.mainservice.service;
 
+import edu.hcmus.doc.mainservice.model.dto.DocStatisticsDto;
+import edu.hcmus.doc.mainservice.model.dto.DocStatisticsSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistoryDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistorySearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
@@ -38,4 +40,8 @@ public interface UserService extends SearchService<UserDto, UserSearchCriteria> 
   void deleteUsers(List<Long> userIds);
 
   List<TransferHistoryDto> getTransferHistoryByUser(TransferHistorySearchCriteriaDto criteriaDto, int offset, int limit);
+
+  List<User> getAllUsers();
+
+  List<DocStatisticsDto> getStatistics(DocStatisticsSearchCriteriaDto docStatisticsSearchCriteriaDto);
 }

@@ -222,7 +222,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
       // update the created_by field of incoming documents
       incomingDocuments.forEach(incomingDocument -> {
-        incomingDocument.setCreatedBy(assignee.getId().toString());
+        incomingDocument.setCreatedBy(assignee.getUsername());
         incomingDocumentRepository.save(incomingDocument);
       });
     } else {
@@ -543,6 +543,11 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     }
 
     processingDocument.setStatus(ProcessingStatus.CLOSED);
+
+    IncomingDocument incomingDocument = getIncomingDocumentById(incomingDocumentId);
+    incomingDocument.setCloseDate(LocalDate.now());
+    incomingDocument.setCloseUsername(SecurityUtils.getCurrentUser().getUsername());
+    incomingDocumentRepository.saveAndFlush(incomingDocument);
 
     return "incomingDocDetailPage.message.closed_successfully";
   }

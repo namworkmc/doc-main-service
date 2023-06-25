@@ -42,7 +42,7 @@ public abstract class DocAbstractVersionEntity {
   protected LocalDateTime createdDate;
 
   @CreatedBy
-  @Column(name = "created_by", nullable = false, updatable = false, columnDefinition = "VARCHAR(50) NOT NULL DEFAULT 'SYSTEM'")
+  @Column(name = "created_by", nullable = false, columnDefinition = "VARCHAR(50) NOT NULL DEFAULT 'SYSTEM'")
   protected String createdBy;
 
   @UpdateTimestamp

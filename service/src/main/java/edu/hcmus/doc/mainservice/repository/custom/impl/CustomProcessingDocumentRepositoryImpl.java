@@ -1,30 +1,44 @@
 package edu.hcmus.doc.mainservice.repository.custom.impl;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringExpression;
-import com.querydsl.jpa.impl.JPAQuery;
-import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentSearchResultDto;
-import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
-import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
-import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
-import edu.hcmus.doc.mainservice.model.entity.*;
-import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
-import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
-import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingDocumentRepository;
-import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
-import org.apache.commons.lang3.StringUtils;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.set;
 import static edu.hcmus.doc.mainservice.model.entity.QIncomingDocument.incomingDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole.processingUserRole;
+
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.jpa.impl.JPAQuery;
+import edu.hcmus.doc.mainservice.model.dto.DocListStatisticsDto;
+import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentSearchResultDto;
+import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
+import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
+import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
+import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
+import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
+import edu.hcmus.doc.mainservice.model.entity.QDistributionOrganization;
+import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
+import edu.hcmus.doc.mainservice.model.entity.QProcessingDocument;
+import edu.hcmus.doc.mainservice.model.entity.QProcessingUser;
+import edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole;
+import edu.hcmus.doc.mainservice.model.entity.QSendingLevel;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
+import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingDocumentRepository;
+import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 public class CustomProcessingDocumentRepositoryImpl
     extends DocAbstractCustomRepository<ProcessingDocument>
@@ -38,6 +52,14 @@ public class CustomProcessingDocumentRepositoryImpl
       .then(ProcessingStatus.CLOSED.value)
       .otherwise(ProcessingStatus.UNPROCESSED.value)
       .as("status");
+
+  private final StringExpression documentCase = Expressions
+      .cases()
+      .when(processingUserRole.role.eq(ProcessingDocumentRoleEnum.ASSIGNEE))
+      .then("received_document")
+      .when(processingUserRole.role.eq(ProcessingDocumentRoleEnum.REPORTER))
+      .then("transferred_document")
+      .otherwise("irrelevant_document");
 
   @Override
   public long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
@@ -392,5 +414,68 @@ public class CustomProcessingDocumentRepositoryImpl
         .where(processingUser.processingDocument.id.eq(processingDocumentId))
         .orderBy(processingUser.step.desc())
         .fetchFirst();
+  }
+
+  @Override
+  public Optional<ProcessingDocument> findProcessingDocumentById(Long id){
+    return Optional.ofNullable(
+        selectFrom(processingDocument)
+            .where(processingDocument.id.eq(id))
+            .fetchOne()
+    );
+
+  }
+
+  @Override
+  public DocListStatisticsDto getDocListStatistics(Long userId, LocalDate fromDate, LocalDate toDate, ProcessingDocumentType processingDocumentType) {
+    QProcessingDocument qProcessingDocument = processingDocument;
+    QProcessingUser qProcessingUser = processingUser;
+    QProcessingUserRole qProcessingUserRole = processingUserRole;
+
+    BooleanBuilder where = new BooleanBuilder();
+
+    if (ProcessingDocumentType.INCOMING_DOCUMENT.equals(processingDocumentType)){
+      where.and(qProcessingDocument.incomingDoc.isNotNull());
+    } else {
+      where.and(qProcessingDocument.outgoingDocument.isNotNull());
+    }
+
+    if (fromDate != null && toDate != null) {
+      where.and(qProcessingUserRole.createdDate.between(
+          fromDate.atStartOfDay(),
+          toDate.plusDays(1).atStartOfDay()
+      ));
+    }
+
+    Map<String, Set<Long>> receivedDocuments = selectFrom(qProcessingDocument)
+        .select(qProcessingDocument.id)
+        .leftJoin(qProcessingUser)
+        .on(qProcessingDocument.id.eq(qProcessingUser.processingDocument.id))
+        .leftJoin(qProcessingUserRole)
+        .on(qProcessingUser.id.eq(qProcessingUserRole.processingUser.id))
+        .where(qProcessingUser.user.id.eq(userId)
+            .and(where))
+        .transform(groupBy(documentCase).as(set(qProcessingDocument.id)));
+
+    if(receivedDocuments.isEmpty() || Objects.isNull(receivedDocuments.get("received_document"))) {
+      return null;
+    } else {
+      DocListStatisticsDto docListStatisticsDto = new DocListStatisticsDto();
+      docListStatisticsDto.setUserId(userId);
+      if (Objects.isNull(receivedDocuments.get("transferred_document"))) {
+        docListStatisticsDto.setProcessedDocuments(new ArrayList<>());
+        docListStatisticsDto.setUnprocessedDocuments(receivedDocuments.get("received_document").stream().toList());
+      } else {
+        List<Long> processedDocuments = receivedDocuments.get("received_document").stream()
+            .filter(receivedDocuments.get("transferred_document")::contains)
+            .toList();
+        List<Long> unprocessedDocuments = receivedDocuments.get("received_document").stream()
+            .filter(docId -> !processedDocuments.contains(docId))
+            .toList();
+        docListStatisticsDto.setProcessedDocuments(processedDocuments);
+        docListStatisticsDto.setUnprocessedDocuments(unprocessedDocuments);
+      }
+      return docListStatisticsDto;
+    }
   }
 }

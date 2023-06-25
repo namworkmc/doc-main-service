@@ -12,6 +12,8 @@ public interface CustomUserRepository extends DocAbstractSearchRepository<User, 
 
   List<User> getUsers(String query, long first, long max);
 
+  List<User> getAllUsers();
+
   Optional<User> getUserById(Long id);
 
   Optional<User> findByUsername(String username);

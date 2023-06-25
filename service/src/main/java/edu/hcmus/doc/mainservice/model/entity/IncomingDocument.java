@@ -69,6 +69,12 @@ public class IncomingDocument extends DocAbstractIdEntity {
   @Column(name = "name", columnDefinition = "VARCHAR(255)")
   private String name;
 
+  @Column(name = "close_date")
+  private LocalDate closeDate;
+
+  @Column(name = "close_username")
+  private String closeUsername;
+
   public void initSendingLevel() {
     if (this.sendingLevel == null) {
       this.sendingLevel = new SendingLevel();

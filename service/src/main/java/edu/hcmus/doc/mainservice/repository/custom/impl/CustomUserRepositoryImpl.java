@@ -36,6 +36,14 @@ public class CustomUserRepositoryImpl
   }
 
   @Override
+  public List<User> getAllUsers() {
+    return selectFrom(QUser.user)
+        .innerJoin(QUser.user.department, QDepartment.department)
+        .where(QUser.user.role.ne(DocSystemRoleEnum.DOC_ADMIN))
+        .fetchJoin().fetch();
+  }
+
+  @Override
   public Optional<User> getUserById(Long id) {
     return Optional.ofNullable(
         selectFrom(QUser.user)

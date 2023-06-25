@@ -1,14 +1,17 @@
 package edu.hcmus.doc.mainservice.repository.custom;
 
 import com.querydsl.core.Tuple;
+import edu.hcmus.doc.mainservice.model.dto.DocListStatisticsDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.DocAbstractSearchRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,4 +38,8 @@ public interface CustomProcessingDocumentRepository
   Optional<ProcessingDocument> findByIncomingDocumentId(Long incomingDocumentId);
 
   Optional<ProcessingStatus> getProcessingStatus(Long documentId);
+
+  DocListStatisticsDto getDocListStatistics(Long userId, LocalDate fromDate, LocalDate toDate, ProcessingDocumentType processingDocumentType);
+
+  Optional<ProcessingDocument> findProcessingDocumentById(Long id);
 }

@@ -12,4 +12,6 @@ public interface CustomProcessingUserRepository {
   boolean isProcessAtStep(Long incomingDocumentId, int step);
 
   Optional<LocalDate> getDateExpired(Long incomingDocumentId, Long userId);
+
+  List<ProcessingUser> findByUserIdAndProcessingDocumentIdWithRole(Long userId, Long processingDocumentId);
 }

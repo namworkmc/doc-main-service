@@ -19,6 +19,7 @@ public class CustomProcessingUserRepositoryImpl
     implements CustomProcessingUserRepository {
 
   private static final QProcessingUser qProcessingUser = QProcessingUser.processingUser;
+  private static final QProcessingUserRole qProcessingUserRole = QProcessingUserRole.processingUserRole;
 
   @Override
   public List<ProcessingUser> findAllByUserIdAndProcessingDocumentId(Long userId,
@@ -56,5 +57,16 @@ public class CustomProcessingUserRepositoryImpl
         .innerJoin(qProcessingDocument.incomingDoc, incomingDocument)
         .on(incomingDocument.id.eq(incomingDocumentId))
         .fetchFirst());
+  }
+
+  @Override
+  public List<ProcessingUser> findByUserIdAndProcessingDocumentIdWithRole(Long userId, Long processingDocumentId) {
+    return selectFrom(processingUser)
+        .leftJoin(qProcessingUserRole)
+        .on(qProcessingUser.id.eq(qProcessingUserRole.processingUser.id))
+        .where(processingUser.user.id.eq(userId)
+            .and(processingUser.processingDocument.id.eq(processingDocumentId)))
+        .orderBy(qProcessingUserRole.role.asc())
+        .fetch();
   }
 }
