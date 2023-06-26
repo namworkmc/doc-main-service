@@ -12,8 +12,8 @@ services:
       - doc-main-data:/data/postgres
       - doc-keycloak-data:/var/lib/postgresql
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: hcmusdoc
+      POSTGRES_PASSWORD: hcmusdoc
       POSTGRES_DB: doc
       PGDATA: /data/postgres
     deploy:
@@ -28,11 +28,12 @@ services:
   # Keycloak
   doc-keycloak:
     container_name: doc-keycloak
-    image: hcmusdoc/doc-keycloak
+    image: quay.io/keycloak/keycloak:20.0.3
     restart: always
     ports:
       - "8180:8180"
     volumes:
+      - ./keycloak/realms/realm-export.json:/opt/keycloak/data/import/realm-export.json
       - ./keycloak/providers/doc-user-provider-1.0.4.jar:/opt/keycloak/providers/doc-user-provider-1.0.4.jar
     environment:
       KEYCLOAK_ADMIN: admin
