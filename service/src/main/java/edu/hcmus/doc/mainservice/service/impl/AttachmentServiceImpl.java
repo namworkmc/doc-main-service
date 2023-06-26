@@ -60,7 +60,7 @@ public class AttachmentServiceImpl implements AttachmentService {
       return;
     }
 
-    attachmentPostDto.setParentFolder(ParentFolderEnum.ICD);
+    attachmentPostDto.setParentFolder(parentFolder);
     RabbitConverterFuture<List<FileDto>> rabbitConverterFuture = asyncRabbitTemplate
         .convertSendAndReceiveAsType(exchange, routingKey, attachmentPostDto,
             new ParameterizedTypeReference<>() {

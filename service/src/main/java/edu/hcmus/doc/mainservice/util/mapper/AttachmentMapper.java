@@ -19,6 +19,7 @@ public interface AttachmentMapper {
   @Mapping(source = "alfrescoFileId", target = "alfrescoFileId")
   @Mapping(source = "alfrescoFolderId", target = "alfrescoFolderId")
   @Mapping(source = "fileType", target = "fileType")
+  @Mapping(target = "fileName", ignore = true)
   AttachmentDto toDto(Attachment attachment);
 
   @Mapping(source = "attachmentDto.alfrescoFileId", target = "alfrescoFileId")

@@ -45,6 +45,9 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
 
   @Override
   public IncomingDocumentDto toDto(IncomingDocument incomingDocument) {
+    List<AttachmentDto> attachments = attachmentService.getAttachmentsByIncomingDocId(
+        incomingDocument.getId());
+
     IncomingDocumentDto dto = delegate.toDto(incomingDocument);
     User currentUser = SecurityUtils.getCurrentUser();
 
@@ -72,6 +75,7 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
     dto.setStatus(status);
     dto.setIsDocTransferred(isDocTransferred);
     dto.setIsDocCollaborator(isDocCollaborator);
+    dto.setAttachments(attachments);
 
     dto.setProcessingDuration(
         processingDocumentService

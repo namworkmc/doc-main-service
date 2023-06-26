@@ -57,4 +57,12 @@ public abstract class AttachmentMapperDecorator implements AttachmentMapper {
     return attachmentDto;
   }
 
+  @Override
+  public AttachmentDto toDto(Attachment attachment) {
+    AttachmentDto dto = delegate.toDto(attachment);
+    String[] split = attachment.getAlfrescoFileId().split("/");
+    dto.setFileName(split[split.length - 1]);
+    return dto;
+  }
+
 }
