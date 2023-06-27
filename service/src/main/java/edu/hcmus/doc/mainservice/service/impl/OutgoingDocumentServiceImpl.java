@@ -15,12 +15,7 @@ import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPost
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
-import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
-import edu.hcmus.doc.mainservice.model.entity.LinkedDocument;
-import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
-import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
-import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
-import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.entity.*;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
 import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
@@ -40,10 +35,7 @@ import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.TransferHistoryRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
-import edu.hcmus.doc.mainservice.service.AttachmentService;
-import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
-import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
-import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
+import edu.hcmus.doc.mainservice.service.*;
 import edu.hcmus.doc.mainservice.util.DocObjectUtils;
 import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
@@ -75,6 +67,7 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   private final IncomingDocumentRepository incomingDocumentRepository;
   private final LinkedDocumentRepository linkedDocumentRepository;
   private final TransferHistoryRepository transferHistoryRepository;
+  private final FolderService folderService;
 
   @Override
   public OutgoingDocument getOutgoingDocumentById(Long id) {
@@ -98,6 +91,8 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
       throw new DocStatusViolatedException(DocStatusViolatedException.STATUS_VIOLATED);
     }
 
+    Folder folder = folderService.findById(updatingDocument.getFolder().getId());
+    folder.setNextNumber(folder.getNextNumber() + 1);
     return outgoingDocumentRepository.saveAndFlush(updatingDocument);
   }
 
