@@ -1,5 +1,6 @@
 package edu.hcmus.doc.mainservice.util.mapper.decorator;
 
+import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPutDto;
@@ -8,14 +9,17 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentD
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
+import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
+import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.DepartmentService;
 import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
 import edu.hcmus.doc.mainservice.util.mapper.OutgoingDocumentMapper;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -32,6 +36,9 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
 
   @Autowired
   ProcessingDocumentService processingDocumentService;
+
+  @Autowired
+  AttachmentService attachmentService;
 
   @Autowired
   @Qualifier("delegate")
@@ -73,6 +80,9 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
 
   @Override
   public OutgoingDocumentGetDto toDto(OutgoingDocument outgoingDocument) {
+    List<AttachmentDto> attachments = attachmentService.getAttachmentsByDocId(
+        outgoingDocument.getId(), ParentFolderEnum.OGD);
+
     OutgoingDocumentGetDto dto = delegate.toDto(outgoingDocument);
     User currentUser = SecurityUtils.getCurrentUser();
 
@@ -97,6 +107,7 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
     dto.setStatus(outgoingDocument.getStatus());
     dto.setIsDocTransferred(isDocTransferred);
     dto.setIsDocCollaborator(isDocCollaborator);
+    dto.setAttachments(attachments);
 
     return dto;
   }

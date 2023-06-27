@@ -8,6 +8,7 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentD
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
@@ -45,8 +46,8 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
 
   @Override
   public IncomingDocumentDto toDto(IncomingDocument incomingDocument) {
-    List<AttachmentDto> attachments = attachmentService.getAttachmentsByIncomingDocId(
-        incomingDocument.getId());
+    List<AttachmentDto> attachments = attachmentService.getAttachmentsByDocId(
+        incomingDocument.getId(), ParentFolderEnum.ICD);
 
     IncomingDocumentDto dto = delegate.toDto(incomingDocument);
     User currentUser = SecurityUtils.getCurrentUser();
@@ -87,8 +88,8 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
 
   @Override
   public IncomingDocumentDto toDto(ProcessingDocument processingDocument) {
-    List<AttachmentDto> attachments = attachmentService.getAttachmentsByIncomingDocId(
-        processingDocument.getIncomingDoc().getId());
+    List<AttachmentDto> attachments = attachmentService.getAttachmentsByDocId(
+        processingDocument.getIncomingDoc().getId(), ParentFolderEnum.ICD);
 
     IncomingDocumentDto dto = delegate.toDto(processingDocument.getIncomingDoc());
     dto.setStatus(processingDocument.getStatus());

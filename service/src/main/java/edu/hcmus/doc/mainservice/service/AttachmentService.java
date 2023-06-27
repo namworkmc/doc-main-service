@@ -10,5 +10,5 @@ public interface AttachmentService {
   void saveAttachmentsByProcessingDocumentTypeAndDocId(ParentFolderEnum parentFolder,
       AttachmentPostDto attachmentPostDto);
 
-  List<AttachmentDto> getAttachmentsByIncomingDocId(Long incomingDocId);
+  List<AttachmentDto> getAttachmentsByDocId(Long docId, ParentFolderEnum parentFolder);
 }

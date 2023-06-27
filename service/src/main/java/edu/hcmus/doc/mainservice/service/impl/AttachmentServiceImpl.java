@@ -47,8 +47,8 @@ public class AttachmentServiceImpl implements AttachmentService {
   private final AttachmentMapperDecorator attachmentMapperDecorator;
 
   @Override
-  public List<AttachmentDto> getAttachmentsByIncomingDocId(Long incomingDocId) {
-    return attachmentRepository.getAttachmentsByIncomingDocId(incomingDocId).stream().map(
+  public List<AttachmentDto> getAttachmentsByDocId(Long docId, ParentFolderEnum parentFolder) {
+    return attachmentRepository.getAttachmentsByDocId(docId, parentFolder).stream().map(
         attachmentMapperDecorator::toDto).toList();
   }
 
