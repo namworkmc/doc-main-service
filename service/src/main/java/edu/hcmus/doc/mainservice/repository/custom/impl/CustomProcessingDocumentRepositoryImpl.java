@@ -26,11 +26,13 @@ import edu.hcmus.doc.mainservice.model.entity.QProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole;
 import edu.hcmus.doc.mainservice.model.entity.QSendingLevel;
+import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
+import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -247,6 +249,26 @@ public class CustomProcessingDocumentRepositoryImpl
             QDistributionOrganization.distributionOrganization)
         .distinct()
         .where(where);
+  }
+
+  @Override
+  public List<Long> getIncomingDocumentsWithTransferPermission() {
+    BooleanBuilder where = new BooleanBuilder();
+
+    User currUser = SecurityUtils.getCurrentUser();
+    where.and(incomingDocument.createdBy.eq(currUser.getUsername()).or(processingUser.user.id.eq(currUser.getId())));
+
+
+    return selectFrom(incomingDocument)
+        .select(incomingDocument.id)
+        .leftJoin(processingDocument)
+        .on(incomingDocument.id.eq(processingDocument.incomingDoc.id))
+        .leftJoin(processingUser)
+        .on(processingUser.processingDocument.id.eq(processingDocument.id))
+        .fetchJoin()
+        .distinct()
+        .where(where)
+        .fetch();
   }
 
   @Override

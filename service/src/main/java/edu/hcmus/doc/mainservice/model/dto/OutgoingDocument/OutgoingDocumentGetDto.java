@@ -32,4 +32,5 @@ public class OutgoingDocumentGetDto extends DocAbstractDto {
     private List<AttachmentDto> attachments = new ArrayList<>();
     private Boolean isDocTransferred;
     private Boolean isDocCollaborator;
+    private Boolean isTransferable;
 }

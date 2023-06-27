@@ -6,6 +6,7 @@ import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.entity.*;
 import edu.hcmus.doc.mainservice.repository.custom.CustomOutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
+import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -87,20 +88,34 @@ public class CustomOutgoingDocumentRepositoryImpl
     }
 
     return selectFrom(outgoingDocument)
-        .leftJoin(processingDocument)
-        .on(outgoingDocument.id.eq(processingDocument.outgoingDocument.id))
-        .fetchJoin()
         .innerJoin(outgoingDocument.documentType, QDocumentType.documentType)
         .fetchJoin()
         .innerJoin(outgoingDocument.publishingDepartment, QDepartment.department)
         .fetchJoin()
         .innerJoin(outgoingDocument.folder, QFolder.folder)
         .fetchJoin()
+        .distinct()
+        .where(where);
+  }
+
+  @Override
+  public List<Long> getOutgoingDocumentsWithTransferPermission() {
+    BooleanBuilder where = new BooleanBuilder();
+
+    User currUser = SecurityUtils.getCurrentUser();
+    where.and(outgoingDocument.createdBy.eq(currUser.getUsername()).or(processingUser.user.id.eq(currUser.getId())));
+
+    return selectFrom(outgoingDocument)
+        .select(outgoingDocument.id)
+        .leftJoin(processingDocument)
+        .on(outgoingDocument.id.eq(processingDocument.outgoingDocument.id))
+        .fetchJoin()
         .leftJoin(processingUser)
         .on(processingUser.processingDocument.id.eq(processingDocument.id))
         .fetchJoin()
         .distinct()
-        .where(where);
+        .where(where)
+        .fetch();
   }
 
   @Override

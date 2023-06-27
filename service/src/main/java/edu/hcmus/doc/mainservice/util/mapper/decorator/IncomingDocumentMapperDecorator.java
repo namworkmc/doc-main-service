@@ -11,6 +11,7 @@ import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
+import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.DistributionOrganizationService;
@@ -39,6 +40,10 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
 
   @Autowired
   ProcessingDocumentService processingDocumentService;
+
+  @Autowired
+  ProcessingDocumentRepository processingDocumentRepository;
+
 
   @Autowired
   @Qualifier("delegate")
@@ -76,6 +81,7 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
     dto.setStatus(status);
     dto.setIsDocTransferred(isDocTransferred);
     dto.setIsDocCollaborator(isDocCollaborator);
+    dto.setIsTransferable(processingDocumentRepository.getIncomingDocumentsWithTransferPermission().contains(incomingDocument.getId()));
     dto.setAttachments(attachments);
 
     dto.setProcessingDuration(
@@ -116,6 +122,7 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
             .build());
 
     dto.setIsDocCollaborator(isDocCollaborator);
+    dto.setIsTransferable(processingDocumentRepository.getIncomingDocumentsWithTransferPermission().contains(processingDocument.getIncomingDoc().getId()));
 
     return dto;
   }

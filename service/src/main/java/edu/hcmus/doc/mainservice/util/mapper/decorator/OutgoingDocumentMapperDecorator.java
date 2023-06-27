@@ -11,6 +11,7 @@ import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
 import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.DepartmentService;
@@ -36,6 +37,9 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
 
   @Autowired
   ProcessingDocumentService processingDocumentService;
+
+  @Autowired
+  OutgoingDocumentRepository outgoingDocumentRepository;
 
   @Autowired
   AttachmentService attachmentService;
@@ -95,19 +99,20 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
             .step(step)
             .build());
 
-    int collabStep = TransferDocumentUtils.getStepOutgoingDocument(currentUser, false);
+    int collaboratorStep = TransferDocumentUtils.getStepOutgoingDocument(currentUser, false);
     Boolean isDocCollaborator = processingDocumentService.isUserWorkingOnOutgoingDocumentWithSpecificRole(
         GetTransferDocumentDetailRequest.builder()
             .documentId(outgoingDocument.getId())
             .userId(currentUser.getId())
             .role(ProcessingDocumentRoleEnum.COLLABORATOR)
-            .step(collabStep)
+            .step(collaboratorStep)
             .build());
 
     dto.setStatus(outgoingDocument.getStatus());
     dto.setIsDocTransferred(isDocTransferred);
     dto.setIsDocCollaborator(isDocCollaborator);
     dto.setAttachments(attachments);
+    dto.setIsTransferable(outgoingDocumentRepository.getOutgoingDocumentsWithTransferPermission().contains(outgoingDocument.getId()));
 
     return dto;
   }

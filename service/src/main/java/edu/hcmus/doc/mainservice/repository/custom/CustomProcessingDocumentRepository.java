@@ -42,4 +42,6 @@ public interface CustomProcessingDocumentRepository
   DocListStatisticsDto getDocListStatistics(Long userId, LocalDate fromDate, LocalDate toDate, ProcessingDocumentType processingDocumentType);
 
   Optional<ProcessingDocument> findProcessingDocumentById(Long id);
+
+  List<Long> getIncomingDocumentsWithTransferPermission();
 }

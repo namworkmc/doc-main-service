@@ -11,4 +11,6 @@ public interface CustomOutgoingDocumentRepository
   List<OutgoingDocument> getOutgoingDocumentsByIds(List<Long> ids);
 
   List<OutgoingDocument> getDocumentsLinkedToIncomingDocument(Long sourceDocumentId);
+
+  List<Long> getOutgoingDocumentsWithTransferPermission();
 }
