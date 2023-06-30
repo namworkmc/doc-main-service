@@ -7,6 +7,7 @@ import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingD
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole.processingUserRole;
+import static edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum.ASSIGNEE;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -256,7 +257,7 @@ public class CustomProcessingDocumentRepositoryImpl
     BooleanBuilder where = new BooleanBuilder();
 
     User currUser = SecurityUtils.getCurrentUser();
-    where.and(incomingDocument.createdBy.eq(currUser.getUsername()).or(processingUser.user.id.eq(currUser.getId())));
+    where.and(incomingDocument.createdBy.eq(currUser.getUsername()).or(processingUser.user.id.eq(currUser.getId()).and(processingDocument.status.eq(ProcessingStatus.CLOSED).not()).and(processingUserRole.role.eq(ASSIGNEE))));
 
 
     return selectFrom(incomingDocument)
@@ -266,6 +267,8 @@ public class CustomProcessingDocumentRepositoryImpl
         .leftJoin(processingUser)
         .on(processingUser.processingDocument.id.eq(processingDocument.id))
         .fetchJoin()
+        .leftJoin(processingUserRole)
+        .on(processingUser.id.eq(processingUserRole.processingUser.id))
         .distinct()
         .where(where)
         .fetch();
@@ -413,6 +416,15 @@ public class CustomProcessingDocumentRepositoryImpl
     return Optional.ofNullable(
         selectFrom(processingDocument)
             .where(processingDocument.incomingDoc.id.eq(incomingDocumentId))
+            .fetchOne()
+    );
+  }
+
+  @Override
+  public Optional<ProcessingDocument> findByOutgoingDocumentId(Long outgoingDocumentId) {
+    return Optional.ofNullable(
+        selectFrom(processingDocument)
+            .where(processingDocument.outgoingDocument.id.eq(outgoingDocumentId))
             .fetchOne()
     );
   }

@@ -17,6 +17,7 @@ import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.DistributionOrganizationService;
 import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.FolderService;
+import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
 import edu.hcmus.doc.mainservice.util.mapper.IncomingDocumentMapper;
@@ -43,6 +44,9 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
 
   @Autowired
   ProcessingDocumentRepository processingDocumentRepository;
+
+  @Autowired
+  IncomingDocumentService incomingDocumentService;
 
 
   @Autowired
@@ -82,6 +86,7 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
     dto.setIsDocTransferred(isDocTransferred);
     dto.setIsDocCollaborator(isDocCollaborator);
     dto.setIsTransferable(processingDocumentRepository.getIncomingDocumentsWithTransferPermission().contains(incomingDocument.getId()));
+    dto.setIsCloseable(incomingDocumentService.validateCloseDocument(incomingDocument.getId()));
     dto.setAttachments(attachments);
 
     dto.setProcessingDuration(

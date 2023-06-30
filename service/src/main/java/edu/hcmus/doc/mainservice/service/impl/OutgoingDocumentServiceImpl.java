@@ -15,7 +15,14 @@ import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPost
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
-import edu.hcmus.doc.mainservice.model.entity.*;
+import edu.hcmus.doc.mainservice.model.entity.Folder;
+import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
+import edu.hcmus.doc.mainservice.model.entity.LinkedDocument;
+import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
+import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
+import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
+import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
+import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
 import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
@@ -23,6 +30,7 @@ import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.model.enums.TransferDocumentComponent;
 import edu.hcmus.doc.mainservice.model.enums.TransferDocumentType;
+import edu.hcmus.doc.mainservice.model.exception.DocNotHavePermissionException;
 import edu.hcmus.doc.mainservice.model.exception.DocStatusViolatedException;
 import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.LinkedDocumentExistedException;
@@ -32,10 +40,15 @@ import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.LinkedDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
+import edu.hcmus.doc.mainservice.repository.ProcessingUserRepository;
 import edu.hcmus.doc.mainservice.repository.TransferHistoryRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
-import edu.hcmus.doc.mainservice.service.*;
+import edu.hcmus.doc.mainservice.service.AttachmentService;
+import edu.hcmus.doc.mainservice.service.FolderService;
+import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
+import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
+import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import edu.hcmus.doc.mainservice.util.DocObjectUtils;
 import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
@@ -44,6 +57,7 @@ import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -68,6 +82,7 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   private final LinkedDocumentRepository linkedDocumentRepository;
   private final TransferHistoryRepository transferHistoryRepository;
   private final FolderService folderService;
+  private final ProcessingUserRepository processingUserRepository;
 
   @Override
   public OutgoingDocument getOutgoingDocumentById(Long id) {
@@ -85,15 +100,43 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
     OutgoingDocument updatingDocument = getOutgoingDocumentById(document.getId());
     DocObjectUtils.copyNonNullProperties(document, updatingDocument);
 
-    if (updatingDocument.getStatus() != OutgoingDocumentStatusEnum.RELEASED) {
-      updatingDocument.setStatus(OutgoingDocumentStatusEnum.RELEASED);
-    } else {
-      throw new DocStatusViolatedException(DocStatusViolatedException.STATUS_VIOLATED);
+    User currUser = SecurityUtils.getCurrentUser();
+
+    if(currUser.getUsername().equals(updatingDocument.getSigner())){
+      if(validateReleaseDocument(updatingDocument)){
+        Folder folder = folderService.findById(updatingDocument.getFolder().getId());
+        folder.setNextNumber(folder.getNextNumber() + 1);
+        updatingDocument.setStatus(OutgoingDocumentStatusEnum.RELEASED);
+        return outgoingDocumentRepository.saveAndFlush(updatingDocument);
+      } else {
+        throw new DocNotHavePermissionException(DocNotHavePermissionException.DOC_NOT_HAVE_PERMISSION);
+      }
+    } else
+      throw new DocNotHavePermissionException(DocNotHavePermissionException.DOC_NOT_HAVE_PERMISSION);
+  }
+
+  @Override
+  public Boolean validateReleaseDocument(OutgoingDocument outgoingDocument) {
+    if(OutgoingDocumentStatusEnum.RELEASED.equals(outgoingDocument.getStatus())){
+      return false;
     }
 
-    Folder folder = folderService.findById(updatingDocument.getFolder().getId());
-    folder.setNextNumber(folder.getNextNumber() + 1);
-    return outgoingDocumentRepository.saveAndFlush(updatingDocument);
+    User currUser = SecurityUtils.getCurrentUser();
+
+    Optional<ProcessingDocument> processingDocument = processingDocumentRepository
+        .findByOutgoingDocumentId(outgoingDocument.getId());
+
+    if (processingDocument.isPresent()) {
+      ProcessingUser processingUser = processingUserRepository.findByUserIdAndProcessingDocumentIdAndRoleAssignee(
+          currUser.getId(), processingDocument.get().getId());
+      if (Objects.nonNull(processingUser)) {
+        return processingUser.getStep()
+            .equals(processingDocumentService.getCurrentStep(processingDocument.get()
+                .getId()));
+      } else return false;
+    } else {
+      return currUser.getUsername().equals(outgoingDocument.getCreatedBy());
+    }
   }
 
   @Override

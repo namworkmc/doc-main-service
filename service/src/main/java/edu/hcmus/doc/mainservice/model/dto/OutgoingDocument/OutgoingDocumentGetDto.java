@@ -33,4 +33,5 @@ public class OutgoingDocumentGetDto extends DocAbstractDto {
     private Boolean isDocTransferred;
     private Boolean isDocCollaborator;
     private Boolean isTransferable;
+    private Boolean isReleasable;
 }

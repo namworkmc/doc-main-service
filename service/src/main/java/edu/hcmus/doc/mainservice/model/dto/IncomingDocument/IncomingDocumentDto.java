@@ -40,6 +40,7 @@ public class IncomingDocumentDto extends DocAbstractDto {
     private Boolean isDocTransferred;
     private Boolean isDocCollaborator;
     private Boolean isTransferable;
+    private Boolean isCloseable;
     private LocalDate closeDate;
     private String closeUsername;
 }

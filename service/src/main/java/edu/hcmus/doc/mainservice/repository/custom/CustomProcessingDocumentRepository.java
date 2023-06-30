@@ -34,8 +34,9 @@ public interface CustomProcessingDocumentRepository
 
   Tuple getCurrentStep(Long processingDocumentId);
 
-
   Optional<ProcessingDocument> findByIncomingDocumentId(Long incomingDocumentId);
+
+  Optional<ProcessingDocument> findByOutgoingDocumentId(Long outgoingDocumentId);
 
   Optional<ProcessingStatus> getProcessingStatus(Long documentId);
 

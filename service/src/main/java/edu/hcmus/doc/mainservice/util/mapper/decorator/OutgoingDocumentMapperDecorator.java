@@ -17,6 +17,7 @@ import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.DepartmentService;
 import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.FolderService;
+import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
 import edu.hcmus.doc.mainservice.util.mapper.OutgoingDocumentMapper;
@@ -40,6 +41,9 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
 
   @Autowired
   OutgoingDocumentRepository outgoingDocumentRepository;
+
+  @Autowired
+  OutgoingDocumentService outgoingDocumentService;
 
   @Autowired
   AttachmentService attachmentService;
@@ -113,6 +117,7 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
     dto.setIsDocCollaborator(isDocCollaborator);
     dto.setAttachments(attachments);
     dto.setIsTransferable(outgoingDocumentRepository.getOutgoingDocumentsWithTransferPermission().contains(outgoingDocument.getId()));
+    dto.setIsReleasable(outgoingDocumentService.validateReleaseDocument(outgoingDocument));
 
     return dto;
   }

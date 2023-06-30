@@ -39,6 +39,8 @@ public interface IncomingDocumentService {
 
   String closeDocument(Long incomingDocumentId);
 
+  Boolean validateCloseDocument(Long incomingDocumentId);
+
   void saveCollaboratorList(ProcessingDocument processingDocument, List<User> collaborators,
       TransferDocDto transferDocDto, Integer step);
 

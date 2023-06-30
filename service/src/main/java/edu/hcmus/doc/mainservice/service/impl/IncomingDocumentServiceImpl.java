@@ -551,4 +551,22 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
     return "incomingDocDetailPage.message.closed_successfully";
   }
+
+  @Override
+  public Boolean validateCloseDocument(Long incomingDocumentId){
+    if (SecurityUtils.getCurrentUser().getRole() != DocSystemRoleEnum.CHUYEN_VIEN) {
+      return false;
+    }
+
+    Optional<ProcessingDocument> processingDocument = processingDocumentRepository
+        .findByIncomingDocumentId(incomingDocumentId);
+
+    if (processingDocument.isPresent()) {
+      if (processingDocument.get().getStatus() != ProcessingStatus.IN_PROGRESS) {
+        return false;
+      }
+      return processingUserRepository.isProcessAtStep(incomingDocumentId, 3);
+    }
+    return false;
+  }
 }

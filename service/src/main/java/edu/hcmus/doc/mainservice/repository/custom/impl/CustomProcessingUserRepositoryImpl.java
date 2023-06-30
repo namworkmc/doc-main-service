@@ -10,6 +10,7 @@ import edu.hcmus.doc.mainservice.model.entity.QProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole;
 import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingUserRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
+import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -31,11 +32,15 @@ public class CustomProcessingUserRepositoryImpl
   }
 
   @Override
-  public boolean isProcessAtStep(Long incomingDocumentId, int step) {
+  public boolean  isProcessAtStep(Long incomingDocumentId, int step) {
     return selectFrom(processingUser)
         .select(processingUser.id)
+        .leftJoin(qProcessingUserRole)
+        .on(qProcessingUser.id.eq(qProcessingUserRole.processingUser.id))
         .where(processingUser.processingDocument.incomingDoc.id.eq(incomingDocumentId)
-            .and(processingUser.step.eq(step)))
+            .and(processingUser.user.id.eq(SecurityUtils.getCurrentUser().getId()))
+            .and(processingUser.step.eq(step))
+            .and(qProcessingUserRole.role.eq(ASSIGNEE)))
         .fetchFirst() != null;
   }
 
@@ -68,5 +73,16 @@ public class CustomProcessingUserRepositoryImpl
             .and(processingUser.processingDocument.id.eq(processingDocumentId)))
         .orderBy(qProcessingUserRole.role.asc())
         .fetch();
+  }
+
+  @Override
+  public ProcessingUser findByUserIdAndProcessingDocumentIdAndRoleAssignee(Long userId, Long processingDocumentId) {
+    return selectFrom(processingUser)
+        .leftJoin(qProcessingUserRole)
+        .on(qProcessingUser.id.eq(qProcessingUserRole.processingUser.id))
+        .where(processingUser.user.id.eq(userId)
+            .and(processingUser.processingDocument.id.eq(processingDocumentId))
+            .and(qProcessingUserRole.role.eq(ASSIGNEE)))
+        .fetchFirst();
   }
 }
