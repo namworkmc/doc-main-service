@@ -28,10 +28,10 @@ public abstract class TransferHistoryMapperDecorator implements TransferHistoryM
     dto.setProcessingDuration(entity.getProcessingDuration());
     dto.setIsInfiniteProcessingTime(entity.getIsInfiniteProcessingTime());
     dto.setIsTransferToSameLevel(entity.getIsTransferToSameLevel());
-    if (entity.getProcessMethod() != null) {
-      dto.setProcessMethod(entity.getProcessMethod().value);
+    if (entity.getProcessingMethod() != null) {
+      dto.setProcessingMethod(entity.getProcessingMethod().getName());
     } else {
-      dto.setProcessMethod(null);
+      dto.setProcessingMethod(null);
     }
     dto.setSenderId(entity.getSender().getId());
     dto.setReceiverId(entity.getReceiver().getId());

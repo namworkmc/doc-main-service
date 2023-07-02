@@ -13,7 +13,7 @@ public class TransferHistoryDto {
   private LocalDate processingDuration;
   private Boolean isInfiniteProcessingTime = false;
   private Boolean isTransferToSameLevel = false;
-  private String processMethod;
+  private String processingMethod;
   private Long senderId;
   private String senderName;
   private Long receiverId;

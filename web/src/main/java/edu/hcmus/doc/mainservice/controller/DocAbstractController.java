@@ -26,6 +26,9 @@ public abstract class DocAbstractController {
   protected DepartmentMapper departmentMapper;
 
   @Autowired
+  protected ProcessingMethodMapper processingMethodMapper;
+
+  @Autowired
   protected FolderMapper folderMapper;
 
   @Autowired

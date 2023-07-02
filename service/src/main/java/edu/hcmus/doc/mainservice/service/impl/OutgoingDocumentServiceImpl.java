@@ -49,6 +49,7 @@ import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
+import edu.hcmus.doc.mainservice.service.ProcessingMethodService;
 import edu.hcmus.doc.mainservice.util.DocObjectUtils;
 import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
@@ -83,6 +84,7 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   private final TransferHistoryRepository transferHistoryRepository;
   private final FolderService folderService;
   private final ProcessingUserRepository processingUserRepository;
+  private final ProcessingMethodService processingMethodService;
 
   @Override
   public OutgoingDocument getOutgoingDocumentById(Long id) {
@@ -315,7 +317,7 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
     }
 
     TransferHistory transferHistory = TransferDocumentUtils.createTransferHistory(reporter,
-        assignee, transferDocDto, OUTGOING_DOCUMENT);
+        assignee, transferDocDto, processingMethodService.findByName(transferDocDto.getProcessingMethod()), OUTGOING_DOCUMENT);
     // save transfer history
     transferHistoryRepository.save(transferHistory);
   }

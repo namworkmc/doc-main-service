@@ -5,6 +5,7 @@ import static com.querydsl.core.group.GroupBy.set;
 import static edu.hcmus.doc.mainservice.model.entity.QIncomingDocument.incomingDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
+import static edu.hcmus.doc.mainservice.model.entity.QProcessingMethod.processingMethod;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole.processingUserRole;
 import static edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum.ASSIGNEE;
@@ -257,8 +258,10 @@ public class CustomProcessingDocumentRepositoryImpl
     BooleanBuilder where = new BooleanBuilder();
 
     User currUser = SecurityUtils.getCurrentUser();
-    where.and(incomingDocument.createdBy.eq(currUser.getUsername()).or(processingUser.user.id.eq(currUser.getId()).and(processingDocument.status.eq(ProcessingStatus.CLOSED).not()).and(processingUserRole.role.eq(ASSIGNEE))));
-
+    where.and(incomingDocument.createdBy.eq(currUser.getUsername())
+        .or(processingUser.user.id.eq(currUser.getId())
+            .and(processingDocument.status.eq(ProcessingStatus.CLOSED).not())
+            .and(processingUserRole.role.eq(ASSIGNEE))));
 
     return selectFrom(incomingDocument)
         .select(incomingDocument.id)
@@ -311,12 +314,13 @@ public class CustomProcessingDocumentRepositoryImpl
         processingDocument.createdDate,
         processingUser.processingDuration,
         processingUser.step,
-        processingUser.processMethod,
+        processingMethod.name,
         processingUser.user.id,
         processingUserRole.role)
         .from(incomingDocument)
         .join(processingDocument).on(incomingDocument.id.eq(processingDocument.incomingDoc.id))
         .join(processingUser).on(processingDocument.id.eq(processingUser.processingDocument.id))
+        .leftJoin(processingMethod).on(processingUser.processingMethod.id.eq(processingMethod.id))
         .join(processingUserRole).on(processingUser.id.eq(processingUserRole.processingUser.id))
         .where(where)
         .fetch()
@@ -335,7 +339,7 @@ public class CustomProcessingDocumentRepositoryImpl
           instance.setIsInfiniteProcessingTime(
               tuple.get(processingUser.processingDuration) == null);
           instance.setStep(tuple.get(processingUser.step));
-          instance.setProcessMethod(tuple.get(processingUser.processMethod));
+          instance.setProcessingMethod(tuple.get(processingMethod.name));
           instance.setUserId(tuple.get(processingUser.user.id));
           instance.setRole(tuple.get(processingUserRole.role));
           return instance;
@@ -344,7 +348,8 @@ public class CustomProcessingDocumentRepositoryImpl
   }
 
   @Override
-  public GetTransferDocumentDetailResponse getTransferOutgoingDocumentDetail(GetTransferDocumentDetailRequest request) {
+  public GetTransferDocumentDetailResponse getTransferOutgoingDocumentDetail(
+      GetTransferDocumentDetailRequest request) {
     BooleanBuilder where = new BooleanBuilder();
     where.and(outgoingDocument.id.eq(request.getDocumentId()))
         .and(processingUser.user.id.eq(request.getUserId())
@@ -362,12 +367,13 @@ public class CustomProcessingDocumentRepositoryImpl
         processingDocument.createdDate,
         processingUser.processingDuration,
         processingUser.step,
-        processingUser.processMethod,
+        processingMethod.name,
         processingUser.user.id,
         processingUserRole.role)
         .from(outgoingDocument)
         .join(processingDocument).on(outgoingDocument.id.eq(processingDocument.outgoingDocument.id))
         .join(processingUser).on(processingDocument.id.eq(processingUser.processingDocument.id))
+        .leftJoin(processingMethod).on(processingUser.processingMethod.id.eq(processingMethod.id))
         .join(processingUserRole).on(processingUser.id.eq(processingUserRole.processingUser.id))
         .where(where)
         .fetch()
@@ -386,7 +392,7 @@ public class CustomProcessingDocumentRepositoryImpl
           instance.setIsInfiniteProcessingTime(
               tuple.get(processingUser.processingDuration) == null);
           instance.setStep(tuple.get(processingUser.step));
-          instance.setProcessMethod(tuple.get(processingUser.processMethod));
+          instance.setProcessingMethod(tuple.get(processingMethod.name));
           instance.setUserId(tuple.get(processingUser.user.id));
           instance.setRole(tuple.get(processingUserRole.role));
           return instance;
@@ -437,12 +443,12 @@ public class CustomProcessingDocumentRepositoryImpl
         .where(incomingDocument.id.eq(documentId))
         .fetchOne();
 
-      return Optional.ofNullable(result)
-          .map(ProcessingStatus::valueOf);
+    return Optional.ofNullable(result)
+        .map(ProcessingStatus::valueOf);
   }
 
   @Override
-  public Tuple getCurrentStep(Long processingDocumentId){
+  public Tuple getCurrentStep(Long processingDocumentId) {
     return select(processingUser.step)
         .from(processingUser)
         .where(processingUser.processingDocument.id.eq(processingDocumentId))
@@ -451,7 +457,7 @@ public class CustomProcessingDocumentRepositoryImpl
   }
 
   @Override
-  public Optional<ProcessingDocument> findProcessingDocumentById(Long id){
+  public Optional<ProcessingDocument> findProcessingDocumentById(Long id) {
     return Optional.ofNullable(
         selectFrom(processingDocument)
             .where(processingDocument.id.eq(id))
@@ -461,14 +467,15 @@ public class CustomProcessingDocumentRepositoryImpl
   }
 
   @Override
-  public DocListStatisticsDto getDocListStatistics(Long userId, LocalDate fromDate, LocalDate toDate, ProcessingDocumentType processingDocumentType) {
+  public DocListStatisticsDto getDocListStatistics(Long userId, LocalDate fromDate,
+      LocalDate toDate, ProcessingDocumentType processingDocumentType) {
     QProcessingDocument qProcessingDocument = processingDocument;
     QProcessingUser qProcessingUser = processingUser;
     QProcessingUserRole qProcessingUserRole = processingUserRole;
 
     BooleanBuilder where = new BooleanBuilder();
 
-    if (ProcessingDocumentType.INCOMING_DOCUMENT.equals(processingDocumentType)){
+    if (ProcessingDocumentType.INCOMING_DOCUMENT.equals(processingDocumentType)) {
       where.and(qProcessingDocument.incomingDoc.isNotNull());
     } else {
       where.and(qProcessingDocument.outgoingDocument.isNotNull());
@@ -491,14 +498,15 @@ public class CustomProcessingDocumentRepositoryImpl
             .and(where))
         .transform(groupBy(documentCase).as(set(qProcessingDocument.id)));
 
-    if(receivedDocuments.isEmpty() || Objects.isNull(receivedDocuments.get("received_document"))) {
+    if (receivedDocuments.isEmpty() || Objects.isNull(receivedDocuments.get("received_document"))) {
       return null;
     } else {
       DocListStatisticsDto docListStatisticsDto = new DocListStatisticsDto();
       docListStatisticsDto.setUserId(userId);
       if (Objects.isNull(receivedDocuments.get("transferred_document"))) {
         docListStatisticsDto.setProcessedDocuments(new ArrayList<>());
-        docListStatisticsDto.setUnprocessedDocuments(receivedDocuments.get("received_document").stream().toList());
+        docListStatisticsDto.setUnprocessedDocuments(
+            receivedDocuments.get("received_document").stream().toList());
       } else {
         List<Long> processedDocuments = receivedDocuments.get("received_document").stream()
             .filter(receivedDocuments.get("transferred_document")::contains)

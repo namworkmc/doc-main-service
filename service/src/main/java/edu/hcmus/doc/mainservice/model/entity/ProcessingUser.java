@@ -1,14 +1,12 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
-import edu.hcmus.doc.mainservice.model.custom.ProcessMethodConverter;
-import edu.hcmus.doc.mainservice.model.enums.ProcessMethod;
 import java.time.LocalDate;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Data;
 
@@ -32,9 +30,9 @@ public class ProcessingUser extends DocAbstractIdEntity {
   @Column(name = "step", nullable = false, columnDefinition = "INT NOT NULL")
   private Integer step;
 
-  @Column(name = "process_method", nullable = false)
-  @Convert(converter = ProcessMethodConverter.class)
-  private ProcessMethod processMethod;
+  @OneToOne
+  @JoinColumn(name = "processing_method_id", referencedColumnName = "id", updatable = false, nullable = false)
+  private ProcessingMethod processingMethod;
 
   @Column(name = "processing_duration", columnDefinition = "DATE")
   private LocalDate processingDuration;

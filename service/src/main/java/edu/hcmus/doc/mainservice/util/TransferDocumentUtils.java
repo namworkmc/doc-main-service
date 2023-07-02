@@ -5,6 +5,7 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
+import edu.hcmus.doc.mainservice.model.entity.ProcessingMethod;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUserRole;
 import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
@@ -87,7 +88,7 @@ public class TransferDocumentUtils {
    * @return TransferHistory
    */
   public static TransferHistory createTransferHistory(User reporter, User assignee,
-      TransferDocDto transferDocDto, ProcessingDocumentType transferType) {
+      TransferDocDto transferDocDto, ProcessingMethod processingMethod, ProcessingDocumentType transferType) {
     TransferHistory transferHistory = new TransferHistory();
     transferHistory.setSender(reporter);
     transferHistory.setReceiver(assignee);
@@ -106,7 +107,7 @@ public class TransferDocumentUtils {
 
     // set transfer history info
     transferHistory.setIsInfiniteProcessingTime(transferDocDto.getIsInfiniteProcessingTime());
-    transferHistory.setProcessMethod(transferDocDto.getProcessMethod());
+    transferHistory.setProcessingMethod(processingMethod);
     if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
       transferHistory.setProcessingDuration(LocalDate.parse(
           Objects.requireNonNull(transferDocDto.getProcessingTime()),
@@ -132,12 +133,12 @@ public class TransferDocumentUtils {
 
   public static ProcessingUser createProcessingUser(ProcessingDocument processingDocument,
       User user,
-      Integer step, TransferDocDto transferDocDto) {
+      Integer step, TransferDocDto transferDocDto, ProcessingMethod processingMethod) {
     ProcessingUser processingUser = new ProcessingUser();
     processingUser.setProcessingDocument(processingDocument);
     processingUser.setUser(user);
     processingUser.setStep(step);
-    processingUser.setProcessMethod(transferDocDto.getProcessMethod());
+    processingUser.setProcessingMethod(processingMethod);
 
     if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
       processingUser.setProcessingDuration(LocalDate.parse(

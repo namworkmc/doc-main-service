@@ -16,7 +16,7 @@ public interface TransferHistoryMapper {
   @Mapping(target = "createdDate", ignore = true)
   @Mapping(target = "processingDuration", ignore = true)
   @Mapping(target = "isInfiniteProcessingTime", ignore = true)
-  @Mapping(target = "processMethod", ignore = true)
+  @Mapping(target = "processingMethod", ignore = true)
   @Mapping(target = "senderId", ignore = true)
   @Mapping(target = "receiverId", ignore = true)
   @Mapping(target = "senderName", ignore = true)

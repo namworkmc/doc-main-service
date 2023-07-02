@@ -3,18 +3,15 @@ package edu.hcmus.doc.mainservice.model.entity;
 import static edu.hcmus.doc.mainservice.DocConst.CATALOG_NAME;
 import static edu.hcmus.doc.mainservice.DocConst.SCHEMA_NAME;
 
-import edu.hcmus.doc.mainservice.model.custom.ProcessMethodConverter;
-import edu.hcmus.doc.mainservice.model.enums.ProcessMethod;
 import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Data;
 
@@ -41,9 +38,9 @@ public class TransferHistory extends DocAbstractIdEntity {
   @Column(name = "outgoing_doc_id", columnDefinition = "BIGINT")
   private List<Long> outgoingDocumentIds;
 
-  @Column(name = "process_method", nullable = false)
-  @Convert(converter = ProcessMethodConverter.class)
-  private ProcessMethod processMethod;
+  @OneToOne
+  @JoinColumn(name = "processing_method_id", referencedColumnName = "id", updatable = false, nullable = false)
+  private ProcessingMethod processingMethod;
 
   @Column(name = "processing_duration", columnDefinition = "TIMESTAMP")
   private LocalDate processingDuration;

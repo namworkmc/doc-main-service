@@ -1,6 +1,5 @@
 package edu.hcmus.doc.mainservice.model.dto.TransferDocument;
 
-import edu.hcmus.doc.mainservice.model.enums.ProcessMethod;
 import edu.hcmus.doc.mainservice.model.enums.TransferDocumentType;
 import java.util.List;
 import lombok.Data;
@@ -23,7 +22,7 @@ public class TransferDocDto {
   @Nullable
   private Boolean isInfiniteProcessingTime;
   @Nullable
-  private ProcessMethod processMethod;
+  private String processingMethod;
   private TransferDocumentType transferDocumentType;
   private Boolean isTransferToSameLevel;
 }

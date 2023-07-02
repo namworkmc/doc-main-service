@@ -59,6 +59,7 @@ import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.DocumentReminderService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
+import edu.hcmus.doc.mainservice.service.ProcessingMethodService;
 import edu.hcmus.doc.mainservice.util.DocObjectUtils;
 import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
@@ -112,6 +113,8 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   private final OutgoingDocumentRepository outgoingDocumentRepository;
 
   private final LinkedDocumentRepository linkedDocumentRepository;
+
+  private final ProcessingMethodService processingMethodService;
 
   @Override
   public long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
@@ -190,7 +193,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     User assignee = getUserByIdOrThrow(transferDocDto.getAssigneeId());
 
     TransferHistory transferHistory = TransferDocumentUtils.createTransferHistory(reporter,
-        assignee, transferDocDto, INCOMING_DOCUMENT);
+        assignee, transferDocDto, processingMethodService.findByName(transferDocDto.getProcessingMethod()), INCOMING_DOCUMENT);
     if (transferDocDto.getIsTransferToSameLevel()) {
       transferToSameLevel(transferDocDto, reporter, assignee, currentUser.getRole());
 
@@ -293,7 +296,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
       TransferDocDto transferDocDto, Integer step) {
     collaborators.forEach(collaborator -> {
       ProcessingUser processingUser1 = createProcessingUser(processingDocument, collaborator, step,
-          transferDocDto);
+          transferDocDto, processingMethodService.findByName(transferDocDto.getProcessingMethod()));
       ProcessingUser savedProcessingUser1 = processingUserRepository.save(processingUser1);
 
       if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
@@ -311,7 +314,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
       TransferDocDto transferDocDto, Integer step,
       ProcessingDocumentRoleEnum role) {
     ProcessingUser processingUser = createProcessingUser(processingDocument, user, step,
-        transferDocDto);
+        transferDocDto, processingMethodService.findByName(transferDocDto.getProcessingMethod()));
     ProcessingUser savedProcessingUser = processingUserRepository.save(processingUser);
 
     if (Boolean.FALSE.equals(transferDocDto.getIsInfiniteProcessingTime())) {
