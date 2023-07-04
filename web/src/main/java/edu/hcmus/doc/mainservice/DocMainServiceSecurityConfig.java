@@ -1,16 +1,19 @@
-package edu.hcmus.doc.mainservice.security.config;
+package edu.hcmus.doc.mainservice;
 
 import static java.util.Arrays.asList;
 
-import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
+import edu.hcmus.doc.mainservice.security.filter.SecretKeyAuthFilter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,8 +30,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@RequiredArgsConstructor
 @EnableWebSecurity
+@RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class DocMainServiceSecurityConfig {
 
@@ -38,8 +41,34 @@ public class DocMainServiceSecurityConfig {
 
   private static final String USERNAME = "username";
 
+  @Value("${doc.http.auth-token-header-name}")
+  private String principalRequestHeader;
+
+  @Value("${doc.http.auth-token}")
+  private String principalRequestValue;
+
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  @Order(1)
+  public SecurityFilterChain keycloakSecurityFilterChain(HttpSecurity http) throws Exception {
+    http.cors()
+        .and()
+        .csrf()
+        .disable()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .addFilter(secretKeyAuthFilter())
+        .antMatcher(DocURL.API_V1 + "/keycloak/users/**")
+        .authorizeRequests()
+        .anyRequest()
+        .authenticated();
+
+    return http.build();
+  }
+
+  @Bean
+  @Order(2)
+  public SecurityFilterChain oauth2SecurityFilterChain(HttpSecurity http) throws Exception {
     return http.cors()
         .and()
         .csrf()
@@ -93,5 +122,20 @@ public class DocMainServiceSecurityConfig {
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  private SecretKeyAuthFilter secretKeyAuthFilter() {
+    SecretKeyAuthFilter secretKeyAuthFilter = new SecretKeyAuthFilter(principalRequestHeader);
+    secretKeyAuthFilter.setAuthenticationManager(authentication -> {
+      String principal = (String) authentication.getPrincipal();
+      if (!principalRequestValue.equals(principal))
+      {
+        throw new BadCredentialsException("The API key was not found or not the expected value.");
+      }
+      authentication.setAuthenticated(true);
+      return authentication;
+    });
+
+    return secretKeyAuthFilter;
   }
 }

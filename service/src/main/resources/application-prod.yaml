@@ -50,6 +50,7 @@ spring:
 logging:
   level:
     sql: info
+    web: info
 
 doc:
   http:
