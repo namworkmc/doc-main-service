@@ -67,10 +67,7 @@ services:
       - local-deployment
     container_name: doc-main-service
     image: hcmusdoc/doc-main-service:latest
-    pull_policy: never
-    build:
-      context: ../../
-      dockerfile: Dockerfile
+    pull_policy: always
     ports:
       - "8080:8080"
     depends_on:
@@ -99,16 +96,6 @@ services:
       DOC_DATABASE: doc
       DOC_MAIN_SERVICE_LIQUIBASE_ENABLED: false
       DOC_MAIN_SERVICE_LIQUIBASE_DROP_FIRST: false
-
-  doc-front:
-    profiles:
-      - local-deployment
-    container_name: doc-front
-    image: hcmusdoc/doc-front:dev-latest
-    ports:
-      - "3000:3000"
-    depends_on:
-      - doc-main-service
 
 volumes:
   doc-main-data:
