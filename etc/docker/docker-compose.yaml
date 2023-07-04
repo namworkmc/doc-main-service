@@ -100,6 +100,16 @@ services:
       DOC_MAIN_SERVICE_LIQUIBASE_ENABLED: false
       DOC_MAIN_SERVICE_LIQUIBASE_DROP_FIRST: false
 
+  doc-front:
+    profiles:
+      - local-deployment
+    container_name: doc-front
+    image: hcmusdoc/doc-front:dev-latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - doc-main-service
+
 volumes:
   doc-main-data:
     name: doc-main-data

@@ -1,12 +1,5 @@
-# Build phase
-FROM maven:3.8.6-eclipse-temurin-17-alpine AS MAVEN_BUILD
-COPY . /build/
-WORKDIR /build/
-RUN mvn install -DskipTests=true -DskipTypescriptGenerator=true -Dmaven.test.failure.ignore=true
-
-# Run phase
 FROM eclipse-temurin:17.0.5_8-jre-alpine
 WORKDIR /app
-COPY --from=MAVEN_BUILD /build/web/target/doc-main-service.jar /app/
+COPY ./web/target/doc-main-service.jar /app/doc-main-service.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "doc-main-service.jar", "--spring.profiles.active=prod"]
