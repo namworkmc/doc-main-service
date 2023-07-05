@@ -1,15 +1,21 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
+import static edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException.INCOMING_DOCUMENT_NOT_FOUND;
+import static edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException.OUTGOING_DOCUMENT_NOT_FOUND;
+
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentDto;
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.Attachment.DocumentWithAttachmentDto;
 import edu.hcmus.doc.mainservice.model.dto.FileDto;
 import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
 import edu.hcmus.doc.mainservice.model.exception.DocMainServiceRuntimeException;
+import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
 import edu.hcmus.doc.mainservice.repository.AttachmentRepository;
 import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +56,28 @@ public class AttachmentServiceImpl implements AttachmentService {
   public List<AttachmentDto> getAttachmentsByDocId(Long docId, ParentFolderEnum parentFolder) {
     return attachmentRepository.getAttachmentsByDocId(docId, parentFolder).stream().map(
         attachmentMapperDecorator::toDto).toList();
+  }
+
+  @Override
+  public List<DocumentWithAttachmentDto> getDocumentsWithAttachmentsByDocIds(List<Long> docIds,
+      ParentFolderEnum parentFolder) {
+    List<DocumentWithAttachmentDto> result = new ArrayList<>();
+    docIds.forEach(docId -> {
+      if (parentFolder == ParentFolderEnum.ICD) {
+        incomingDocumentRepository.findById(docId)
+            .orElseThrow(() -> new DocumentNotFoundException(INCOMING_DOCUMENT_NOT_FOUND));
+      } else {
+        outgoingDocumentRepository.findById(docId)
+            .orElseThrow(() -> new DocumentNotFoundException(OUTGOING_DOCUMENT_NOT_FOUND));
+      }
+
+      List<AttachmentDto> attachments = getAttachmentsByDocId(docId, parentFolder);
+      DocumentWithAttachmentDto documentWithAttachmentDto = new DocumentWithAttachmentDto();
+      documentWithAttachmentDto.setDocId(docId);
+      documentWithAttachmentDto.setAttachments(attachments);
+      result.add(documentWithAttachmentDto);
+    });
+    return result;
   }
 
   @SneakyThrows

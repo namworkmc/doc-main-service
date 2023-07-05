@@ -1,6 +1,8 @@
 package edu.hcmus.doc.mainservice.model.dto.TransferHistory;
 
+import edu.hcmus.doc.mainservice.model.dto.Attachment.DocumentWithAttachmentDto;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 
@@ -18,4 +20,5 @@ public class TransferHistoryDto {
   private String senderName;
   private Long receiverId;
   private String receiverName;
+  private List<DocumentWithAttachmentDto> attachments = new ArrayList<>();
 }
