@@ -19,7 +19,7 @@ spec:
       containers:
         - name: doc-main-service
           image: hcmusdoc/doc-main-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           livenessProbe:
             httpGet:
               port: 8080

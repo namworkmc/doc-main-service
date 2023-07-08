@@ -19,7 +19,7 @@ spec:
       containers:
         - name: doc-file-service
           image: hcmusdoc/doc-file-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8081
           env:

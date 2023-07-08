@@ -18,8 +18,8 @@ spec:
     spec:
       containers:
         - name: doc-front
-          image: hcmusdoc/doc-front:latest
-          imagePullPolicy: IfNotPresent
+          image: hcmusdoc/doc-front:local-latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
 
