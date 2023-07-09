@@ -96,6 +96,7 @@ services:
       DOC_DATABASE: doc
       DOC_MAIN_SERVICE_LIQUIBASE_ENABLED: false
       DOC_MAIN_SERVICE_LIQUIBASE_DROP_FIRST: false
+      TZ: Asia/Ho_Chi_Minh
 
 volumes:
   doc-main-data:

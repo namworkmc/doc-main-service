@@ -155,6 +155,12 @@ spec:
             - name: DOC_MAIN_SERVICE_LIQUIBASE_DROP_FIRST
               value: "false"
 
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-const-config
+                  key: vietnam-timezone
+
 
 ---
 

@@ -93,6 +93,12 @@ spec:
             - name: KC_METRICS_ENABLED
               value: "true"
 
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-const-config
+                  key: vietnam-timezone
+
 ---
 
 apiVersion: v1

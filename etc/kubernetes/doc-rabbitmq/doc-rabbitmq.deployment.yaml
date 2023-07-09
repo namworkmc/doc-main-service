@@ -37,6 +37,12 @@ spec:
                   name: doc-rabbitmq-secret
                   key: password
 
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-const-config
+                  key: vietnam-timezone
+
 ---
 
 # Define a 'Service' To Expose mysql to Other Services

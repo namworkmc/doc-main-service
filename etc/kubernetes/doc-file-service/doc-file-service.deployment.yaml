@@ -203,6 +203,12 @@ spec:
                   name: doc-file-service-config
                   key: doc-file-service-aws-s3-bucket-name
 
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: doc-const-config
+                  key: vietnam-timezone
+
 ---
 
 apiVersion: v1

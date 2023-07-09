@@ -1,3 +1,5 @@
+kubectl apply -f ./common/doc-const.config.yaml
+
 kubectl apply -f ./doc-ingress/doc-kong.yaml
 kubectl apply -f ./doc-ingress/doc-ingress.yaml
 

@@ -49,8 +49,8 @@ spring:
 
 logging:
   level:
-    sql: info
-    web: info
+    sql: debug
+    web: debug
 
 doc:
   http:
