@@ -43,6 +43,7 @@ jobs:
 
       - name: Push to Docker Hub
         uses: docker/build-push-action@v4
+        if: !startsWith(github.ref_name, 'release-')
         with:
           context: .
           push: true
@@ -54,4 +55,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: hcmusdoc/doc-main-service:${{ github.ref_name }}
+          tags:
+            - hcmusdoc/doc-main-service:release-latest
+            - hcmusdoc/doc-main-service:${{ github.ref_name }}
