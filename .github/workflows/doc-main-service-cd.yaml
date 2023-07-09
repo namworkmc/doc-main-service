@@ -7,7 +7,7 @@ on:
   push:
     branches: [ main, deployment ]
     tags:
-    - 'release/v*'
+    - 'release-*'
 
 jobs:
   build:
@@ -50,7 +50,7 @@ jobs:
           
       - name: Push release image to Docker Hub
         uses: docker/build-push-action@v4
-        if: startsWith(github.ref_name, 'release/v')
+        if: startsWith(github.ref_name, 'release-')
         with:
           context: .
           push: true
