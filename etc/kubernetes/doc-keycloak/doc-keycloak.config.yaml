@@ -10,6 +10,6 @@ data:
   keycloak-client-id: "doc-client"
   oauth2-resourceserver-jwt-issuer-uri: "http://doc-keycloak:8180/realms/doc-realm"
   keycloak-http-port: "8180"
-  keycloak-db-host: "doc-keycloak-db"
+  keycloak-db-host: "dpg-cim1untph6eg6k81pehg-a.singapore-postgres.render.com"
   keycloak-db-port: "5432"
-  keycloak-database-name: "doc-keycloak-db"
+  keycloak-database-name: "prj_doc_keycloak_8hva"

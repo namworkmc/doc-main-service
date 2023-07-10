@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: doc-db-config
 data:
-  host: "rds-terraform.cjdkg26tuejl.ap-southeast-1.rds.amazonaws.com"
+  host: "dpg-cim104unqqlfm4fbppvg-a.singapore-postgres.render.com"
   port: "5432"
-  db-name: "doc"
+  db-name: "doc_3pxi"

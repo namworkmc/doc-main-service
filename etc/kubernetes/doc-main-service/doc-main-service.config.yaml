@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: doc-main-service-config
 data:
-  doc-main-service-spring-profiles-active: "local-deployment"
+  doc-main-service-spring-profiles-active: "prod"
   doc-main-service-server-port: "8080"

@@ -20,12 +20,12 @@ spec:
         - name: doc-keycloak-service
           image: hcmusdoc/doc-keycloak:latest
           imagePullPolicy: Always
-          livenessProbe:
-            httpGet:
-              port: 8180
-              path: /health/live
-            initialDelaySeconds: 60
-            periodSeconds: 30
+#          livenessProbe:
+#            httpGet:
+#              port: 8180
+#              path: /health/live
+#            initialDelaySeconds: 120
+#            periodSeconds: 60
           args: [ "start-dev", "--import-realm", "--cache-stack=kubernetes" ]
           ports:
             - containerPort: 8180
