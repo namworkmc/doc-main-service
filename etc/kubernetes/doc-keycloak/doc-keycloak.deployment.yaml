@@ -18,8 +18,8 @@ spec:
     spec:
       containers:
         - name: doc-keycloak-service
-          image: hcmusdoc/doc-keycloak:latest
-          imagePullPolicy: Always
+          image: hcmusdoc/prj-doc-keycloak:1.0.0
+          imagePullPolicy: IfNotPresent
 #          livenessProbe:
 #            httpGet:
 #              port: 8180
