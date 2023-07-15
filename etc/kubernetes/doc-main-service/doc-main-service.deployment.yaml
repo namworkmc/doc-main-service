@@ -29,12 +29,6 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: DOC_MAIN_SERVICE_SPRING_PROFILES_ACTIVE
-              valueFrom:
-                configMapKeyRef:
-                  name: doc-main-service-config
-                  key: doc-main-service-spring-profiles-active
-
             - name: DOC_MAIN_SERVICE_SERVER_PORT
               valueFrom:
                 configMapKeyRef:

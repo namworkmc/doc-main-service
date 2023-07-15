@@ -18,8 +18,14 @@ spec:
     spec:
       containers:
         - name: doc-file-service
-          image: hcmusdoc/doc-file-service:latest
+          image: hcmusdoc/doc-file-service:release-v1.0.0
           imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health/liveness
+            initialDelaySeconds: 60
+            periodSeconds: 30
           ports:
             - containerPort: 8081
           env:
