@@ -46,8 +46,10 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 3000KB # max file size for each request
-      max-request-size: 3000KB # max request size for a multipart/form-data.
+      # max file size for each request
+      max-file-size: 10MB
+      # max request size for a multipart/form-data
+      max-request-size: 100MB
 
 logging:
   level:

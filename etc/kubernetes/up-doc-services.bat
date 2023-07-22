@@ -22,4 +22,4 @@ kubectl apply -f ./doc-file-service/doc-file-service.config.yaml
 kubectl apply -f ./doc-file-service/doc-file-service.secret.yaml
 kubectl apply -f ./doc-file-service/doc-file-service.deployment.yaml
 
-@REM kubectl apply -f ./doc-main-service/doc-front.deployment.yaml
+kubectl apply -f ./doc-main-service/doc-front.deployment.yaml
