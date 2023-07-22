@@ -37,6 +37,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     folderService.resetFolderNextNumberAndUpdateYear();
   }
 
+  /**
+   * Run at 12:00:05 AM every day
+   */
   @Override
   @Scheduled(cron = "${doc.schedule.update-document-reminder-status-cron}")
   public void updateDocumentReminderStatus() {

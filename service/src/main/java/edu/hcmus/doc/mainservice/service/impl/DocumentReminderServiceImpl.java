@@ -8,7 +8,9 @@ import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
 import edu.hcmus.doc.mainservice.repository.DocumentReminderRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.DocumentReminderService;
+import edu.hcmus.doc.mainservice.util.DocDateTimeUtils;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.AbstractMap;
 import java.util.List;
@@ -93,11 +95,17 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
   }
 
   @Override
-  public Long createdDocumentReminder(ProcessingUser processingUser) {
+  public Long createDocumentReminder(ProcessingUser processingUser) {
     DocumentReminder documentReminder = new DocumentReminder();
     documentReminder.setProcessingUser(processingUser);
     documentReminder.setExpirationDate(processingUser.getProcessingDuration());
-    documentReminder.setStatus(DocumentReminderStatusEnum.ACTIVE);
+    documentReminder.setStatus(
+        DocDateTimeUtils.isBetween(LocalDateTime.now(),
+            DocDateTimeUtils.getAtStartOf7DaysBefore(processingUser.getProcessingDuration()),
+            DocDateTimeUtils.getAtEndOfDay(processingUser.getProcessingDuration()))
+            ? DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION
+            : DocumentReminderStatusEnum.ACTIVE
+    );
     return documentReminderRepository.save(documentReminder).getId();
   }
 }

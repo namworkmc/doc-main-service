@@ -23,5 +23,5 @@ public interface DocumentReminderService {
 
   long updateCurrentUserIsNotOpenedReminders(List<Long> ids);
 
-  Long createdDocumentReminder(ProcessingUser processingUser);
+  Long createDocumentReminder(ProcessingUser processingUser);
 }

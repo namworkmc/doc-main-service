@@ -10,6 +10,6 @@ public class DocMainServiceApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(DocMainServiceApplication.class, args);
-    log.info("DOC Main Service Application is running");
+    log.info("doc-main-service application is running");
   }
 }
