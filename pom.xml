@@ -21,7 +21,7 @@
 
   <groupId>edu.hcmus.doc.main-service</groupId>
   <artifactId>doc-main-service-parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${prj-doc.doc-main-service.version}</version>
   <name>doc-main-service</name>
   <description>doc-main-service</description>
 
@@ -32,6 +32,7 @@
     <commons-collections4.version>4.4</commons-collections4.version>
     <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
     <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+    <prj-doc.doc-main-service.version>1.0.0-SNAPSHOT</prj-doc.doc-main-service.version>
   </properties>
 
   <dependencies>
