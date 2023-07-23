@@ -11,7 +11,13 @@ import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingU
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
-import edu.hcmus.doc.mainservice.model.entity.*;
+import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
+import edu.hcmus.doc.mainservice.model.entity.QDistributionOrganization;
+import edu.hcmus.doc.mainservice.model.entity.QFolder;
+import edu.hcmus.doc.mainservice.model.entity.QIncomingDocument;
+import edu.hcmus.doc.mainservice.model.entity.QProcessingDocument;
+import edu.hcmus.doc.mainservice.model.entity.QProcessingUser;
+import edu.hcmus.doc.mainservice.model.entity.QSendingLevel;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomIncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
@@ -85,8 +91,6 @@ public class CustomIncomingDocumentRepositoryImpl
                 .fetchJoin()
                 .join(incomingDocument.documentType, documentType)
                 .fetchJoin()
-//                .join(incomingDocument.sendingLevel, QSendingLevel.sendingLevel)
-//                .fetchJoin()
                 .join(incomingDocument.distributionOrg, QDistributionOrganization.distributionOrganization)
                 .fetchJoin()
                 .where(incomingDocument.id.eq(id))

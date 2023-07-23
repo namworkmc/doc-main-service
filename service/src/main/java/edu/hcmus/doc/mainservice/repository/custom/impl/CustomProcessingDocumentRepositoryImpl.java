@@ -96,7 +96,7 @@ public class CustomProcessingDocumentRepositoryImpl
                 incomingDocument.documentType.type,
                 incomingDocument.distributionOrg.id,
                 incomingDocument.distributionOrg.name)
-            .orderBy(incomingDocument.id.asc())
+            .orderBy(incomingDocument.id.desc())
             .offset(offset * limit)
             .limit(limit)
             .fetch()
