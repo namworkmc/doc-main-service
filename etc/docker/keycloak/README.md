@@ -23,12 +23,10 @@ To use custom User Federation and get the project preconfigured in Keycloak, fol
    There is a package called `providers` that contains a .jar file, which is a custom Keycloak User Federation file.
     - If you want to use your own custom User Federation, put your file in the "providers" package, and then place it in `/opt/keycloak/providers` of the container.
 
-Note:
-- You can find the source-code of the custom User Federation at https://github.com/hcmus-k19-doc/doc-user-provider
+For more information, please refer to  https://github.com/hcmus-k19-doc/doc-user-provider 
 
 ## Contact
 - [Nguyen Duc Nam](https://github.com/namworkmc)
 - [Hoang Nhu Thanh](https://github.com/thanhhoang4869)
 - [Le Ngoc Minh Nhat](https://github.com/minhnhat02122001)
 - [Hoang Huu Giap](https://github.com/hhgiap241)
-- 
