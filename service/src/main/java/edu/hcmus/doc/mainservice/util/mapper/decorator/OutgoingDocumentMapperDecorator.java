@@ -8,9 +8,11 @@ import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.PublishDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
 import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
@@ -19,8 +21,11 @@ import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
+import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
 import edu.hcmus.doc.mainservice.util.mapper.OutgoingDocumentMapper;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -118,6 +123,16 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
     dto.setAttachments(attachments);
     dto.setIsTransferable(outgoingDocumentRepository.getOutgoingDocumentsWithTransferPermission().contains(outgoingDocument.getId()));
     dto.setIsReleasable(outgoingDocumentService.validateReleaseDocument(outgoingDocument));
+
+    dto.setCustomProcessingDuration(
+        processingDocumentService
+            .getDateExpiredV2(outgoingDocument.getId(), currentUser.getId(),
+                currentUser.getRole(), true, ProcessingDocumentTypeEnum.OUTGOING_DOCUMENT)
+            .map(result -> result.equals("infinite") ? ResourceBundleUtils.getContent(
+                MESSAGE.infinite_processing_duration) : LocalDate.parse(result).format(
+                DateTimeFormatter.ofPattern("dd-MM-yyyy")))
+            .orElse(null)
+    );
 
     return dto;
   }

@@ -18,4 +18,5 @@ public enum MESSAGE {
   user_has_already_exists_in_the_flow_of_document,
   user_not_have_permission_to_transfer_document_in_same_level,
   user_not_have_permission_to_transfer_this_document,
+  infinite_processing_duration,
 }

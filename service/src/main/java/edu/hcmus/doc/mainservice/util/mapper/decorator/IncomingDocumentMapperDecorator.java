@@ -8,8 +8,10 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentD
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
@@ -19,8 +21,11 @@ import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
+import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
 import edu.hcmus.doc.mainservice.util.mapper.IncomingDocumentMapper;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -85,13 +90,15 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
     dto.setStatus(status);
     dto.setIsDocTransferred(isDocTransferred);
     dto.setIsDocCollaborator(isDocCollaborator);
-    dto.setIsTransferable(processingDocumentRepository.getIncomingDocumentsWithTransferPermission().contains(incomingDocument.getId()));
+    dto.setIsTransferable(processingDocumentRepository.getIncomingDocumentsWithTransferPermission()
+        .contains(incomingDocument.getId()));
     dto.setIsCloseable(incomingDocumentService.validateCloseDocument(incomingDocument.getId()));
     dto.setAttachments(attachments);
 
     dto.setProcessingDuration(
         processingDocumentService
-            .getDateExpired(incomingDocument.getId(), SecurityUtils.getCurrentUser().getId())
+            .getDateExpired(incomingDocument.getId(), currentUser.getId(), currentUser.getRole(),
+                false)
             .orElse(null)
     );
     return dto;
@@ -127,7 +134,18 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
             .build());
 
     dto.setIsDocCollaborator(isDocCollaborator);
-    dto.setIsTransferable(processingDocumentRepository.getIncomingDocumentsWithTransferPermission().contains(processingDocument.getIncomingDoc().getId()));
+    dto.setIsTransferable(processingDocumentRepository.getIncomingDocumentsWithTransferPermission()
+        .contains(processingDocument.getIncomingDoc().getId()));
+
+    dto.setCustomProcessingDuration(
+        processingDocumentService
+            .getDateExpiredV2(processingDocument.getIncomingDoc().getId(), currentUser.getId(),
+                currentUser.getRole(), true, ProcessingDocumentTypeEnum.INCOMING_DOCUMENT)
+            .map(result -> result.equals("infinite") ? ResourceBundleUtils.getContent(
+                MESSAGE.infinite_processing_duration) : LocalDate.parse(result).format(
+                DateTimeFormatter.ofPattern("dd-MM-yyyy")))
+            .orElse(null)
+    );
 
     return dto;
   }

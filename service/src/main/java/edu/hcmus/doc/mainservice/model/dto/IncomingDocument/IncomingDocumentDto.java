@@ -43,4 +43,5 @@ public class IncomingDocumentDto extends DocAbstractDto {
     private Boolean isCloseable;
     private LocalDate closeDate;
     private String closeUsername;
+    private String customProcessingDuration;
 }

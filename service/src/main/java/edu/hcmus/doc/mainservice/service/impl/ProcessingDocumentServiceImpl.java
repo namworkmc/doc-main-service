@@ -20,6 +20,7 @@ import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentNotFoundException;
@@ -417,7 +418,13 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
   }
 
   @Override
-  public Optional<LocalDate> getDateExpired(Long incomingDocumentId, Long userId) {
-    return processingUserRepository.getDateExpired(incomingDocumentId, userId);
+  public Optional<LocalDate> getDateExpired(Long incomingDocumentId, Long userId, DocSystemRoleEnum userRole, Boolean isAnyRole) {
+    return processingUserRepository.getDateExpired(incomingDocumentId, userId, userRole, isAnyRole);
+  }
+
+  @Override
+  public Optional<String> getDateExpiredV2(Long documentId, Long userId,
+      DocSystemRoleEnum userRole, Boolean isAnyRole, ProcessingDocumentTypeEnum type) {
+    return processingUserRepository.getDateExpiredV2(documentId, userId, userRole, isAnyRole, type);
   }
 }

@@ -34,4 +34,5 @@ public class OutgoingDocumentGetDto extends DocAbstractDto {
     private Boolean isDocCollaborator;
     private Boolean isTransferable;
     private Boolean isReleasable;
+    private String customProcessingDuration;
 }
