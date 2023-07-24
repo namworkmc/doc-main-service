@@ -1,9 +1,13 @@
 package edu.hcmus.doc.mainservice.controller;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import edu.hcmus.doc.mainservice.model.dto.ExceptionDto;
 import edu.hcmus.doc.mainservice.model.dto.KeycloakErrorDto;
-import edu.hcmus.doc.mainservice.model.exception.*;
-
+import edu.hcmus.doc.mainservice.model.exception.DocAuthorizedException;
+import edu.hcmus.doc.mainservice.model.exception.DocExistedException;
+import edu.hcmus.doc.mainservice.model.exception.DocMainServiceRuntimeException;
+import edu.hcmus.doc.mainservice.model.exception.DocNotFoundException;
+import edu.hcmus.doc.mainservice.model.exception.DocStatusViolatedException;
 import java.util.Objects;
 import javax.ws.rs.ClientErrorException;
 import lombok.extern.slf4j.Slf4j;
@@ -81,6 +85,14 @@ public class ExceptionController {
     return ResponseEntity
         .status(HttpStatus.CONFLICT)
         .body(new ExceptionDto(DocMainServiceRuntimeException.CONCURRENT_UPDATE));
+  }
+
+  @ExceptionHandler(FirebaseMessagingException.class)
+  public ResponseEntity<ExceptionDto> handleFirebaseMessagingException(FirebaseMessagingException exception) {
+    log.error(exception.getMessage(), exception);
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(new ExceptionDto("Firebase messaging error"));
   }
 
   @ExceptionHandler(Throwable.class)

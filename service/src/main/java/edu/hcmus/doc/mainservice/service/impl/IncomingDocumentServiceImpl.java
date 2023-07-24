@@ -60,8 +60,8 @@ import edu.hcmus.doc.mainservice.service.DocumentReminderService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingMethodService;
+import edu.hcmus.doc.mainservice.util.DocMessageUtils;
 import edu.hcmus.doc.mainservice.util.DocObjectUtils;
-import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
 import edu.hcmus.doc.mainservice.util.mapper.IncomingDocumentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.AttachmentMapperDecorator;
@@ -397,20 +397,20 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     switch (currUser.getRole()) {
       case VAN_THU -> {
         menuConfigs.add(TransferDocumentMenuConfig.builder()
-            .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
+            .transferDocumentTypeLabel(DocMessageUtils.getContent(
                 MESSAGE.submit_document_to_giam_doc_type_label))
             .componentKey(TransferDocumentComponent.TRANSFER_TO_GIAM_DOC.value)
-            .menuLabel(ResourceBundleUtils.getContent(
+            .menuLabel(DocMessageUtils.getContent(
                 MESSAGE.submit_document_to_giam_doc_menu_label))
             .menuKey(TransferDocumentComponent.TRANSFER_TO_GIAM_DOC.value)
             .transferDocumentType(TRANSFER_TO_GIAM_DOC)
             .isTransferToSameLevel(false)
             .build());
         menuConfigs.add(TransferDocumentMenuConfig.builder()
-            .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
+            .transferDocumentTypeLabel(DocMessageUtils.getContent(
                 MESSAGE.transfer_document_to_van_thu_type_label))
             .componentKey(TransferDocumentComponent.TRANSFER_TO_VAN_THU.value)
-            .menuLabel(ResourceBundleUtils.getContent(
+            .menuLabel(DocMessageUtils.getContent(
                 MESSAGE.transfer_document_to_van_thu_menu_label))
             .menuKey(TransferDocumentComponent.TRANSFER_TO_VAN_THU.value)
             .transferDocumentType(TransferDocumentType.TRANSFER_TO_VAN_THU)
@@ -421,20 +421,20 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
       }
       case HIEU_TRUONG -> {
         menuConfigs.add(TransferDocumentMenuConfig.builder()
-            .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
+            .transferDocumentTypeLabel(DocMessageUtils.getContent(
                 MESSAGE.transfer_document_to_giam_doc_type_label))
             .componentKey(TransferDocumentComponent.TRANSFER_TO_GIAM_DOC.value)
-            .menuLabel(ResourceBundleUtils.getContent(
+            .menuLabel(DocMessageUtils.getContent(
                 MESSAGE.transfer_document_to_giam_doc_menu_label))
             .menuKey(TransferDocumentComponent.TRANSFER_TO_GIAM_DOC.value)
             .transferDocumentType(TRANSFER_TO_GIAM_DOC)
             .isTransferToSameLevel(true)
             .build());
         menuConfigs.add(TransferDocumentMenuConfig.builder()
-            .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
+            .transferDocumentTypeLabel(DocMessageUtils.getContent(
                 MESSAGE.assign_document_to_truong_phong_type_label))
             .componentKey(TransferDocumentComponent.TRANSFER_TO_TRUONG_PHONG.value)
-            .menuLabel(ResourceBundleUtils.getContent(
+            .menuLabel(DocMessageUtils.getContent(
                 MESSAGE.assign_document_to_truong_phong_menu_label))
             .menuKey(TransferDocumentComponent.TRANSFER_TO_TRUONG_PHONG.value)
             .transferDocumentType(TransferDocumentType.TRANSFER_TO_TRUONG_PHONG)
@@ -445,20 +445,20 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
       }
       case TRUONG_PHONG -> {
         menuConfigs.add(TransferDocumentMenuConfig.builder()
-            .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
+            .transferDocumentTypeLabel(DocMessageUtils.getContent(
                 MESSAGE.transfer_document_to_truong_phong_type_label))
             .componentKey(TransferDocumentComponent.TRANSFER_TO_TRUONG_PHONG.value)
-            .menuLabel(ResourceBundleUtils.getContent(
+            .menuLabel(DocMessageUtils.getContent(
                 MESSAGE.transfer_document_to_truong_phong_menu_label))
             .menuKey(TransferDocumentComponent.TRANSFER_TO_TRUONG_PHONG.value)
             .transferDocumentType(TransferDocumentType.TRANSFER_TO_TRUONG_PHONG)
             .isTransferToSameLevel(true)
             .build());
         menuConfigs.add(TransferDocumentMenuConfig.builder()
-            .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
+            .transferDocumentTypeLabel(DocMessageUtils.getContent(
                 MESSAGE.assign_document_to_chuyen_vien_type_label))
             .componentKey(TransferDocumentComponent.TRANSFER_TO_CHUYEN_VIEN.value)
-            .menuLabel(ResourceBundleUtils.getContent(
+            .menuLabel(DocMessageUtils.getContent(
                 MESSAGE.assign_document_to_chuyen_vien_menu_label))
             .menuKey(TransferDocumentComponent.TRANSFER_TO_CHUYEN_VIEN.value)
             .transferDocumentType(TransferDocumentType.TRANSFER_TO_CHUYEN_VIEN)
@@ -469,10 +469,10 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
       }
       case CHUYEN_VIEN -> {
         menuConfigs.add(TransferDocumentMenuConfig.builder()
-            .transferDocumentTypeLabel(ResourceBundleUtils.getContent(
+            .transferDocumentTypeLabel(DocMessageUtils.getContent(
                 MESSAGE.transfer_document_to_chuyen_vien_type_label))
             .componentKey(TransferDocumentComponent.TRANSFER_TO_CHUYEN_VIEN.value)
-            .menuLabel(ResourceBundleUtils.getContent(
+            .menuLabel(DocMessageUtils.getContent(
                 MESSAGE.transfer_document_to_chuyen_vien_menu_label))
             .menuKey(TransferDocumentComponent.TRANSFER_TO_CHUYEN_VIEN.value)
             .transferDocumentType(TransferDocumentType.TRANSFER_TO_CHUYEN_VIEN)

@@ -1,6 +1,6 @@
 package edu.hcmus.doc.mainservice.model.enums;
 
-import edu.hcmus.doc.mainservice.service.ScheduleService;
+import edu.hcmus.doc.mainservice.service.impl.DocScheduleService;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 
@@ -11,15 +11,15 @@ public enum BatchJobEnum {
   RESET_FOLDER_NEXT_NUMBER_BATCH_JOB(
       "Reset folder next number batch job is running",
       "RESET_FOLDER_NEXT_NUMBER_BATCH_JOB",
-      ScheduleService::resetFolderNextNumber
+      DocScheduleService::resetFolderNextNumber
   ),
   UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB(
       "Update document reminder status batch job is running",
       "UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB",
-      ScheduleService::updateDocumentReminderStatus
+      DocScheduleService::updateDocumentReminderStatus
   );
 
   public final String info;
   public final String value;
-  public final Consumer<ScheduleService> executor;
+  public final Consumer<DocScheduleService> executor;
 }

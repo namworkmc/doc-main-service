@@ -21,7 +21,7 @@ import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
-import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
+import edu.hcmus.doc.mainservice.util.DocMessageUtils;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
 import edu.hcmus.doc.mainservice.util.mapper.IncomingDocumentMapper;
 import java.time.LocalDate;
@@ -141,7 +141,7 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
         processingDocumentService
             .getDateExpiredV2(processingDocument.getIncomingDoc().getId(), currentUser.getId(),
                 currentUser.getRole(), true, ProcessingDocumentTypeEnum.INCOMING_DOCUMENT)
-            .map(result -> result.equals("infinite") ? ResourceBundleUtils.getContent(
+            .map(result -> result.equals("infinite") ? DocMessageUtils.getContent(
                 MESSAGE.infinite_processing_duration) : LocalDate.parse(result).format(
                 DateTimeFormatter.ofPattern("dd-MM-yyyy")))
             .orElse(null)

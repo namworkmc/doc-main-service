@@ -47,4 +47,5 @@
   <include id="042" file="042_update_incoming_document_table.sql" relativeToChangelogFile="true" />
   <include id="043" file="043_add_process_method_table.sql" relativeToChangelogFile="true" />
   <include id="044" file="044_update_process_method_transfer_history_table.sql" relativeToChangelogFile="true" />
+  <include id="045" file="045_init_firebase_token_table.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>

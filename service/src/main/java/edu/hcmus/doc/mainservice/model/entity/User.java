@@ -4,13 +4,16 @@ import static edu.hcmus.doc.mainservice.DocConst.CATALOG_NAME;
 import static edu.hcmus.doc.mainservice.DocConst.SCHEMA_NAME;
 
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -52,6 +55,9 @@ public class User extends DocAbstractIdEntity {
 
   @Column(name = "role_title")
   private String roleTitle;
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  private Set<DocFirebaseTokenEntity> firebaseTokens = new HashSet<>();
 
   @Override
   public boolean equals(Object o) {

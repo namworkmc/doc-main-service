@@ -2,15 +2,22 @@ package edu.hcmus.doc.mainservice.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import edu.hcmus.doc.mainservice.util.keycloak.KeycloakProperty;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
+import edu.hcmus.doc.mainservice.util.FirebaseProperties;
+import edu.hcmus.doc.mainservice.util.keycloak.KeycloakProperties;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.client.ClientBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -18,11 +25,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @RequiredArgsConstructor
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
-@EnableConfigurationProperties(KeycloakProperty.class)
+@EnableConfigurationProperties({KeycloakProperties.class, FirebaseProperties.class})
 @EnableScheduling
 public class DocMainServiceConfig {
 
-  private final KeycloakProperty keycloakProperty;
+  private final KeycloakProperties keycloakProperties;
+
+  private final FirebaseProperties firebaseProperties;
 
   private final ObjectMapper objectMapper;
 
@@ -34,13 +43,13 @@ public class DocMainServiceConfig {
   @Bean
   public ResteasyWebTarget resteasyTokenTarget() {
     ResteasyClient resteasyClient = resteasyClient();
-    return resteasyClient.target(keycloakProperty.getUrl() + "/token");
+    return resteasyClient.target(keycloakProperties.getUrl() + "/token");
   }
 
   @Bean
   public ResteasyWebTarget resteasyRevokeTarget() {
     ResteasyClient resteasyClient = resteasyClient();
-    return resteasyClient.target(keycloakProperty.getUrl() + "/revoke");
+    return resteasyClient.target(keycloakProperties.getUrl() + "/revoke");
   }
 
   @PostConstruct
@@ -51,5 +60,31 @@ public class DocMainServiceConfig {
   @Bean
   public AuditorAware<String> auditorProvider() {
     return new AuditorAwareImpl();
+  }
+
+  @Bean
+  public FirebaseMessaging firebaseMessaging(FirebaseApp firebaseApp) {
+    return FirebaseMessaging.getInstance(firebaseApp);
+  }
+
+  @Bean
+  public FirebaseApp firebaseApp(GoogleCredentials googleCredentials) {
+    FirebaseOptions options = FirebaseOptions.builder()
+        .setCredentials(googleCredentials)
+        .build();
+
+    return FirebaseApp.initializeApp(options);
+  }
+
+  @Bean
+  @SneakyThrows
+  public GoogleCredentials googleCredentials() {
+    if (firebaseProperties.getGoogleCredentials() != null) {
+      return GoogleCredentials.fromStream(new ClassPathResource(firebaseProperties.getGoogleCredentials()).getInputStream());
+    }
+    else {
+      // Use standard credentials chain. Useful when running inside GKE
+      return GoogleCredentials.getApplicationDefault();
+    }
   }
 }

@@ -1,12 +1,15 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
 import edu.hcmus.doc.mainservice.model.dto.TokenDto;
+import edu.hcmus.doc.mainservice.model.entity.DocFirebaseTokenEntity;
 import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.DocFirebaseTokenType;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserPasswordIncorrectException;
+import edu.hcmus.doc.mainservice.repository.FirebaseTokenRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.service.KeycloakService;
-import edu.hcmus.doc.mainservice.util.keycloak.KeycloakProperty;
+import edu.hcmus.doc.mainservice.util.keycloak.KeycloakProperties;
 import edu.hcmus.doc.mainservice.util.keycloak.KeycloakResource;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
@@ -19,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Throwable.class)
 public class KeycloakServiceImpl implements KeycloakService {
 
-  private final KeycloakProperty keycloakProperty;
+  private final KeycloakProperties keycloakProperties;
 
   private final KeycloakResource keycloakTokenEndpoint;
 
@@ -29,33 +32,41 @@ public class KeycloakServiceImpl implements KeycloakService {
 
   private final PasswordEncoder passwordEncoder;
 
+  private final FirebaseTokenRepository firebaseTokenRepository;
+
   public KeycloakServiceImpl(
-      KeycloakProperty keycloakProperty,
+      KeycloakProperties keycloakProperties,
       ResteasyWebTarget resteasyTokenTarget,
       ResteasyWebTarget resteasyRevokeTarget,
-      UserRepository userRepository, PasswordEncoder passwordEncoder) {
-    this.keycloakProperty = keycloakProperty;
+      UserRepository userRepository, PasswordEncoder passwordEncoder,
+      FirebaseTokenRepository firebaseTokenRepository) {
+    this.keycloakProperties = keycloakProperties;
     this.keycloakTokenEndpoint = resteasyTokenTarget.proxy(KeycloakResource.class);
     this.keycloakRevokeEndpoint = resteasyRevokeTarget.proxy(KeycloakResource.class);
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.firebaseTokenRepository = firebaseTokenRepository;
   }
 
   @Override
-  public TokenDto getToken(String username, String password) {
-    User user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+  public TokenDto getToken(String username, String password, String firebaseToken) {
+    User user = userRepository.findUserByUsername(username).orElseThrow(UserNotFoundException::new);
 
     if (!passwordEncoder.matches(password, user.getPassword())) {
       throw new UserPasswordIncorrectException();
+    }
+
+    if (StringUtils.isNotBlank(firebaseToken)) {
+      saveFirebaseToken(user, firebaseToken, DocFirebaseTokenType.FCM);
     }
 
     return keycloakTokenEndpoint.getToken(
         OAuth2ParameterNames.PASSWORD,
         username,
         password,
-        keycloakProperty.getScope(),
-        keycloakProperty.getClientId(),
-        keycloakProperty.getClientSecret()
+        keycloakProperties.getScope(),
+        keycloakProperties.getClientId(),
+        keycloakProperties.getClientSecret()
     );
   }
 
@@ -64,23 +75,39 @@ public class KeycloakServiceImpl implements KeycloakService {
     return keycloakTokenEndpoint.refreshToken(
         OAuth2ParameterNames.REFRESH_TOKEN,
         refreshToken,
-        keycloakProperty.getScope(),
-        keycloakProperty.getClientId(),
-        keycloakProperty.getClientSecret()
+        keycloakProperties.getScope(),
+        keycloakProperties.getClientId(),
+        keycloakProperties.getClientSecret()
     );
   }
 
   @Override
-  public void revokeTokens(String refreshToken) {
+  public void revokeTokens(String refreshToken, String firebaseToken) {
     if (StringUtils.isBlank(refreshToken)) {
       return;
     }
 
+    if (StringUtils.isNotBlank(firebaseToken)) {
+      deleteByTokenAndType(firebaseToken, DocFirebaseTokenType.FCM);
+    }
+
     keycloakRevokeEndpoint.revokeTokens(
-        keycloakProperty.getClientId(),
-        keycloakProperty.getClientSecret(),
+        keycloakProperties.getClientId(),
+        keycloakProperties.getClientSecret(),
         refreshToken,
         OAuth2ParameterNames.REFRESH_TOKEN
     );
+  }
+
+  private void saveFirebaseToken(User user, String token, DocFirebaseTokenType type) {
+    DocFirebaseTokenEntity firebaseToken = new DocFirebaseTokenEntity();
+    firebaseToken.setToken(token);
+    firebaseToken.setType(type);
+    firebaseToken.setUser(user);
+    firebaseTokenRepository.save(firebaseToken);
+  }
+
+  private void deleteByTokenAndType(String firebaseToken, DocFirebaseTokenType type) {
+    firebaseTokenRepository.deleteByTokenAndType(firebaseToken, type);
   }
 }

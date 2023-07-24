@@ -32,7 +32,7 @@ import edu.hcmus.doc.mainservice.repository.TransferHistoryRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
-import edu.hcmus.doc.mainservice.util.ResourceBundleUtils;
+import edu.hcmus.doc.mainservice.util.DocMessageUtils;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -183,7 +183,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         if (!currentUserCheck) {
           Object[] arguments = new Object[]{incomingDocId};
           response.setIsValid(false);
-          response.setMessage(ResourceBundleUtils.getDynamicContent(
+          response.setMessage(DocMessageUtils.getContent(
               MESSAGE.user_not_have_permission_to_transfer_document_in_same_level, arguments));
           break;
         }
@@ -199,7 +199,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         if (assigneeCheck) {
           Object[] arguments = {assignee.getFullName(), incomingDocId};
           response.setIsValid(false);
-          response.setMessage(ResourceBundleUtils.getDynamicContent(
+          response.setMessage(DocMessageUtils.getContent(
               MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
           break;
         }
@@ -220,7 +220,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         if (!currentUserCheck) {
           Object[] arguments = {incomingDocId};
           response.setIsValid(false);
-          response.setMessage(ResourceBundleUtils.getDynamicContent(
+          response.setMessage(DocMessageUtils.getContent(
               MESSAGE.user_not_have_permission_to_transfer_this_document, arguments));
           break;
         }
@@ -237,7 +237,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         if (assigneeCheck) {
           Object[] arguments = {assignee.getFullName(), incomingDocId};
           response.setIsValid(false);
-          response.setMessage(ResourceBundleUtils.getDynamicContent(
+          response.setMessage(DocMessageUtils.getContent(
               MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
           break;
         }
@@ -260,7 +260,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         if (!isCollaboratorsValid) {
           Object[] arguments = {collaboratorNames.substring(0, collaboratorNames.length() - 2)};
           response.setIsValid(false);
-          response.setMessage(ResourceBundleUtils.getDynamicContent(
+          response.setMessage(DocMessageUtils.getContent(
               MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
           break;
         }
@@ -291,7 +291,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
     if(currentUser.getRole() == DocSystemRoleEnum.VAN_THU){
       Object[] arguments = {currentUser.getUsername()};
       response.setIsValid(false);
-      response.setMessage(ResourceBundleUtils.getDynamicContent(MESSAGE.user_not_have_permission_to_transfer_this_document, arguments));
+      response.setMessage(DocMessageUtils.getContent(MESSAGE.user_not_have_permission_to_transfer_this_document, arguments));
       return response;
     }
 
@@ -316,7 +316,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         if (!currentUserCheck) {
           Object[] arguments = {outgoingDocId};
           response.setIsValid(false);
-          response.setMessage(ResourceBundleUtils.getDynamicContent(
+          response.setMessage(DocMessageUtils.getContent(
               MESSAGE.user_not_have_permission_to_transfer_this_document, arguments));
           break;
         }
@@ -333,7 +333,7 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         if (assigneeCheck) {
           Object[] arguments = {assignee.getFullName(), outgoingDocId};
           response.setIsValid(false);
-          response.setMessage(ResourceBundleUtils.getDynamicContent(
+          response.setMessage(DocMessageUtils.getContent(
               MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
           break;
         }
@@ -356,14 +356,14 @@ public class ProcessingDocumentServiceImpl implements ProcessingDocumentService 
         if (!isCollaboratorsValid) {
           Object[] arguments = {collaboratorNames.substring(0, collaboratorNames.length() - 2)};
           response.setIsValid(false);
-          response.setMessage(ResourceBundleUtils.getDynamicContent(
+          response.setMessage(DocMessageUtils.getContent(
               MESSAGE.user_has_already_exists_in_the_flow_of_document, arguments));
           break;
         }
       } else if(OutgoingDocumentStatusEnum.RELEASED.equals(outgoingDocument.getStatus())) {
         Object[] arguments = {outgoingDocId};
         response.setIsValid(false);
-        response.setMessage(ResourceBundleUtils.getDynamicContent(
+        response.setMessage(DocMessageUtils.getContent(
             MESSAGE.user_not_have_permission_to_transfer_this_document, arguments));
         break;
       }

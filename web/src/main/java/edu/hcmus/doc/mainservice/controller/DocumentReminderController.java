@@ -3,6 +3,7 @@ package edu.hcmus.doc.mainservice.controller;
 import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.dto.DocumentReminderDetailsDto;
 import edu.hcmus.doc.mainservice.model.dto.DocumentReminderWrapperDto;
+import edu.hcmus.doc.mainservice.model.dto.MobileNotificationMessageDto;
 import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
 import edu.hcmus.doc.mainservice.service.DocumentReminderService;
 import edu.hcmus.doc.mainservice.util.DocDateTimeUtils;
@@ -12,9 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +58,12 @@ public class DocumentReminderController {
   @GetMapping("/current-user/unread/count")
   public long getCurrentUserNotificationCount() {
     return documentReminderService.countUnreadDocumentReminders();
+  }
+
+  @SneakyThrows
+  @PostMapping("/mobile-notification")
+  public void pushMobileNotification(@RequestBody MobileNotificationMessageDto messageDto) {
+    documentReminderService.pushMobileNotification(messageDto);
   }
 
   @PutMapping("/current-user/read")

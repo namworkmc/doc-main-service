@@ -2,20 +2,23 @@ package edu.hcmus.doc.mainservice.util;
 
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import java.text.MessageFormat;
-import java.util.Objects;
+import java.util.Locale;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
-import java.util.Locale;
+
+@Slf4j
 @Component
-public class ResourceBundleUtils {
+public class DocMessageUtils {
+
   private static ResourceBundleMessageSource messageSource;
 
   @Autowired
   public void setMessageSource(ResourceBundleMessageSource messageSource) {
-    ResourceBundleUtils.messageSource = messageSource;
+    DocMessageUtils.messageSource = messageSource;
   }
 
   /**
@@ -26,19 +29,26 @@ public class ResourceBundleUtils {
   }
 
   public static String getContent(MESSAGE messageKey) {
-    String msgKey = messageKey.name();
+    return getContent(messageKey.name());
+  }
+
+  public static String getContent(String messageKey) {
     String content;
     try {
       Locale locale = getLocale();
-      content = messageSource.getMessage(msgKey, null, locale);
+      content = messageSource.getMessage(messageKey, null, locale);
     } catch (NoSuchMessageException e) {
-      System.out.println(e.getMessage());
-      content = getDefaultContent(msgKey);
+      log.error(e.getMessage());
+      content = getDefaultContent(messageKey);
     }
     return content;
   }
 
-  public static String getDynamicContent(MESSAGE messageKey, Object... arguments) {
+  public static String getContent(MESSAGE messageKey, Object... arguments) {
+    return getContent(messageKey.name(), arguments);
+  }
+
+  public static String getContent(String messageKey, Object... arguments) {
     String content = getContent(messageKey);
     MessageFormat messageFormat = new MessageFormat(content);
     content = messageFormat.format(arguments);

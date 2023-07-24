@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "keycloak")
-public class KeycloakProperty {
+public class KeycloakProperties {
 
   private String url;
   private String scope;

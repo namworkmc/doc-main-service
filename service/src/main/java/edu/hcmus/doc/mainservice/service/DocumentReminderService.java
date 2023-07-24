@@ -1,6 +1,8 @@
 package edu.hcmus.doc.mainservice.service;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import edu.hcmus.doc.mainservice.model.dto.DocumentReminderDetailsDto;
+import edu.hcmus.doc.mainservice.model.dto.MobileNotificationMessageDto;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
@@ -24,4 +26,15 @@ public interface DocumentReminderService {
   long updateCurrentUserIsNotOpenedReminders(List<Long> ids);
 
   Long createDocumentReminder(ProcessingUser processingUser);
+
+  String pushMobileNotification(MobileNotificationMessageDto mobileNotificationMessageDto)
+      throws FirebaseMessagingException;
+
+  void pushMobileNotificationsByUserId(
+      MobileNotificationMessageDto mobileNotificationMessageDto, Long userId)
+      throws FirebaseMessagingException;
+
+  MobileNotificationMessageDto buildMobileNotificationMessage(
+      DocumentReminderStatusEnum documentReminderStatus,
+      String documentNumber);
 }

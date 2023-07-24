@@ -82,7 +82,6 @@ public class DocMainServiceSecurityConfig {
         .antMatchers(DocURL.API_V1 + "/admin/**")
         .hasAuthority(DocSystemRoleEnum.DOC_ADMIN.value)
         .anyRequest()
-//        .permitAll()
         .authenticated()
         .and()
         .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)

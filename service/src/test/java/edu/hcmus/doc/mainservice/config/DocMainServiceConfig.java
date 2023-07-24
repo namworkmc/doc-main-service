@@ -1,6 +1,6 @@
 package edu.hcmus.doc.mainservice.config;
 
-import edu.hcmus.doc.mainservice.util.keycloak.KeycloakProperty;
+import edu.hcmus.doc.mainservice.util.keycloak.KeycloakProperties;
 import javax.ws.rs.client.ClientBuilder;
 import lombok.RequiredArgsConstructor;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
@@ -16,10 +16,10 @@ import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 @Configuration
 @RequiredArgsConstructor
 @EnableJpaAuditing
-@EnableConfigurationProperties(KeycloakProperty.class)
+@EnableConfigurationProperties(KeycloakProperties.class)
 public class DocMainServiceConfig {
 
-  private final KeycloakProperty keycloakProperty;
+  private final KeycloakProperties keycloakProperties;
 
   @Bean
   public ResteasyClient resteasyClient() {
@@ -29,7 +29,7 @@ public class DocMainServiceConfig {
   @Bean
   public ResteasyWebTarget resteasyWebTarget() {
     ResteasyClient resteasyClient = resteasyClient();
-    return resteasyClient.target(keycloakProperty.getUrl());
+    return resteasyClient.target(keycloakProperties.getUrl());
   }
 
   @Bean
