@@ -8,3 +8,6 @@ doc:
     reset-folder-next-number-cron: 0 0 0 1 JAN ?
     # At 12:00:05 AM every day
     update-document-reminder-status-cron: 5 0 0 * * *
+
+firebase:
+  googleCredentials: firebase-service-account.json

@@ -81,6 +81,3 @@ management:
     health:
       probes:
         enabled: true
-
-firebase:
-  googleCredentials: firebase-service-account.json
