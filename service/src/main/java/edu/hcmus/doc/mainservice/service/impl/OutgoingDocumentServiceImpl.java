@@ -12,7 +12,9 @@ import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentMenu
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.Folder;
@@ -165,7 +167,17 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   }
 
   @Override
-  public OutgoingDocument updateOutgoingDocument(OutgoingDocument outgoingDocument) {
+  public OutgoingDocument updateOutgoingDocument(
+      OutgoingDocumentWithAttachmentPutDto outgoingDocumentWithAttachmentPutDto)
+      throws JsonProcessingException {
+    OutgoingDocumentPutDto outgoingDocumentPutDto =
+        objectMapper.readValue(
+            outgoingDocumentWithAttachmentPutDto.getOutgoingDocumentPutDto(),
+            OutgoingDocumentPutDto.class);
+
+    OutgoingDocument outgoingDocument = outgoingDecoratorDocumentMapper.toEntity(
+        outgoingDocumentPutDto);
+
     OutgoingDocument updatingDocument = getOutgoingDocumentById(outgoingDocument.getId());
     DocObjectUtils.copyNonNullProperties(outgoingDocument, updatingDocument);
 
@@ -173,7 +185,16 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
       throw new DocStatusViolatedException(DocStatusViolatedException.STATUS_VIOLATED);
     }
 
-    return outgoingDocumentRepository.saveAndFlush(updatingDocument);
+    OutgoingDocument savedOutgoingDocument = outgoingDocumentRepository.saveAndFlush(updatingDocument);
+
+    if(Objects.nonNull(outgoingDocumentWithAttachmentPutDto.getAttachments())) {
+      AttachmentPostDto attachmentPostDto = attachmentMapperDecorator.toAttachmentPostDto(
+          savedOutgoingDocument.getId(), outgoingDocumentWithAttachmentPutDto.getAttachments());
+
+      attachmentService.saveAttachmentsByProcessingDocumentTypeAndDocId(ParentFolderEnum.OGD, attachmentPostDto);
+    }
+
+    return savedOutgoingDocument;
   }
 
   @Override

@@ -14,6 +14,7 @@ import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.util.DocDateTimeUtils;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -62,8 +63,14 @@ public class DocScheduleService {
       }
 
       try {
-        MobileNotificationMessageDto message = documentReminderService.buildMobileNotificationMessage(reminder.getStatus(),
-            reminder.getProcessingUser().getProcessingDocument().getIncomingDoc().getIncomingNumber());
+        MobileNotificationMessageDto message;
+        if(Objects.nonNull(reminder.getProcessingUser().getProcessingDocument().getIncomingDoc())){
+          message = documentReminderService.buildMobileNotificationMessage(reminder.getStatus(),
+              reminder.getProcessingUser().getProcessingDocument().getIncomingDoc().getIncomingNumber());
+        } else {
+          message = documentReminderService.buildMobileNotificationMessage(reminder.getStatus(),
+              reminder.getProcessingUser().getProcessingDocument().getOutgoingDocument().getOutgoingNumber());
+        }
         documentReminderService.pushMobileNotificationsByUserId(message, reminder.getProcessingUser().getUser().getId());
       } catch (FirebaseMessagingException e) {
         log.error("Error when sending mobile notification: {}", e.getMessage(), e);

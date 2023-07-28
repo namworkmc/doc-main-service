@@ -41,7 +41,7 @@ spring:
     change-log: classpath:db.changelog-master.xml
     database-change-log-lock-table: database_changelog_lock
     database-change-log-table: database_changelog
-    enabled: true
+    enabled: false
     drop-first: false
 
   servlet:

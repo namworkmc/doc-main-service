@@ -6,8 +6,8 @@ import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
-import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.PublishDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailCustomResponse;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
@@ -16,15 +16,22 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocD
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
 import edu.hcmus.doc.mainservice.model.exception.DocMainServiceRuntimeException;
-import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,21 +39,18 @@ import java.util.stream.Collectors;
 public class OutgoingDocumentController extends DocAbstractController {
   private final OutgoingDocumentService outgoingDocumentService;
   private final ProcessingDocumentService processingDocumentService;
-  private final IncomingDocumentService incomingDocumentService;
 
   @GetMapping("/{id}")
   public OutgoingDocumentGetDto getOutgoingDocument(@PathVariable Long id) {
     return outgoingDecoratorDocumentMapper
             .toDto(outgoingDocumentService.getOutgoingDocumentById(id));
   }
-
+  @SneakyThrows
   @PutMapping("/update")
   public OutgoingDocumentGetDto updateOutgoingDocument(
-          @RequestBody OutgoingDocumentPutDto outgoingDocumentPutDto) {
-    OutgoingDocument outgoingDocument = outgoingDecoratorDocumentMapper.toEntity(
-            outgoingDocumentPutDto);
+      @ModelAttribute OutgoingDocumentWithAttachmentPutDto outgoingDocumentWithAttachmentPutDto) {
     return outgoingDecoratorDocumentMapper.toDto(
-            outgoingDocumentService.updateOutgoingDocument(outgoingDocument));
+            outgoingDocumentService.updateOutgoingDocument(outgoingDocumentWithAttachmentPutDto));
   }
 
   @PostMapping("/release")

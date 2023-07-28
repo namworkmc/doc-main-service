@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
@@ -19,7 +20,8 @@ public interface OutgoingDocumentService {
   OutgoingDocument createOutgoingDocument(OutgoingDocumentWithAttachmentPostDto outgoingDocumentWithAttachmentPostDto)
           throws JsonProcessingException;
 
-  OutgoingDocument updateOutgoingDocument(OutgoingDocument outgoingDocument);
+  OutgoingDocument updateOutgoingDocument(OutgoingDocumentWithAttachmentPutDto outgoingDocumentWithAttachmentPutDto)
+      throws JsonProcessingException;
 
   long getTotalElements(OutgoingDocSearchCriteriaDto searchCriteriaDto);
 

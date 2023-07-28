@@ -7,7 +7,9 @@ import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentDto;
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.Attachment.DocumentWithAttachmentDto;
 import edu.hcmus.doc.mainservice.model.dto.FileDto;
+import edu.hcmus.doc.mainservice.model.entity.Attachment;
 import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
+import edu.hcmus.doc.mainservice.model.exception.AttachmentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.DocMainServiceRuntimeException;
 import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
 import edu.hcmus.doc.mainservice.repository.AttachmentRepository;
@@ -135,4 +137,13 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
   }
+
+  @Override
+  public Attachment deleteAttachmentById(Long id){
+    Attachment attachment = attachmentRepository.findById(id)
+        .orElseThrow(() -> new AttachmentNotFoundException("Attachment not found"));
+    attachment.setDeleted(true);
+    return attachmentRepository.saveAndFlush(attachment);
+  }
+
 }

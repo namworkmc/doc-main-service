@@ -26,6 +26,7 @@ import java.time.YearMonth;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -126,15 +127,30 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
           DocDateTimeUtils.getAtStartOf7DaysBefore(processingUser.getProcessingDuration()),
           DocDateTimeUtils.getAtEndOfDay(processingUser.getProcessingDuration()))) {
         documentReminder.setStatus(DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION);
-        MobileNotificationMessageDto message = buildMobileNotificationMessage(
-            documentReminder.getStatus(),
-            processingUser.getProcessingDocument().getIncomingDoc().getIncomingNumber());
+        MobileNotificationMessageDto message;
+        if(Objects.nonNull(processingUser.getProcessingDocument().getIncomingDoc())){
+          message = buildMobileNotificationMessage(
+              documentReminder.getStatus(),
+              processingUser.getProcessingDocument().getIncomingDoc().getIncomingNumber());
+        } else {
+          message = buildMobileNotificationMessage(
+              documentReminder.getStatus(),
+              processingUser.getProcessingDocument().getOutgoingDocument().getOutgoingNumber());
+        }
         pushMobileNotificationsByUserId(message, processingUser.getUser().getId());
+
       } else if (DocDateTimeUtils.getAtEndOfDay(processingUser.getProcessingDuration()).isBefore(LocalDateTime.now())) {
         documentReminder.setStatus(DocumentReminderStatusEnum.EXPIRED);
-        MobileNotificationMessageDto message = buildMobileNotificationMessage(
-            documentReminder.getStatus(),
-            processingUser.getProcessingDocument().getIncomingDoc().getIncomingNumber());
+        MobileNotificationMessageDto message;
+        if(Objects.nonNull(processingUser.getProcessingDocument().getIncomingDoc())){
+          message = buildMobileNotificationMessage(
+              documentReminder.getStatus(),
+              processingUser.getProcessingDocument().getIncomingDoc().getIncomingNumber());
+        } else {
+          message = buildMobileNotificationMessage(
+              documentReminder.getStatus(),
+              processingUser.getProcessingDocument().getOutgoingDocument().getOutgoingNumber());
+        }
         pushMobileNotificationsByUserId(message, processingUser.getUser().getId());
       } else {
         documentReminder.setStatus(DocumentReminderStatusEnum.ACTIVE);

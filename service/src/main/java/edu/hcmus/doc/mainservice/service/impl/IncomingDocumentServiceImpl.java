@@ -16,7 +16,9 @@ import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.DocumentTypeStatisticsDto;
 import edu.hcmus.doc.mainservice.model.dto.DocumentTypeStatisticsWrapperDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPostDto;
+import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentMenuConfig;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentStatisticsDto;
@@ -122,9 +124,23 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   }
 
   @Override
-  public IncomingDocument updateIncomingDocument(IncomingDocument incomingDocument) {
+  public IncomingDocument updateIncomingDocument(
+      IncomingDocumentWithAttachmentPutDto incomingDocumentWithAttachmentPutDto)
+      throws JsonProcessingException {
+    IncomingDocumentPutDto incomingDocumentPutDto = objectMapper.readValue(
+        incomingDocumentWithAttachmentPutDto.getIncomingDocumentPutDto(),
+        IncomingDocumentPutDto.class);
+    IncomingDocument incomingDocument = incomingDecoratorDocumentMapper.toEntity(
+        incomingDocumentPutDto);
     IncomingDocument updatingIncomingDocument = getIncomingDocumentById(incomingDocument.getId());
     DocObjectUtils.copyNonNullProperties(incomingDocument, updatingIncomingDocument);
+
+    if(Objects.nonNull(incomingDocumentWithAttachmentPutDto.getAttachments())) {
+      AttachmentPostDto attachmentPostDto = attachmentMapperDecorator.toAttachmentPostDto(
+          updatingIncomingDocument.getId(), incomingDocumentWithAttachmentPutDto.getAttachments());
+
+      attachmentService.saveAttachmentsByProcessingDocumentTypeAndDocId(ParentFolderEnum.ICD, attachmentPostDto);
+    }
     return incomingDocumentRepository.saveAndFlush(updatingIncomingDocument);
   }
 

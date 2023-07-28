@@ -20,6 +20,7 @@ public class CustomAttachmentRepositoryImpl
     } else {
       where.and(QAttachment.attachment.outgoingDocument.id.eq(docId));
     }
+    where.and(QAttachment.attachment.isDeleted.eq(false));
 
     return select(QAttachment.attachment.id,
         QAttachment.attachment.alfrescoFileId,
@@ -29,6 +30,7 @@ public class CustomAttachmentRepositoryImpl
         QAttachment.attachment.createdBy)
         .from(QAttachment.attachment)
         .where(where)
+        .orderBy(QAttachment.attachment.createdDate.desc())
         .fetch()
         .stream()
         .map(tuple -> {
