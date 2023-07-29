@@ -1,6 +1,7 @@
 package edu.hcmus.doc.mainservice.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import java.time.LocalDate;
 import lombok.Data;
 
@@ -20,4 +21,6 @@ public class SearchCriteriaDto {
   @JsonFormat(pattern = "dd-MM-yyyy")
   private LocalDate processingDurationTo;
   private String summary;
+  private ProcessingStatus status;
+  private String documentName;
 }

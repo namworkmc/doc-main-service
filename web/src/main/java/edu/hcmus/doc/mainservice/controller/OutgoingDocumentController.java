@@ -72,7 +72,7 @@ public class OutgoingDocumentController extends DocAbstractController {
 
   @PostMapping("/search")
   public DocPaginationDto<OutgoingDocumentGetDto> getOutgoingDocuments(
-      @RequestBody(required = false) OutgoingDocSearchCriteriaDto searchCriteria,
+      @RequestBody OutgoingDocSearchCriteriaDto searchCriteria,
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "3") int pageSize
   ) {

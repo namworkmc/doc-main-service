@@ -48,6 +48,8 @@ public class CustomProcessingDocumentRepositoryImpl
     extends DocAbstractCustomRepository<ProcessingDocument>
     implements CustomProcessingDocumentRepository {
 
+  private static final String STATUS_ALIAS = "status";
+
   private final StringExpression processingStatusCases = Expressions
       .cases()
       .when(processingDocument.status.eq(ProcessingStatus.IN_PROGRESS))
@@ -55,7 +57,7 @@ public class CustomProcessingDocumentRepositoryImpl
       .when(processingDocument.status.eq(ProcessingStatus.CLOSED))
       .then(ProcessingStatus.CLOSED.value)
       .otherwise(ProcessingStatus.UNPROCESSED.value)
-      .as("status");
+      .as(STATUS_ALIAS);
 
   private final StringExpression documentCase = Expressions
       .cases()
@@ -67,9 +69,19 @@ public class CustomProcessingDocumentRepositoryImpl
 
   @Override
   public long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
-    return searchQueryByCriteria(searchCriteriaDto)
+    if (searchCriteriaDto.getStatus() != null) {
+      return Optional.ofNullable(searchQueryByCriteria(searchCriteriaDto)
+          .select(processingStatusCases)
+          .where(Expressions.stringPath(STATUS_ALIAS).eq(searchCriteriaDto.getStatus().value))
+          .select(processingDocument.id.count())
+          .fetchFirst())
+          .orElse(0L);
+    }
+
+    return Optional.ofNullable(searchQueryByCriteria(searchCriteriaDto)
         .select(incomingDocument.id.count())
-        .fetchFirst();
+        .fetchFirst())
+        .orElse(0L);
   }
 
   @Override
@@ -81,6 +93,11 @@ public class CustomProcessingDocumentRepositoryImpl
   @Override
   public List<ProcessingDocument> searchByCriteria(SearchCriteriaDto searchCriteriaDto, long offset,
       long limit) {
+    BooleanBuilder where = new BooleanBuilder();
+    if (searchCriteriaDto.getStatus() != null) {
+      where.and(Expressions.stringPath(STATUS_ALIAS).eq(searchCriteriaDto.getStatus().value));
+    }
+
     return
         searchQueryByCriteria(searchCriteriaDto)
             .select(
@@ -96,6 +113,7 @@ public class CustomProcessingDocumentRepositoryImpl
                 incomingDocument.documentType.type,
                 incomingDocument.distributionOrg.id,
                 incomingDocument.distributionOrg.name)
+            .where(where)
             .orderBy(incomingDocument.id.desc())
             .offset(offset * limit)
             .limit(limit)
@@ -208,39 +226,40 @@ public class CustomProcessingDocumentRepositoryImpl
   private JPAQuery<IncomingDocument> searchQueryByCriteria(SearchCriteriaDto searchCriteriaDto) {
     BooleanBuilder where = new BooleanBuilder();
 
-    if (searchCriteriaDto != null && StringUtils.isNotBlank(
+    if (StringUtils.isNotBlank(
         searchCriteriaDto.getIncomingNumber())) {
-      where.and(incomingDocument.incomingNumber.eq(searchCriteriaDto.getIncomingNumber()));
+      where.and(incomingDocument.incomingNumber.containsIgnoreCase(searchCriteriaDto.getIncomingNumber()));
     }
-    if (searchCriteriaDto != null && StringUtils.isNotBlank(
+    if (StringUtils.isNotBlank(
         searchCriteriaDto.getOriginalSymbolNumber())) {
       where.and(
-          incomingDocument.originalSymbolNumber.eq(searchCriteriaDto.getOriginalSymbolNumber()));
+          incomingDocument.originalSymbolNumber.containsIgnoreCase(searchCriteriaDto.getOriginalSymbolNumber()));
     }
-    if (searchCriteriaDto != null && searchCriteriaDto.getDocumentTypeId() != null) {
+    if (searchCriteriaDto.getDocumentTypeId() != null) {
       where.and(incomingDocument.documentType.id.eq(searchCriteriaDto.getDocumentTypeId()));
     }
-    if (searchCriteriaDto != null && searchCriteriaDto.getDistributionOrgId() != null) {
+    if (searchCriteriaDto.getDistributionOrgId() != null) {
       where.and(incomingDocument.distributionOrg.id.eq(searchCriteriaDto.getDistributionOrgId()));
     }
-    if (searchCriteriaDto != null
-        && searchCriteriaDto.getArrivingDateFrom() != null
+    if (searchCriteriaDto.getArrivingDateFrom() != null
         && searchCriteriaDto.getArrivingDateTo() != null) {
       where.and(incomingDocument.arrivingDate.between(
           searchCriteriaDto.getArrivingDateFrom().atStartOfDay().toLocalDate(),
           searchCriteriaDto.getArrivingDateTo().plusDays(1).atStartOfDay().toLocalDate()
       ));
     }
-    if (searchCriteriaDto != null
-        && searchCriteriaDto.getProcessingDurationFrom() != null
+    if (searchCriteriaDto.getProcessingDurationFrom() != null
         && searchCriteriaDto.getProcessingDurationTo() != null) {
       where.and(incomingDocument.arrivingDate.between(
           searchCriteriaDto.getProcessingDurationFrom().atStartOfDay().toLocalDate(),
           searchCriteriaDto.getProcessingDurationTo().plusDays(1).atStartOfDay().toLocalDate()
       ));
     }
-    if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getSummary())) {
-      where.and(incomingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
+    if (StringUtils.isNotBlank(searchCriteriaDto.getSummary())) {
+      where.and(incomingDocument.summary.containsIgnoreCase(searchCriteriaDto.getSummary()));
+    }
+    if (StringUtils.isNotBlank(searchCriteriaDto.getDocumentName())) {
+      where.and(incomingDocument.name.containsIgnoreCase(searchCriteriaDto.getDocumentName()));
     }
 
     return selectFrom(incomingDocument)

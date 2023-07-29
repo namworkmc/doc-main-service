@@ -66,32 +66,34 @@ public class CustomOutgoingDocumentRepositoryImpl
   }
 
   @Override
-  public JPAQuery<OutgoingDocument> buildSearchQuery(
-      OutgoingDocSearchCriteriaDto searchCriteriaDto) {
+  public JPAQuery<OutgoingDocument> buildSearchQuery(OutgoingDocSearchCriteriaDto searchCriteriaDto) {
     BooleanBuilder where = new BooleanBuilder();
 
-    if (searchCriteriaDto != null && StringUtils.isNotBlank(
-        searchCriteriaDto.getOutgoingNumber())) {
+    if (StringUtils.isNotBlank(searchCriteriaDto.getOutgoingNumber())) {
       where.and(outgoingDocument.outgoingNumber.eq(searchCriteriaDto.getOutgoingNumber()));
     }
-    if (searchCriteriaDto != null && StringUtils.isNotBlank(
+    if (StringUtils.isNotBlank(
         searchCriteriaDto.getOriginalSymbolNumber())) {
       where.and(
           outgoingDocument.originalSymbolNumber.eq(searchCriteriaDto.getOriginalSymbolNumber()));
     }
-    if (searchCriteriaDto != null && searchCriteriaDto.getDocumentTypeId() != null) {
+    if (searchCriteriaDto.getDocumentTypeId() != null) {
       where.and(outgoingDocument.documentType.id.eq(searchCriteriaDto.getDocumentTypeId()));
     }
-    if (searchCriteriaDto != null
-        && searchCriteriaDto.getReleaseDateFrom() != null
-        && searchCriteriaDto.getReleaseDateTo() != null) {
+    if (searchCriteriaDto.getReleaseDateFrom() != null && searchCriteriaDto.getReleaseDateTo() != null) {
       where.and(outgoingDocument.releaseDate.between(
           searchCriteriaDto.getReleaseDateFrom().atStartOfDay().toLocalDate(),
           searchCriteriaDto.getReleaseDateTo().plusDays(1).atStartOfDay().toLocalDate()
       ));
     }
-    if (searchCriteriaDto != null && StringUtils.isNotBlank(searchCriteriaDto.getSummary())) {
-      where.and(outgoingDocument.summary.startsWithIgnoreCase(searchCriteriaDto.getSummary()));
+    if (StringUtils.isNotBlank(searchCriteriaDto.getSummary())) {
+      where.and(outgoingDocument.summary.containsIgnoreCase(searchCriteriaDto.getSummary()));
+    }
+    if (searchCriteriaDto.getStatus() != null) {
+      where.and(outgoingDocument.status.eq(searchCriteriaDto.getStatus()));
+    }
+    if (StringUtils.isNotBlank(searchCriteriaDto.getDocumentName())) {
+      where.and(outgoingDocument.name.containsIgnoreCase(searchCriteriaDto.getDocumentName()));
     }
 
     return selectFrom(outgoingDocument)

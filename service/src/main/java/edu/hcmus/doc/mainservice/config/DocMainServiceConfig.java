@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.ws.rs.client.ClientBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -69,6 +70,10 @@ public class DocMainServiceConfig {
 
   @Bean
   public FirebaseApp firebaseApp(GoogleCredentials googleCredentials) {
+    if (CollectionUtils.isNotEmpty(FirebaseApp.getApps())) {
+      return FirebaseApp.getInstance();
+    }
+
     FirebaseOptions options = FirebaseOptions.builder()
         .setCredentials(googleCredentials)
         .build();
