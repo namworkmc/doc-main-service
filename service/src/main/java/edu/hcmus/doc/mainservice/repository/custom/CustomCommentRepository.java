@@ -1,11 +1,16 @@
 package edu.hcmus.doc.mainservice.repository.custom;
 
 import edu.hcmus.doc.mainservice.model.entity.Comment;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
+import edu.hcmus.doc.mainservice.repository.DocAbstractPagination;
 import java.util.List;
 
-public interface CustomCommentRepository {
+public interface CustomCommentRepository
+    extends DocAbstractPagination<Comment, Long, Long> {
 
-  List<Comment> getCommentByIncomingDocumentId(Long incomingDocumentId);
+  long getTotalElementsByTypeAndDocumentId(ProcessingDocumentTypeEnum type, Long incomingDocumentId);
 
-  List<Comment> getCommentByOutgoingDocumentId(Long outgoingDocumentId);
+  List<Comment> getCommentByIncomingDocumentId(long page, long pageSize, Long incomingDocumentId);
+
+  List<Comment> getCommentByOutgoingDocumentId(long page, long pageSize, Long documentId);
 }

@@ -2,6 +2,7 @@ package edu.hcmus.doc.mainservice.controller;
 
 import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.dto.CommentDto;
+import edu.hcmus.doc.mainservice.model.dto.DocPaginationDto;
 import edu.hcmus.doc.mainservice.model.entity.Comment;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import edu.hcmus.doc.mainservice.service.CommentService;
@@ -13,25 +14,32 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(DocURL.API_V1 + "/comments")
-public class CommentController {
+public class CommentController extends DocAbstractController {
 
   private final CommentMapper commentMapper;
 
   private final CommentService commentService;
 
   @GetMapping("/{processingDocumentType}/{documentId}")
-  public List<CommentDto> getCommentByIncomingDocumentId(
+  public DocPaginationDto<CommentDto> getCommentByIncomingDocumentId(
       @PathVariable ProcessingDocumentTypeEnum processingDocumentType,
-      @PathVariable Long documentId) {
-    return commentService.getCommentByTypeAndDocumentId(processingDocumentType, documentId)
+      @PathVariable Long documentId,
+      @RequestParam(required = false, defaultValue = "0") long page,
+      @RequestParam(required = false, defaultValue = "10") long pageSize) {
+    List<CommentDto> payload = commentService
+        .getCommentByTypeAndDocumentId(page, pageSize, processingDocumentType, documentId)
         .stream()
         .map(commentMapper::toDto)
         .toList();
+    long totalElements = commentService.getTotalElementsByDocumentId(processingDocumentType, documentId);
+    long totalPages = (totalElements / pageSize) + (totalElements % pageSize == 0 ? 0 : 1);
+    return paginationMapper.toDto(payload, totalElements, totalPages);
   }
 
   @PostMapping("/{documentId}")

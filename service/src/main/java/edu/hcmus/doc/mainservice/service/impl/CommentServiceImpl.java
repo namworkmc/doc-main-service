@@ -23,11 +23,17 @@ public class CommentServiceImpl implements CommentService {
   private final OutgoingDocumentRepository outgoingDocumentRepository;
 
   @Override
-  public List<Comment> getCommentByTypeAndDocumentId(ProcessingDocumentTypeEnum processingDocumentType, Long incomingDocumentId) {
+  public long getTotalElementsByDocumentId(ProcessingDocumentTypeEnum processingDocumentType, Long documentId) {
+    return commentRepository.getTotalElementsByTypeAndDocumentId(processingDocumentType, documentId);
+  }
+
+  @Override
+  public List<Comment> getCommentByTypeAndDocumentId(long page, long pageSize,
+      ProcessingDocumentTypeEnum processingDocumentType, Long documentId) {
     if (processingDocumentType == ProcessingDocumentTypeEnum.INCOMING_DOCUMENT) {
-      return commentRepository.getCommentByIncomingDocumentId(incomingDocumentId);
+      return commentRepository.getCommentByIncomingDocumentId(page, pageSize, documentId);
     } else {
-      return commentRepository.getCommentByOutgoingDocumentId(incomingDocumentId);
+      return commentRepository.getCommentByOutgoingDocumentId(page, pageSize, documentId);
     }
   }
 

@@ -6,8 +6,10 @@ import java.util.List;
 
 public interface CommentService {
 
-  List<Comment> getCommentByTypeAndDocumentId(ProcessingDocumentTypeEnum processingDocumentType,
-      Long incomingDocumentId);
+  long getTotalElementsByDocumentId(ProcessingDocumentTypeEnum processingDocumentType, Long documentId);
+
+  List<Comment> getCommentByTypeAndDocumentId(long page, long pageSize, ProcessingDocumentTypeEnum processingDocumentType,
+      Long documentId);
 
   Long createComment(Long documentId, ProcessingDocumentTypeEnum processingDocumentType,
       Comment comment);
