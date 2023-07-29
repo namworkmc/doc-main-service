@@ -13,6 +13,7 @@ import edu.hcmus.doc.mainservice.model.entity.DocumentReminder;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import edu.hcmus.doc.mainservice.repository.DocumentReminderRepository;
 import edu.hcmus.doc.mainservice.repository.FirebaseTokenRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
@@ -123,38 +124,33 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
     documentReminder.setExpirationDate(processingUser.getProcessingDuration());
 
     try {
+      MobileNotificationMessageDto message;
       if (DocDateTimeUtils.isBetween(LocalDateTime.now(),
           DocDateTimeUtils.getAtStartOf7DaysBefore(processingUser.getProcessingDuration()),
           DocDateTimeUtils.getAtEndOfDay(processingUser.getProcessingDuration()))) {
         documentReminder.setStatus(DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION);
-        MobileNotificationMessageDto message;
-        if(Objects.nonNull(processingUser.getProcessingDocument().getIncomingDoc())){
-          message = buildMobileNotificationMessage(
-              documentReminder.getStatus(),
-              processingUser.getProcessingDocument().getIncomingDoc().getIncomingNumber());
-        } else {
-          message = buildMobileNotificationMessage(
-              documentReminder.getStatus(),
-              processingUser.getProcessingDocument().getOutgoingDocument().getOutgoingNumber());
-        }
-        pushMobileNotificationsByUserId(message, processingUser.getUser().getId());
-
       } else if (DocDateTimeUtils.getAtEndOfDay(processingUser.getProcessingDuration()).isBefore(LocalDateTime.now())) {
         documentReminder.setStatus(DocumentReminderStatusEnum.EXPIRED);
-        MobileNotificationMessageDto message;
-        if(Objects.nonNull(processingUser.getProcessingDocument().getIncomingDoc())){
-          message = buildMobileNotificationMessage(
-              documentReminder.getStatus(),
-              processingUser.getProcessingDocument().getIncomingDoc().getIncomingNumber());
-        } else {
-          message = buildMobileNotificationMessage(
-              documentReminder.getStatus(),
-              processingUser.getProcessingDocument().getOutgoingDocument().getOutgoingNumber());
-        }
-        pushMobileNotificationsByUserId(message, processingUser.getUser().getId());
       } else {
         documentReminder.setStatus(DocumentReminderStatusEnum.ACTIVE);
+        return documentReminderRepository.save(documentReminder).getId();
       }
+
+      if (processingUser.getProcessingDocument().getIncomingDoc() != null){
+        message = buildMobileNotificationMessage(
+            documentReminder.getStatus(),
+            processingUser.getProcessingDocument().getIncomingDoc().getIncomingNumber());
+        message.setProcessingDocumentType(ProcessingDocumentTypeEnum.INCOMING_DOCUMENT);
+        message.setDocumentId(processingUser.getProcessingDocument().getIncomingDoc().getId());
+      } else {
+        message = buildMobileNotificationMessage(
+            documentReminder.getStatus(),
+            processingUser.getProcessingDocument().getOutgoingDocument().getOutgoingNumber());
+        message.setProcessingDocumentType(ProcessingDocumentTypeEnum.OUTGOING_DOCUMENT);
+        message.setDocumentId(processingUser.getProcessingDocument().getOutgoingDocument().getId());
+      }
+
+      pushMobileNotificationsByUserId(message, processingUser.getUser().getId());
     } catch (FirebaseMessagingException e) {
       log.error("Error when sending mobile notification: {}", e.getMessage(), e);
     }
@@ -166,6 +162,8 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
   public String pushMobileNotification(MobileNotificationMessageDto mobileNotificationMessageDto)
       throws FirebaseMessagingException {
     Message message = Message.builder()
+        .putData("processingDocumentType", mobileNotificationMessageDto.getProcessingDocumentType().name())
+        .putData("documentId", mobileNotificationMessageDto.getDocumentId().toString())
         .setNotification(Notification.builder()
             .setTitle(mobileNotificationMessageDto.getTitle())
             .setBody(mobileNotificationMessageDto.getBody())
@@ -195,6 +193,7 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
     }
 
     MulticastMessage multicastMessage = MulticastMessage.builder()
+        .putData("processingDocumentType", mobileNotificationMessageDto.getProcessingDocumentType().name())
         .setNotification(Notification.builder()
             .setTitle(mobileNotificationMessageDto.getTitle())
             .setBody(mobileNotificationMessageDto.getBody())
