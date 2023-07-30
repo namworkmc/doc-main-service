@@ -11,4 +11,6 @@ public interface ReturnRequestService {
   ReturnRequestGetDto getReturnRequestById(Long returnRequestId, ProcessingDocumentTypeEnum type);
 
   List<Long> createReturnRequest(ReturnRequestPostDto returnRequestDto);
+
+  List<Long> createSendBackRequest(ReturnRequestPostDto returnRequestDto);
 }

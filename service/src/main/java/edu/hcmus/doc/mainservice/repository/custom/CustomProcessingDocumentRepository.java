@@ -50,4 +50,6 @@ public interface CustomProcessingDocumentRepository
   Boolean isExistUserWorkingOnThisDocumentAtSpecificStep(Long documentId, Integer step);
 
   boolean isDocumentClosed(Long documentId, ProcessingDocumentTypeEnum processingDocumentType);
+
+  Optional<ProcessingDocument> findProcessingDocumentByProcessingUserId(Long processingUserId);
 }

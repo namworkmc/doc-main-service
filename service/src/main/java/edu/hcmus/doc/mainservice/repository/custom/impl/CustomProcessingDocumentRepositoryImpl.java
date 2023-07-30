@@ -581,4 +581,14 @@ public class CustomProcessingDocumentRepositoryImpl
     }
     return false;
   }
+
+  @Override
+  public Optional<ProcessingDocument> findProcessingDocumentByProcessingUserId(
+      Long processingUserId) {
+    return Optional.ofNullable(selectFrom(processingDocument)
+        .join(processingUser)
+        .on(processingUser.processingDocument.id.eq(processingDocument.id))
+        .where(processingUser.id.eq(processingUserId))
+        .fetchOne());
+  }
 }

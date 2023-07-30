@@ -1,5 +1,6 @@
 package edu.hcmus.doc.mainservice.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import java.time.LocalDate;
 import javax.persistence.Column;
@@ -44,10 +45,12 @@ public class ProcessingDocument extends DocAbstractIdEntity {
     }
   }
 
+  @JsonIgnore
   public boolean isIncomingDocument() {
     return this.incomingDoc != null;
   }
 
+  @JsonIgnore
   public boolean isOutgoingDocument() {
     return !isIncomingDocument();
   }

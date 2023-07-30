@@ -39,4 +39,9 @@ public class ReturnRequestController {
   public List<Long> createReturnRequest(@RequestBody ReturnRequestPostDto returnRequestPostDto) {
     return returnRequestService.createReturnRequest(returnRequestPostDto);
   }
+
+  @PostMapping("/create-send-back-request")
+  public List<Long> createSendBackRequest(@RequestBody ReturnRequestPostDto returnRequestPostDto) {
+    return returnRequestService.createSendBackRequest(returnRequestPostDto);
+  }
 }
