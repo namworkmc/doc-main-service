@@ -18,8 +18,8 @@ spec:
     spec:
       containers:
         - name: doc-file-service
-          image: hcmusdoc/doc-file-service:release-v1.0.0
-          imagePullPolicy: Always
+          image: hcmusdoc/doc-file-service:release-v1.1.0
+          imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
               port: 8081
