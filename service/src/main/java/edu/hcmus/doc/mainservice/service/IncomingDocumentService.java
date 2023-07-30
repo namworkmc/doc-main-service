@@ -63,4 +63,6 @@ public interface IncomingDocumentService {
   void updateLinkedDocuments(Long targetDocumentId, List<OutgoingDocumentGetDto> documents);
 
   void deleteLinkedDocuments(Long targetDocumentId, Long linkedDocumentId);
+
+  Boolean isDocClosedByNextUserInFlow(Long incomingDocumentId);
 }

@@ -39,7 +39,7 @@ public class TransferHistory extends DocAbstractIdEntity {
   private List<Long> outgoingDocumentIds;
 
   @OneToOne
-  @JoinColumn(name = "processing_method_id", referencedColumnName = "id", updatable = false, nullable = false)
+  @JoinColumn(name = "processing_method_id", referencedColumnName = "id")
   private ProcessingMethod processingMethod;
 
   @Column(name = "processing_duration", columnDefinition = "TIMESTAMP")
@@ -50,4 +50,8 @@ public class TransferHistory extends DocAbstractIdEntity {
 
   @Column(name = "is_transfer_to_same_level", columnDefinition = "BOOLEAN")
   private Boolean isTransferToSameLevel;
+
+  @OneToOne
+  @JoinColumn(name = "return_request_id", referencedColumnName = "id")
+  private ReturnRequest returnRequest;
 }

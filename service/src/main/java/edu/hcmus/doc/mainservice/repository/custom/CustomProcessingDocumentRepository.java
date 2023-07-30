@@ -9,6 +9,7 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentD
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.DocAbstractSearchRepository;
 import java.time.LocalDate;
@@ -45,4 +46,8 @@ public interface CustomProcessingDocumentRepository
   Optional<ProcessingDocument> findProcessingDocumentById(Long id);
 
   List<Long> getIncomingDocumentsWithTransferPermission();
+
+  Boolean isExistUserWorkingOnThisDocumentAtSpecificStep(Long documentId, Integer step);
+
+  boolean isDocumentClosed(Long documentId, ProcessingDocumentTypeEnum processingDocumentType);
 }

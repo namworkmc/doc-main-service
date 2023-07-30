@@ -8,11 +8,7 @@ import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.PublishDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
-import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
-import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
-import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
-import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
-import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
+import edu.hcmus.doc.mainservice.model.enums.*;
 import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
@@ -133,6 +129,9 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
                 DateTimeFormatter.ofPattern("dd-MM-yyyy")))
             .orElse(null)
     );
+
+    dto.setIsDocTransferredByNextUserInFlow(processingDocumentService.isExistUserWorkingOnThisDocumentAtSpecificStep(
+        outgoingDocument.getId(), step + 1, ProcessingDocumentTypeEnum.OUTGOING_DOCUMENT));
 
     return dto;
   }

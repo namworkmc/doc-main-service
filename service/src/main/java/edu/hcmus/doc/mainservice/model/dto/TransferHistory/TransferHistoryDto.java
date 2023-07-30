@@ -23,4 +23,5 @@ public class TransferHistoryDto {
   private String receiverName;
   private List<DocumentWithAttachmentDto> attachments = new ArrayList<>();
   private LocalTime createdTime;
+  private Long returnRequestId;
 }

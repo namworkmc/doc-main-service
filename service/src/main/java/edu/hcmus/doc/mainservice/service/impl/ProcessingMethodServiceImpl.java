@@ -23,11 +23,14 @@ public class ProcessingMethodServiceImpl implements ProcessingMethodService {
   }
 
   @Override
-  public ProcessingMethod findByName(String name){
-    if(StringUtils.isNotBlank(name)) {
-      Optional<ProcessingMethod> processingMethod = processingMethodRepository.findProcessingMethodByName(name);
+  public ProcessingMethod findByName(String name) {
+    if (StringUtils.isNotBlank(name)) {
+      Optional<ProcessingMethod> processingMethod = processingMethodRepository.findProcessingMethodByName(
+          name);
       return processingMethod.orElseGet(() -> createProcessingMethod(name));
-    } else return null;
+    } else {
+      return null;
+    }
   }
 
   @Override

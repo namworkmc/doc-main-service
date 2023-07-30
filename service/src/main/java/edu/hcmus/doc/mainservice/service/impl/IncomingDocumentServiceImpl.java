@@ -588,4 +588,21 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     }
     return false;
   }
+
+  /**
+   * Only TRUONG_PHONG can use this function, to check if document is closed or not
+   * @param incomingDocumentId Long
+   * @return Boolean
+   */
+  @Override
+  public Boolean isDocClosedByNextUserInFlow(Long incomingDocumentId) {
+    if (SecurityUtils.getCurrentUser().getRole() != DocSystemRoleEnum.TRUONG_PHONG) {
+      return false;
+    }
+
+    Optional<ProcessingDocument> processingDocument = processingDocumentRepository
+            .findByIncomingDocumentId(incomingDocumentId);
+
+    return processingDocument.filter(document -> document.getStatus() == ProcessingStatus.CLOSED).isPresent();
+  }
 }

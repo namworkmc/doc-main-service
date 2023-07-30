@@ -8,11 +8,7 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentD
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
-import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
-import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
-import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
-import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
-import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
+import edu.hcmus.doc.mainservice.model.enums.*;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
@@ -101,6 +97,9 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
                 false)
             .orElse(null)
     );
+
+    dto.setIsDocTransferredByNextUserInFlow(processingDocumentService.isExistUserWorkingOnThisDocumentAtSpecificStep(
+        incomingDocument.getId(), step + 1, ProcessingDocumentTypeEnum.INCOMING_DOCUMENT));
     return dto;
   }
 
@@ -146,6 +145,9 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
                 DateTimeFormatter.ofPattern("dd-MM-yyyy")))
             .orElse(null)
     );
+
+    dto.setIsDocTransferredByNextUserInFlow(processingDocumentService.isExistUserWorkingOnThisDocumentAtSpecificStep(
+        processingDocument.getIncomingDoc().getId(), step + 1, ProcessingDocumentTypeEnum.INCOMING_DOCUMENT));
 
     return dto;
   }

@@ -20,4 +20,6 @@ public interface CustomProcessingUserRepository {
   List<ProcessingUser> findByUserIdAndProcessingDocumentIdWithRole(Long userId, Long processingDocumentId);
 
   ProcessingUser findByUserIdAndProcessingDocumentIdAndRoleAssignee(Long userId, Long processingDocumentId);
+
+  List<ProcessingUser> findByDocumentIdAndStep(Long documentId, Integer step, ProcessingDocumentTypeEnum type);
 }

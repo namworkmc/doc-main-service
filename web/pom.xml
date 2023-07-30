@@ -73,6 +73,8 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferHistory.GetTransferDocumentHistoryResponse</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistoryDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistorySearchCriteriaDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.ReturnRequest.ReturnRequestPostDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.ReturnRequest.ReturnRequestGetDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocStatisticsSearchCriteriaDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocStatisticsWrapperDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.enums.Urgency</classPattern>

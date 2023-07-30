@@ -15,7 +15,6 @@ import edu.hcmus.doc.mainservice.model.entity.QProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
-import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingUserRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
@@ -30,6 +29,8 @@ public class CustomProcessingUserRepositoryImpl
 
   private static final QProcessingUser qProcessingUser = QProcessingUser.processingUser;
   private static final QProcessingUserRole qProcessingUserRole = QProcessingUserRole.processingUserRole;
+
+  private static final QProcessingDocument qProcessingDocument = QProcessingDocument.processingDocument;
 
   @Override
   public List<ProcessingUser> findAllByUserIdAndProcessingDocumentId(Long userId,
@@ -199,5 +200,23 @@ public class CustomProcessingUserRepositoryImpl
             .and(processingUser.processingDocument.id.eq(processingDocumentId))
             .and(qProcessingUserRole.role.eq(ASSIGNEE)))
         .fetchFirst();
+  }
+
+  @Override
+  public List<ProcessingUser> findByDocumentIdAndStep(Long documentId, Integer step,
+      ProcessingDocumentTypeEnum type) {
+    BooleanBuilder whereBuilder = new BooleanBuilder();
+    whereBuilder.and(processingUser.step.eq(step));
+    if (type.equals(ProcessingDocumentTypeEnum.INCOMING_DOCUMENT)) {
+      whereBuilder.and(qProcessingDocument.incomingDoc.id.eq(documentId));
+    } else {
+      whereBuilder.and(qProcessingDocument.outgoingDocument.id.eq(documentId));
+    }
+
+    return selectFrom(processingUser)
+        .leftJoin(qProcessingDocument)
+        .on(qProcessingUser.processingDocument.id.eq(qProcessingDocument.id))
+        .where(whereBuilder)
+        .fetch();
   }
 }

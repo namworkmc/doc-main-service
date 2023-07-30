@@ -45,4 +45,6 @@ public interface ProcessingDocumentService {
   Optional<LocalDate> getDateExpired(Long incomingDocumentId, Long userId, DocSystemRoleEnum userRole, Boolean isAnyRole);
 
   Optional<String> getDateExpiredV2(Long documentId, Long userId, DocSystemRoleEnum userRole, Boolean isAnyRole, ProcessingDocumentTypeEnum type);
+
+  Boolean isExistUserWorkingOnThisDocumentAtSpecificStep(Long documentId, Integer step, ProcessingDocumentTypeEnum processingDocumentType);
 }

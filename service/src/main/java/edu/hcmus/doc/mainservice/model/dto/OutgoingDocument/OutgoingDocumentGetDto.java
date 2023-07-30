@@ -31,6 +31,7 @@ public class OutgoingDocumentGetDto extends DocAbstractDto {
     private OutgoingDocumentStatusEnum status;
     private List<AttachmentDto> attachments = new ArrayList<>();
     private Boolean isDocTransferred;
+    private Boolean isDocTransferredByNextUserInFlow;
     private Boolean isDocCollaborator;
     private Boolean isTransferable;
     private Boolean isReleasable;

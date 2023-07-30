@@ -11,16 +11,19 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
+import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.QDepartment;
 import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
 import edu.hcmus.doc.mainservice.model.entity.QFolder;
 import edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomOutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
@@ -144,5 +147,17 @@ public class CustomOutgoingDocumentRepositoryImpl
             .stream()
             .map(linkedDocument -> getOutgoingDocumentById(linkedDocument.getOutgoingDocument().getId()))
             .collect(Collectors.toList());
+  }
+
+  @Override
+  public boolean isDocumentReleased(Long documentId) {
+    OutgoingDocument result = selectFrom(outgoingDocument)
+        .where(outgoingDocument.id.eq(documentId))
+        .fetchOne();
+
+    if (Objects.nonNull(result)) {
+      return result.getStatus() == OutgoingDocumentStatusEnum.RELEASED;
+    }
+    return false;
   }
 }

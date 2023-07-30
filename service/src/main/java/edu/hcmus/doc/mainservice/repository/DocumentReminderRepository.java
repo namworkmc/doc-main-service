@@ -15,4 +15,7 @@ public interface DocumentReminderRepository
     CustomDocumentReminderRepository {
 
   List<DocumentReminder> getDocumentRemindersByStatusIn(List<DocumentReminderStatusEnum> statuses);
+
+  // delete by processing user id
+  void deleteByProcessingUserId(Long processingUserId);
 }

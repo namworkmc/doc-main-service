@@ -22,6 +22,7 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentD
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
+import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.QDistributionOrganization;
 import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingDocument;
@@ -31,6 +32,7 @@ import edu.hcmus.doc.mainservice.model.entity.QSendingLevel;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
@@ -538,5 +540,45 @@ public class CustomProcessingDocumentRepositoryImpl
       }
       return docListStatisticsDto;
     }
+  }
+
+  /**
+   * Check if there is a user working on this document at specific step, if step is null that means every step is acceptable
+   * @param documentId Long
+   * @param step Integer
+   * @return Boolean
+   */
+  @Override
+  public Boolean isExistUserWorkingOnThisDocumentAtSpecificStep(Long documentId, Integer step) {
+    // check in processing user table, if there is a record with the same document id then return true, else return false
+    BooleanBuilder whereBuilder = new BooleanBuilder();
+    whereBuilder.and(processingUser.processingDocument.id.eq(documentId));
+    if (step != null) {
+      whereBuilder.and(processingUser.step.eq(step));
+    }
+
+    ProcessingUser result = selectFrom(processingUser)
+        .where(whereBuilder)
+        .fetchFirst();
+    return Objects.nonNull(result);
+  }
+
+  @Override
+  public boolean isDocumentClosed(Long documentId, ProcessingDocumentTypeEnum processingDocumentType) {
+    BooleanBuilder whereBuilder = new BooleanBuilder();
+    if (ProcessingDocumentTypeEnum.INCOMING_DOCUMENT.equals(processingDocumentType)) {
+      whereBuilder.and(processingDocument.incomingDoc.id.eq(documentId));
+    } else {
+      whereBuilder.and(processingDocument.outgoingDocument.id.eq(documentId));
+    }
+
+    ProcessingDocument result = selectFrom(processingDocument)
+        .where(whereBuilder)
+        .fetchOne();
+
+    if (Objects.nonNull(result)) {
+      return result.getStatus() == ProcessingStatus.CLOSED;
+    }
+    return false;
   }
 }

@@ -38,6 +38,7 @@ public class IncomingDocumentDto extends DocAbstractDto {
     private Urgency urgency;
     private Confidentiality confidentiality;
     private Boolean isDocTransferred;
+    private Boolean isDocTransferredByNextUserInFlow;
     private Boolean isDocCollaborator;
     private Boolean isTransferable;
     private Boolean isCloseable;
