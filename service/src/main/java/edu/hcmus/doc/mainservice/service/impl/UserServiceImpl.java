@@ -12,6 +12,7 @@ import edu.hcmus.doc.mainservice.model.dto.UserSearchCriteria;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUserRole;
+import edu.hcmus.doc.mainservice.model.entity.TransferHistory;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
@@ -20,6 +21,7 @@ import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.EmailExistedException;
 import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentNotFoundException;
+import edu.hcmus.doc.mainservice.model.exception.TransferHistoryNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserPasswordIncorrectException;
 import edu.hcmus.doc.mainservice.model.exception.UsernameExistedException;
@@ -186,6 +188,27 @@ public class UserServiceImpl implements UserService {
     Pageable pageable = PageRequest.of(offset, limit);
     return transferHistoryRepository.findAllByUserId(criteriaDto.getUserId(), pageable)
         .map(transferHistoryMapper::toDto).toList();
+  }
+
+  @Override
+  public Long getUnreadTransferHistoryByUserId() {
+    return (long) transferHistoryRepository.findByUserIdAndUnread(getCurrentUserFromDB().getId())
+        .size();
+  }
+
+  @Override
+  public void updateReadTransferHistory(Long transferHistoryId) {
+    TransferHistory transferHistory = transferHistoryRepository.findById(transferHistoryId)
+        .orElseThrow(() -> new TransferHistoryNotFoundException(TransferHistoryNotFoundException.TRANSFER_HISTORY_NOT_FOUND));
+    transferHistory.setIsRead(true);
+    transferHistoryRepository.saveAndFlush(transferHistory);
+  }
+
+  @Override
+  public void updateAllReadTransferHistory() {
+    List<TransferHistory> transferHistories = transferHistoryRepository.findByUserIdAndUnread(getCurrentUserFromDB().getId());
+    transferHistories.forEach(transferHistory -> transferHistory.setIsRead(true));
+    transferHistoryRepository.saveAll(transferHistories);
   }
 
   @Override

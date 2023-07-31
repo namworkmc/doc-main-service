@@ -41,6 +41,12 @@ public interface UserService extends SearchService<UserDto, UserSearchCriteria> 
 
   List<TransferHistoryDto> getTransferHistoryByUser(TransferHistorySearchCriteriaDto criteriaDto, int offset, int limit);
 
+  Long getUnreadTransferHistoryByUserId();
+
+  void updateReadTransferHistory(Long transferHistoryId);
+
+  void updateAllReadTransferHistory();
+
   List<User> getAllUsers();
 
   List<DocStatisticsDto> getStatistics(DocStatisticsSearchCriteriaDto docStatisticsSearchCriteriaDto);

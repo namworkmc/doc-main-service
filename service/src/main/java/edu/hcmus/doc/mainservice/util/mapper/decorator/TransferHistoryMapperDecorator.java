@@ -49,6 +49,7 @@ public abstract class TransferHistoryMapperDecorator implements TransferHistoryM
     dto.setReceiverId(entity.getReceiver().getId());
     dto.setSenderName(entity.getSender().getFullName());
     dto.setReceiverName(entity.getReceiver().getFullName());
+    dto.setIsRead(entity.getIsRead());
 
     if (entity.getReturnRequest() != null) {
       dto.setReturnRequestId(entity.getReturnRequest().getId());

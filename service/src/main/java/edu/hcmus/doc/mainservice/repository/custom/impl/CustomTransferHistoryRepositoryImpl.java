@@ -67,4 +67,12 @@ public class CustomTransferHistoryRepositoryImpl extends
         .orderBy(transferHistory.createdDate.desc());
     return query;
   }
+
+  @Override
+  public List<TransferHistory> findByUserIdAndUnread(Long userId) {
+    return selectFrom(transferHistory)
+        .where((transferHistory.receiver.id.eq(userId).or(transferHistory.sender.id.eq(userId)))
+            .and(transferHistory.isRead.eq(false)))
+        .fetch();
+  }
 }

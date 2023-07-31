@@ -49,4 +49,5 @@
   <include id="044" file="044_update_process_method_transfer_history_table.sql" relativeToChangelogFile="true" />
   <include id="045" file="045_init_firebase_token_table.sql" relativeToChangelogFile="true" />
   <include id="046" file="046_add_columns_for_return_request_table.sql" relativeToChangelogFile="true" />
+  <include id="048" file="048_update_transfer_history_table.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>

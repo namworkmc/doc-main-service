@@ -54,4 +54,7 @@ public class TransferHistory extends DocAbstractIdEntity {
   @OneToOne
   @JoinColumn(name = "return_request_id", referencedColumnName = "id")
   private ReturnRequest returnRequest;
+
+  @Column(name = "is_read", nullable = false, columnDefinition = "BOOL NOT NULL DEFAULT FALSE")
+  private Boolean isRead;
 }

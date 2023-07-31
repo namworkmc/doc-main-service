@@ -73,6 +73,21 @@ public class UserController extends DocAbstractController {
         searchCriteria, page, pageSize);
   }
 
+  @GetMapping("/get-transfer-history/quantity")
+  public Long getUnreadTransferDocumentHistory() {
+    return userService.getUnreadTransferHistoryByUserId();
+  }
+
+  @PutMapping("/update-transfer-history-is-read/{transferHistoryId}")
+  public void updateReadTransferHistory(@PathVariable Long transferHistoryId) {
+    userService.updateReadTransferHistory(transferHistoryId);
+  }
+
+  @PutMapping("/update-transfer-history-is-read")
+  public void updateAllReadTransferHistory() {
+    userService.updateAllReadTransferHistory();
+  }
+
   @GetMapping("/all")
   public List<UserDto> getUsers() {
     return userService
