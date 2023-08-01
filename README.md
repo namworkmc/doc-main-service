@@ -1,6 +1,6 @@
 # doc-main-service
 
-The doc-main-service is an integral component of a microservices architecture, specifically designed for managing the Document Publication and Approval System.
+The doc-main-service is an integral component of a microservices architecture, specifically designed for managing the **Document Publication and Approval System**.
 This service plays a crucial role in facilitating the seamless flow of uploading and downloading files, while the actual storage and retrieval of documents are handled by another dedicated service.
 
 ## Prerequisites
@@ -48,7 +48,7 @@ Note:
 - If you want to run the unit tests, remove the `-DskipTests=true` flag.
 - If you want to skip the TypeScript generator, add the `-DskipTypescriptGenerator=true` flag.
 
-4. To start the project, you will need to set up PostgreSQL database, RabbitMQ, and Keycloak, and configure the project to integrate with these services. You can set up the properties in the `application-dev.yaml` file located in the `module service`, package `src\main\resources`.
+4. To start the project, you will need to set up PostgreSQL database, RabbitMQ, and Keycloak (our customized Keycloak, [refer](https://github.com/hcmus-k19-doc/doc-keycloak) for more information), and configure the project to integrate with these services. You can set up the properties in the `application-dev.yaml` file located in the `module service`, package `src\main\resources`.
 5. We also provide `liquibase` scripts to create the database schema, you can find them in the `module db`.
 To run the scripts, you will need to enable `liquibase` and configure the database you want to use in the `application-dev.yaml` file.
 
@@ -58,14 +58,14 @@ You should now be able to run the project.
 
 Follow these steps to run the project using Docker:
 
-1. Run the `build-image.bat` file in the root of the project to build the image. If the file cannot run completely, please copy and paste the commands in `build-image.bat` to your terminal to build the image.
+1. Run the `build-image.bat` file in the root of the project to build the image. If the file cannot run completely, please copy and paste each command in `build-image.bat` to your terminal to build the image.
 
 2. Start the `docker-compose.yaml` file located in `etc/docker` using the following command:
 ```
 docker compose --profile local-deployment up -d
 ```
 
-**Note: Remember to configure PostgreSQL database, RabbitMQ, and Keycloak before starting the project.**
+**Note: Remember to configure PostgreSQL database, RabbitMQ, and Keycloak (our customized Keycloak, [refer](https://github.com/hcmus-k19-doc/doc-keycloak) for more information) before starting the project.**
 
 ## Run the Project on Kubernetes
 
@@ -74,8 +74,6 @@ Before running the project on Kubernetes, make sure you have `minikube` or `Kube
 Follow these steps to run the project on Kubernetes:
 
 1. Run the `up-doc-services.bat` file.
-
-2. Run the `keycloak.bat` file.
 
 ## Contact
 - [Nguyen Duc Nam](https://github.com/namworkmc)
