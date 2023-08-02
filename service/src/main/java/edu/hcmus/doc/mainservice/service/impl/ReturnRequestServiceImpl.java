@@ -41,6 +41,7 @@ import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
 import edu.hcmus.doc.mainservice.util.mapper.ReturnRequestMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -332,10 +333,17 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
 
   private TransferHistory createTransferHistory(ReturnRequest returnRequest,
       ProcessingDocumentTypeEnum type) {
+    User currentUser = SecurityUtils.getCurrentUser();
     TransferHistory transferHistory = new TransferHistory();
     transferHistory.setReturnRequest(returnRequest);
-    transferHistory.setSender(returnRequest.getCurrentProcessingUser());
-    transferHistory.setReceiver(returnRequest.getPreviousProcessingUser());
+    if (Objects.equals(returnRequest.getCurrentProcessingUser().getId(), currentUser.getId())) {
+      transferHistory.setSender(returnRequest.getCurrentProcessingUser());
+      transferHistory.setReceiver(returnRequest.getPreviousProcessingUser());
+    } else {
+      transferHistory.setSender(returnRequest.getPreviousProcessingUser());
+      transferHistory.setReceiver(returnRequest.getCurrentProcessingUser());
+    }
+    transferHistory.setIsRead(false);
     if (type == ProcessingDocumentTypeEnum.INCOMING_DOCUMENT) {
       transferHistory.setIncomingDocumentIds(List.of(returnRequest.getIncomingDocument().getId()));
     } else if (type == ProcessingDocumentTypeEnum.OUTGOING_DOCUMENT) {

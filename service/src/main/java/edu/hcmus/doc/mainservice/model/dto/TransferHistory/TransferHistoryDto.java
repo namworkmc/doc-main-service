@@ -1,6 +1,8 @@
 package edu.hcmus.doc.mainservice.model.dto.TransferHistory;
 
 import edu.hcmus.doc.mainservice.model.dto.Attachment.DocumentWithAttachmentDto;
+import edu.hcmus.doc.mainservice.model.dto.ReturnRequest.ReturnRequestGetDto;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -24,5 +26,6 @@ public class TransferHistoryDto {
   private String receiverName;
   private List<DocumentWithAttachmentDto> attachments = new ArrayList<>();
   private LocalTime createdTime;
-  private Long returnRequestId;
+  private ReturnRequestGetDto returnRequest;
+  private ProcessingDocumentTypeEnum documentType;
 }

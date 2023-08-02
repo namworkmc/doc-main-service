@@ -9,4 +9,5 @@ public class ProcessingDetailsDto {
   private String outgoingNumber;
   private Integer step;
   private ProcessingUserDto processingUser;
+  private Boolean isDocClosedOrReleased = false;
 }

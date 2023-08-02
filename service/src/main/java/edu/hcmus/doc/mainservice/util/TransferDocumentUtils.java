@@ -93,6 +93,7 @@ public class TransferDocumentUtils {
     transferHistory.setSender(reporter);
     transferHistory.setReceiver(assignee);
     transferHistory.setIsTransferToSameLevel(transferDocDto.getIsTransferToSameLevel());
+    transferHistory.setIsRead(false);
 
     if (transferType == ProcessingDocumentType.INCOMING_DOCUMENT) {
       transferHistory.setIncomingDocumentIds(transferDocDto.getDocumentIds());
