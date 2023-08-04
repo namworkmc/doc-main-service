@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: doc-db-config
 data:
-  host: "dpg-cim104unqqlfm4fbppvg-a.singapore-postgres.render.com"
+  host: "doc.cjdkg26tuejl.ap-southeast-1.rds.amazonaws.com"
   port: "5432"
-  db-name: "doc_3pxi"
+  db-name: "prj_doc_prod"
