@@ -18,13 +18,14 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
-import edu.hcmus.doc.mainservice.model.exception.DocMainServiceRuntimeException;
+import edu.hcmus.doc.mainservice.model.exception.DocBusinessException;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingUserRoleService;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -81,7 +82,7 @@ public class IncomingDocumentController extends DocAbstractController {
   @SneakyThrows
   @PostMapping("/create")
   public IncomingDocumentDto createIncomingDocument(
-      @ModelAttribute IncomingDocumentWithAttachmentPostDto incomingDocumentWithAttachmentPostDto) {
+      @ModelAttribute @Valid IncomingDocumentWithAttachmentPostDto incomingDocumentWithAttachmentPostDto) {
     return incomingDecoratorDocumentMapper.toDto(
         incomingDocumentService.createIncomingDocument(incomingDocumentWithAttachmentPostDto));
   }
@@ -111,7 +112,7 @@ public class IncomingDocumentController extends DocAbstractController {
   @SneakyThrows
   @PutMapping("/update")
   public IncomingDocumentDto updateIncomingDocument(
-      @ModelAttribute IncomingDocumentWithAttachmentPutDto incomingDocumentWithAttachmentPutDto) {
+      @ModelAttribute @Valid IncomingDocumentWithAttachmentPutDto incomingDocumentWithAttachmentPutDto) {
     return incomingDecoratorDocumentMapper.toDto(
         incomingDocumentService.updateIncomingDocument(incomingDocumentWithAttachmentPutDto));
   }
@@ -150,7 +151,7 @@ public class IncomingDocumentController extends DocAbstractController {
   public void linkDocuments(@PathVariable Long targetDocumentId,
                             @RequestBody List<Long> documents) {
     if (documents.isEmpty()) {
-      throw new DocMainServiceRuntimeException(DocMainServiceRuntimeException.DOCUMENT_REQUIRED);
+      throw new DocBusinessException(DocBusinessException.DOCUMENT_REQUIRED);
     }
 
     incomingDocumentService.linkDocuments(targetDocumentId, documents);
@@ -169,7 +170,7 @@ public class IncomingDocumentController extends DocAbstractController {
   public void updateLinkedDocuments(@PathVariable Long targetDocumentId,
                                     @RequestBody List<OutgoingDocumentGetDto> documents) {
     if (documents.isEmpty()) {
-      throw new DocMainServiceRuntimeException(DocMainServiceRuntimeException.DOCUMENT_REQUIRED);
+      throw new DocBusinessException(DocBusinessException.DOCUMENT_REQUIRED);
     }
 
     incomingDocumentService.updateLinkedDocuments(targetDocumentId, documents);

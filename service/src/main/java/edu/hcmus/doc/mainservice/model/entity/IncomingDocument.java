@@ -12,6 +12,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -19,43 +21,53 @@ import lombok.Data;
 @Table(name = "incoming_document", schema = "doc_main", catalog = "doc")
 public class IncomingDocument extends DocAbstractIdEntity {
 
-  @Column(name = "incoming_number", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
+  @NotBlank
+  @Column(name = "incoming_number", columnDefinition = "VARCHAR(255) NOT NULL")
   private String incomingNumber;
 
+  @NotNull
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "document_type_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "document_type_id", referencedColumnName = "id")
   private DocumentType documentType;
 
-  @Column(name = "original_symbol_number", nullable = false,
-          columnDefinition = "VARCHAR(255) NOT NULL")
+  @NotBlank
+  @Column(name = "original_symbol_number", columnDefinition = "VARCHAR(255) NOT NULL")
   private String originalSymbolNumber;
 
+  @NotNull
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "distribution_org_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "distribution_org_id", referencedColumnName = "id")
   private DistributionOrganization distributionOrg;
 
-  @Column(name = "distribution_date", nullable = false, columnDefinition = "TIMESTAMP NOT NULL")
+  @NotNull
+  @Column(name = "distribution_date", columnDefinition = "TIMESTAMP NOT NULL")
   private LocalDate distributionDate;
 
-  @Column(name = "arriving_date", nullable = false, columnDefinition = "DATE NOT NULL")
+  @NotNull
+  @Column(name = "arriving_date", columnDefinition = "DATE NOT NULL")
   private LocalDate arrivingDate;
 
-  @Column(name = "arriving_time", nullable = false, columnDefinition = "TIME NOT NULL")
+  @NotNull
+  @Column(name = "arriving_time", columnDefinition = "TIME NOT NULL")
   private LocalTime arrivingTime;
 
+  @NotBlank
   @Column(name = "summary", columnDefinition = "VARCHAR(255)")
   private String summary;
 
+  @NotNull
   @Enumerated(EnumType.STRING)
-  @Column(name = "urgency", nullable = false)
+  @Column(name = "urgency")
   private Urgency urgency;
 
+  @NotNull
   @Enumerated(EnumType.STRING)
-  @Column(name = "confidentiality", nullable = false)
+  @Column(name = "confidentiality")
   private Confidentiality confidentiality;
 
+  @NotNull
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "folder_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "folder_id", referencedColumnName = "id")
   private Folder folder;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -63,9 +75,10 @@ public class IncomingDocument extends DocAbstractIdEntity {
   private SendingLevel sendingLevel;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "publishing_department_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "publishing_department_id", referencedColumnName = "id")
   private Department publishingDepartment;
 
+  @NotBlank
   @Column(name = "name", columnDefinition = "VARCHAR(255)")
   private String name;
 

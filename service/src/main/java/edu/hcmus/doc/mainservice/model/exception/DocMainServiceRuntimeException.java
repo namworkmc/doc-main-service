@@ -6,9 +6,11 @@ public class DocMainServiceRuntimeException extends RuntimeException {
 
   public static final String INTERNAL_SERVER_ERROR = "doc.exception.internal_server_error";
 
-  public static final String DOCUMENT_REQUIRED = "doc.exception.document_required";
-
   public static final String DOCUMENT_NUMBER_EXCEEDED = "doc.exception.documents_number_exceeded";
+
+  public DocMainServiceRuntimeException() {
+    super(INTERNAL_SERVER_ERROR);
+  }
 
   public DocMainServiceRuntimeException(String message) {
     super(message);

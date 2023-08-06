@@ -9,6 +9,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import edu.hcmus.doc.mainservice.util.FirebaseProperties;
 import edu.hcmus.doc.mainservice.util.keycloak.KeycloakProperties;
 import javax.annotation.PostConstruct;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import javax.ws.rs.client.ClientBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -91,5 +94,11 @@ public class DocMainServiceConfig {
       // Use standard credentials chain. Useful when running inside GKE
       return GoogleCredentials.getApplicationDefault();
     }
+  }
+
+  @Bean
+  public Validator validator() {
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    return factory.getValidator();
   }
 }

@@ -1,6 +1,6 @@
 package edu.hcmus.doc.mainservice.model.exception;
 
-public class UserPasswordIncorrectException extends DocMainServiceRuntimeException {
+public class UserPasswordIncorrectException extends DocBusinessException {
 
   private static final String USER_PASSWORD_INCORRECT = "user.password.incorrect";
 

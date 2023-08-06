@@ -130,18 +130,18 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     IncomingDocumentPutDto incomingDocumentPutDto = objectMapper.readValue(
         incomingDocumentWithAttachmentPutDto.getIncomingDocumentPutDto(),
         IncomingDocumentPutDto.class);
-    IncomingDocument incomingDocument = incomingDecoratorDocumentMapper.toEntity(
-        incomingDocumentPutDto);
-    IncomingDocument updatingIncomingDocument = getIncomingDocumentById(incomingDocument.getId());
-    DocObjectUtils.copyNonNullProperties(incomingDocument, updatingIncomingDocument);
+    DocObjectUtils.validateObject(incomingDocumentPutDto);
 
-    if(Objects.nonNull(incomingDocumentWithAttachmentPutDto.getAttachments())) {
+    IncomingDocument persistedIncomingDocument = getIncomingDocumentById(incomingDocumentPutDto.getId());
+    incomingDecoratorDocumentMapper.partialUpdate(incomingDocumentPutDto, persistedIncomingDocument);
+
+    if (Objects.nonNull(incomingDocumentWithAttachmentPutDto.getAttachments())) {
       AttachmentPostDto attachmentPostDto = attachmentMapperDecorator.toAttachmentPostDto(
-          updatingIncomingDocument.getId(), incomingDocumentWithAttachmentPutDto.getAttachments());
+          persistedIncomingDocument.getId(), incomingDocumentWithAttachmentPutDto.getAttachments());
 
       attachmentService.saveAttachmentsByProcessingDocumentTypeAndDocId(ParentFolderEnum.ICD, attachmentPostDto);
     }
-    return incomingDocumentRepository.saveAndFlush(updatingIncomingDocument);
+    return incomingDocumentRepository.save(persistedIncomingDocument);
   }
 
   @Override
@@ -185,6 +185,8 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     IncomingDocumentPostDto incomingDocumentPostDto = objectMapper.readValue(
         incomingDocumentWithAttachmentPostDto.getIncomingDocumentPostDto(),
         IncomingDocumentPostDto.class);
+    DocObjectUtils.validateObject(incomingDocumentPostDto);
+
     IncomingDocument incomingDocument = incomingDecoratorDocumentMapper.toEntity(
         incomingDocumentPostDto);
 

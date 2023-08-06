@@ -6,10 +6,13 @@ import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPutD
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.util.mapper.decorator.IncomingDocumentMapperDecorator;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(
     componentModel = "spring",
@@ -72,4 +75,10 @@ public interface IncomingDocumentMapper {
   @Mapping(target = "sendingLevel", ignore = true)
   @Mapping(source = "id", target = "id")
   IncomingDocument toEntity(IncomingDocumentPutDto incomingDocumentDto);
+
+  @Mapping(target = "documentType", ignore = true)
+  @Mapping(target = "distributionOrg", ignore = true)
+  @Mapping(target = "folder", ignore = true)
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  void partialUpdate(IncomingDocumentPutDto incomingDocumentDto, @MappingTarget IncomingDocument incomingDocument);
 }

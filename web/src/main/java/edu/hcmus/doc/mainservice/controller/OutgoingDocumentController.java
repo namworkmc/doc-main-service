@@ -15,11 +15,11 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.ValidateTransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
-import edu.hcmus.doc.mainservice.model.exception.DocMainServiceRuntimeException;
+import edu.hcmus.doc.mainservice.model.exception.DocBusinessException;
 import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import java.util.List;
-import java.util.stream.Collectors;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,7 +48,7 @@ public class OutgoingDocumentController extends DocAbstractController {
   @SneakyThrows
   @PutMapping("/update")
   public OutgoingDocumentGetDto updateOutgoingDocument(
-      @ModelAttribute OutgoingDocumentWithAttachmentPutDto outgoingDocumentWithAttachmentPutDto) {
+      @ModelAttribute @Valid OutgoingDocumentWithAttachmentPutDto outgoingDocumentWithAttachmentPutDto) {
     return outgoingDecoratorDocumentMapper.toDto(
             outgoingDocumentService.updateOutgoingDocument(outgoingDocumentWithAttachmentPutDto));
   }
@@ -65,7 +65,7 @@ public class OutgoingDocumentController extends DocAbstractController {
   @SneakyThrows
   @PostMapping("/create")
   public OutgoingDocumentGetDto createIncomingDocument(
-          @ModelAttribute OutgoingDocumentWithAttachmentPostDto outgoingDocumentWithAttachmentPostDto) {
+          @ModelAttribute @Valid OutgoingDocumentWithAttachmentPostDto outgoingDocumentWithAttachmentPostDto) {
     return outgoingDecoratorDocumentMapper.toDto(
             outgoingDocumentService.createOutgoingDocument(outgoingDocumentWithAttachmentPostDto));
   }
@@ -110,7 +110,7 @@ public class OutgoingDocumentController extends DocAbstractController {
   public void linkDocuments(@PathVariable Long targetDocumentId,
                             @RequestBody List<Long> documents) {
     if (documents.isEmpty()) {
-      throw new DocMainServiceRuntimeException(DocMainServiceRuntimeException.DOCUMENT_REQUIRED);
+      throw new DocBusinessException(DocBusinessException.DOCUMENT_REQUIRED);
     }
 
     outgoingDocumentService.linkDocuments(targetDocumentId, documents);
@@ -119,10 +119,10 @@ public class OutgoingDocumentController extends DocAbstractController {
   @GetMapping("/link-documents/{targetDocumentId}")
   public List<IncomingDocumentDto> getLinkedDocuments(@PathVariable Long targetDocumentId) {
     return outgoingDocumentService
-            .getLinkedDocuments(targetDocumentId)
-            .stream()
-            .map(incomingDecoratorDocumentMapper::toDto)
-            .collect(Collectors.toList());
+        .getLinkedDocuments(targetDocumentId)
+        .stream()
+        .map(incomingDecoratorDocumentMapper::toDto)
+        .toList();
   }
 
   @DeleteMapping("/link-documents/{targetDocumentId}")
