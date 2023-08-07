@@ -11,14 +11,12 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
-import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.QDepartment;
 import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
 import edu.hcmus.doc.mainservice.model.entity.QFolder;
 import edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
-import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomOutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
@@ -90,13 +88,13 @@ public class CustomOutgoingDocumentRepositoryImpl
       ));
     }
     if (StringUtils.isNotBlank(searchCriteriaDto.getSummary())) {
-      where.and(outgoingDocument.summary.containsIgnoreCase(searchCriteriaDto.getSummary()));
+      where.and(outgoingDocument.summary.containsIgnoreCase(searchCriteriaDto.getSummary().trim()));
     }
     if (searchCriteriaDto.getStatus() != null) {
       where.and(outgoingDocument.status.eq(searchCriteriaDto.getStatus()));
     }
     if (StringUtils.isNotBlank(searchCriteriaDto.getDocumentName())) {
-      where.and(outgoingDocument.name.containsIgnoreCase(searchCriteriaDto.getDocumentName()));
+      where.and(outgoingDocument.name.containsIgnoreCase(searchCriteriaDto.getDocumentName().trim()));
     }
 
     return selectFrom(outgoingDocument)

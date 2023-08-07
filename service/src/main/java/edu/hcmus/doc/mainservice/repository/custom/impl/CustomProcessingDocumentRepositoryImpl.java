@@ -230,12 +230,12 @@ public class CustomProcessingDocumentRepositoryImpl
 
     if (StringUtils.isNotBlank(
         searchCriteriaDto.getIncomingNumber())) {
-      where.and(incomingDocument.incomingNumber.containsIgnoreCase(searchCriteriaDto.getIncomingNumber()));
+      where.and(incomingDocument.incomingNumber.containsIgnoreCase(searchCriteriaDto.getIncomingNumber().trim()));
     }
     if (StringUtils.isNotBlank(
         searchCriteriaDto.getOriginalSymbolNumber())) {
       where.and(
-          incomingDocument.originalSymbolNumber.containsIgnoreCase(searchCriteriaDto.getOriginalSymbolNumber()));
+          incomingDocument.originalSymbolNumber.containsIgnoreCase(searchCriteriaDto.getOriginalSymbolNumber().trim()));
     }
     if (searchCriteriaDto.getDocumentTypeId() != null) {
       where.and(incomingDocument.documentType.id.eq(searchCriteriaDto.getDocumentTypeId()));
@@ -258,10 +258,10 @@ public class CustomProcessingDocumentRepositoryImpl
       ));
     }
     if (StringUtils.isNotBlank(searchCriteriaDto.getSummary())) {
-      where.and(incomingDocument.summary.containsIgnoreCase(searchCriteriaDto.getSummary()));
+      where.and(incomingDocument.summary.containsIgnoreCase(searchCriteriaDto.getSummary().trim()));
     }
     if (StringUtils.isNotBlank(searchCriteriaDto.getDocumentName())) {
-      where.and(incomingDocument.name.containsIgnoreCase(searchCriteriaDto.getDocumentName()));
+      where.and(incomingDocument.name.containsIgnoreCase(searchCriteriaDto.getDocumentName().trim()));
     }
 
     return selectFrom(incomingDocument)
