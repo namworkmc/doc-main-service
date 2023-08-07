@@ -8,6 +8,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.passay.CharacterData;
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+import org.passay.PasswordGenerator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -18,6 +22,8 @@ public final class SecurityUtils {
   private static final int FIVE_MINUTES = 300;
 
   private static final int ONE_DAY = 86400;
+
+  private static final String SPECIAL_CHARACTERS = "!@#$%^&*()_+";
 
   private SecurityUtils() {
   }
@@ -94,6 +100,37 @@ public final class SecurityUtils {
 
     JwtAuthenticationToken token = new JwtAuthenticationToken(jwt);
     SecurityContextHolder.getContext().setAuthentication(token);
+  }
+
+  public static String generateRandomPassword() {
+    PasswordGenerator gen = new PasswordGenerator();
+    CharacterData lowerCaseChars = EnglishCharacterData.LowerCase;
+    CharacterRule lowerCaseRule = new CharacterRule(lowerCaseChars);
+    lowerCaseRule.setNumberOfCharacters(1);
+
+    CharacterData upperCaseChars = EnglishCharacterData.UpperCase;
+    CharacterRule upperCaseRule = new CharacterRule(upperCaseChars);
+    upperCaseRule.setNumberOfCharacters(1);
+
+    CharacterData digitChars = EnglishCharacterData.Digit;
+    CharacterRule digitRule = new CharacterRule(digitChars);
+    digitRule.setNumberOfCharacters(1);
+
+    CharacterData specialChars = new CharacterData() {
+      @Override
+      public String getErrorCode() {
+        return "ERROR_CODE";
+      }
+
+      @Override
+      public String getCharacters() {
+        return SPECIAL_CHARACTERS;
+      }
+    };
+    CharacterRule splCharRule = new CharacterRule(specialChars);
+    splCharRule.setNumberOfCharacters(1);
+
+    return gen.generatePassword(8, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
   }
 
   private static Authentication getSecurityAuthentication() {
