@@ -3,6 +3,7 @@ package edu.hcmus.doc.mainservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPutDto;
+import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWrapperDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
@@ -21,7 +22,7 @@ public interface IncomingDocumentService {
 
   long getTotalPages(SearchCriteriaDto searchCriteriaDto, long limit);
 
-  List<ProcessingDocument> searchIncomingDocuments(SearchCriteriaDto searchCriteria, int page, int pageSize);
+  IncomingDocumentWrapperDto searchIncomingDocuments(SearchCriteriaDto searchCriteria, int page, int pageSize);
 
   @Deprecated(since = "1.0.0", forRemoval = true)
   List<IncomingDocument> getIncomingDocuments(String query, long offset, long limit);

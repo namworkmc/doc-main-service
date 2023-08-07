@@ -6,6 +6,7 @@ import edu.hcmus.doc.mainservice.model.dto.ElasticSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPutDto;
+import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWrapperDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
 import edu.hcmus.doc.mainservice.model.dto.ProcessingDetailsDto;
@@ -67,16 +68,11 @@ public class IncomingDocumentController extends DocAbstractController {
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "3") int pageSize
   ) {
-    long totalElements = incomingDocumentService.getTotalElements(searchCriteria);
-    long totalPages = (totalElements / pageSize) + (totalElements % pageSize == 0 ? 0 : 1);
+    IncomingDocumentWrapperDto incomingDocumentWrapperDto = incomingDocumentService.searchIncomingDocuments(searchCriteria, page, pageSize);
     return paginationMapper.toDto(
-        incomingDocumentService
-            .searchIncomingDocuments(searchCriteria, page, pageSize)
-            .stream()
-            .map(incomingDecoratorDocumentMapper::toDto)
-            .toList(),
-        totalElements,
-        totalPages);
+        incomingDocumentWrapperDto.getIncomingDocumentDtoList(),
+        incomingDocumentWrapperDto.getTotalElements(),
+        incomingDocumentWrapperDto.getTotalPages());
   }
 
   @SneakyThrows

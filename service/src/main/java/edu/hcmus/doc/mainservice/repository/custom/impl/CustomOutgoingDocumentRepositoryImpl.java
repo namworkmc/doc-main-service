@@ -6,6 +6,7 @@ import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.process
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole.processingUserRole;
 import static edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum.ASSIGNEE;
+import static edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum.COLLABORATOR;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -16,11 +17,17 @@ import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
 import edu.hcmus.doc.mainservice.model.entity.QFolder;
 import edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.OutgoingDocumentStatusEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.repository.custom.CustomOutgoingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
+import edu.hcmus.doc.mainservice.util.DocMessageUtils;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +67,7 @@ public class CustomOutgoingDocumentRepositoryImpl
       long offset, long limit) {
     return
         buildSearchQuery(searchCriteriaDto)
-            .orderBy(outgoingDocument.id.asc())
+            .orderBy(outgoingDocument.id.desc())
             .offset(offset * limit)
             .limit(limit)
             .fetch();
@@ -98,15 +105,51 @@ public class CustomOutgoingDocumentRepositoryImpl
     }
 
     return selectFrom(outgoingDocument)
-        .innerJoin(outgoingDocument.documentType, QDocumentType.documentType)
+        .leftJoin(outgoingDocument.documentType)
         .fetchJoin()
-        .innerJoin(outgoingDocument.publishingDepartment, QDepartment.department)
-        .fetchJoin()
-        .innerJoin(outgoingDocument.folder, QFolder.folder)
+        .leftJoin(outgoingDocument.publishingDepartment)
         .fetchJoin()
         .distinct()
-        .orderBy(outgoingDocument.id.desc())
         .where(where);
+  }
+
+  @Override
+  public List<Long> checkOutgoingDocumentSearchByCriteria(long userId, int step, ProcessingDocumentRoleEnum role) {
+
+    return selectFrom(outgoingDocument)
+        .select(outgoingDocument.id)
+        .leftJoin(processingDocument).on(outgoingDocument.id.eq(processingDocument.outgoingDocument.id)).fetchJoin()
+        .innerJoin(processingUser).on(processingUser.processingDocument.id.eq(processingDocument.id).and(processingUser.user.id.eq(userId)).and(processingUser.step.eq(step))).fetchJoin()
+        .innerJoin(processingUserRole).on(processingUser.id.eq(processingUserRole.processingUser.id).and(processingUserRole.role.eq(role))).fetchJoin()
+        .distinct()
+        .fetch();
+  }
+
+  @Override
+  public Map<Long, String> getProcessingTimeOfOutgoingDocumentList(long userId) {
+    return selectFrom(outgoingDocument)
+        .select(outgoingDocument.id, processingUser.processingDuration)
+        .leftJoin(processingDocument)
+        .on(outgoingDocument.id.eq(processingDocument.outgoingDocument.id)).fetchJoin()
+        .innerJoin(processingUser).on(processingUser.processingDocument.id.eq(processingDocument.id)
+            .and(processingUser.user.id.eq(userId))).fetchJoin()
+        .innerJoin(processingUserRole).on(processingUser.id.eq(processingUserRole.processingUser.id)
+            .and(processingUserRole.role.in(ASSIGNEE, COLLABORATOR))).fetchJoin()
+        .distinct()
+        .fetch()
+        .stream()
+        .collect(Collectors.toMap(
+            tuple -> tuple.get(outgoingDocument.id),
+            tuple -> {
+              LocalDate processingDuration = tuple.get(processingUser.processingDuration
+              );
+              if (processingDuration != null) {
+                return processingDuration.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+              } else {
+                return DocMessageUtils.getContent(MESSAGE.infinite_processing_duration);
+              }
+            }
+        ));
   }
 
   @Override
@@ -121,12 +164,12 @@ public class CustomOutgoingDocumentRepositoryImpl
         .leftJoin(processingDocument)
         .on(outgoingDocument.id.eq(processingDocument.outgoingDocument.id))
         .fetchJoin()
-        .leftJoin(processingUser)
+        .innerJoin(processingUser)
         .on(processingUser.processingDocument.id.eq(processingDocument.id))
         .fetchJoin()
-        .distinct()
-        .leftJoin(processingUserRole)
+        .innerJoin(processingUserRole)
         .on(processingUser.id.eq(processingUserRole.processingUser.id))
+        .distinct()
         .where(where.and(outgoingDocument.status.eq(OutgoingDocumentStatusEnum.RELEASED).not()))
         .fetch();
   }

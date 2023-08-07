@@ -8,7 +8,10 @@ import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentD
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.User;
-import edu.hcmus.doc.mainservice.model.enums.*;
+import edu.hcmus.doc.mainservice.model.enums.ParentFolderEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
+import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
@@ -17,11 +20,8 @@ import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
-import edu.hcmus.doc.mainservice.util.DocMessageUtils;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
 import edu.hcmus.doc.mainservice.util.mapper.IncomingDocumentMapper;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -105,50 +105,8 @@ public abstract class IncomingDocumentMapperDecorator implements IncomingDocumen
 
   @Override
   public IncomingDocumentDto toDto(ProcessingDocument processingDocument) {
-    List<AttachmentDto> attachments = attachmentService.getAttachmentsByDocId(
-        processingDocument.getIncomingDoc().getId(), ParentFolderEnum.ICD);
-
     IncomingDocumentDto dto = delegate.toDto(processingDocument.getIncomingDoc());
     dto.setStatus(processingDocument.getStatus());
-    dto.setAttachments(attachments);
-
-    User currentUser = SecurityUtils.getCurrentUser();
-    int step = TransferDocumentUtils.getStep(currentUser, null, true);
-    Boolean isDocTransferred = processingDocumentService.isUserWorkingOnDocumentWithSpecificRole(
-        GetTransferDocumentDetailRequest.builder()
-            .documentId(processingDocument.getIncomingDoc().getId())
-            .userId(currentUser.getId())
-            .role(ProcessingDocumentRoleEnum.REPORTER)
-            .step(step)
-            .build());
-    dto.setIsDocTransferred(isDocTransferred);
-
-    int collabStep = TransferDocumentUtils.getStep(currentUser, null, false);
-    Boolean isDocCollaborator = processingDocumentService.isUserWorkingOnDocumentWithSpecificRole(
-        GetTransferDocumentDetailRequest.builder()
-            .documentId(processingDocument.getIncomingDoc().getId())
-            .userId(currentUser.getId())
-            .role(ProcessingDocumentRoleEnum.COLLABORATOR)
-            .step(collabStep)
-            .build());
-
-    dto.setIsDocCollaborator(isDocCollaborator);
-    dto.setIsTransferable(processingDocumentRepository.getIncomingDocumentsWithTransferPermission()
-        .contains(processingDocument.getIncomingDoc().getId()));
-
-    dto.setCustomProcessingDuration(
-        processingDocumentService
-            .getDateExpiredV2(processingDocument.getIncomingDoc().getId(), currentUser.getId(),
-                currentUser.getRole(), true, ProcessingDocumentTypeEnum.INCOMING_DOCUMENT)
-            .map(result -> result.equals("infinite") ? DocMessageUtils.getContent(
-                MESSAGE.infinite_processing_duration) : LocalDate.parse(result).format(
-                DateTimeFormatter.ofPattern("dd-MM-yyyy")))
-            .orElse(null)
-    );
-
-    dto.setIsDocTransferredByNextUserInFlow(processingDocumentService.isExistUserWorkingOnThisDocumentAtSpecificStep(
-        processingDocument.getIncomingDoc().getId(), step + 1, ProcessingDocumentTypeEnum.INCOMING_DOCUMENT));
-
     return dto;
   }
 

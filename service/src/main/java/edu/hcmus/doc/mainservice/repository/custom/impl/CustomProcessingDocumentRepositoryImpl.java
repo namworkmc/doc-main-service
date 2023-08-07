@@ -9,6 +9,7 @@ import static edu.hcmus.doc.mainservice.model.entity.QProcessingMethod.processin
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingUser.processingUser;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole.processingUserRole;
 import static edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum.ASSIGNEE;
+import static edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum.COLLABORATOR;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -30,6 +31,7 @@ import edu.hcmus.doc.mainservice.model.entity.QProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole;
 import edu.hcmus.doc.mainservice.model.entity.QSendingLevel;
 import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
@@ -37,13 +39,16 @@ import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.custom.CustomProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.custom.DocAbstractCustomRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
+import edu.hcmus.doc.mainservice.util.DocMessageUtils;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 public class CustomProcessingDocumentRepositoryImpl
@@ -275,6 +280,45 @@ public class CustomProcessingDocumentRepositoryImpl
   }
 
   @Override
+  public List<Long> checkIncomingDocumentSearchByCriteria(long userId, int step, ProcessingDocumentRoleEnum role) {
+
+    return selectFrom(incomingDocument)
+        .select(incomingDocument.id)
+        .leftJoin(processingDocument).on(incomingDocument.id.eq(processingDocument.incomingDoc.id)).fetchJoin()
+        .innerJoin(processingUser).on(processingUser.processingDocument.id.eq(processingDocument.id).and(processingUser.user.id.eq(userId)).and(processingUser.step.eq(step))).fetchJoin()
+        .innerJoin(processingUserRole).on(processingUser.id.eq(processingUserRole.processingUser.id).and(processingUserRole.role.eq(role))).fetchJoin()
+        .distinct()
+        .fetch();
+  }
+
+  @Override
+  public Map<Long, String> getProcessingTimeOfIncomingDocumentList(long userId) {
+    return selectFrom(incomingDocument)
+        .select(incomingDocument.id, processingUser.processingDuration)
+        .leftJoin(processingDocument)
+        .on(incomingDocument.id.eq(processingDocument.incomingDoc.id)).fetchJoin()
+        .innerJoin(processingUser).on(processingUser.processingDocument.id.eq(processingDocument.id)
+            .and(processingUser.user.id.eq(userId))).fetchJoin()
+        .innerJoin(processingUserRole).on(processingUser.id.eq(processingUserRole.processingUser.id)
+            .and(processingUserRole.role.in(ASSIGNEE, COLLABORATOR))).fetchJoin()
+        .distinct()
+        .fetch()
+        .stream()
+        .collect(Collectors.toMap(
+            tuple -> tuple.get(incomingDocument.id),
+            tuple -> {
+              LocalDate processingDuration = tuple.get(processingUser.processingDuration
+              );
+              if (processingDuration != null) {
+                return processingDuration.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+              } else {
+                return DocMessageUtils.getContent(MESSAGE.infinite_processing_duration);
+              }
+            }
+        ));
+  }
+
+  @Override
   public List<Long> getIncomingDocumentsWithTransferPermission() {
     BooleanBuilder where = new BooleanBuilder();
 
@@ -288,10 +332,10 @@ public class CustomProcessingDocumentRepositoryImpl
         .select(incomingDocument.id)
         .leftJoin(processingDocument)
         .on(incomingDocument.id.eq(processingDocument.incomingDoc.id))
-        .leftJoin(processingUser)
+        .innerJoin(processingUser)
         .on(processingUser.processingDocument.id.eq(processingDocument.id))
         .fetchJoin()
-        .leftJoin(processingUserRole)
+        .innerJoin(processingUserRole)
         .on(processingUser.id.eq(processingUserRole.processingUser.id))
         .distinct()
         .where(where)

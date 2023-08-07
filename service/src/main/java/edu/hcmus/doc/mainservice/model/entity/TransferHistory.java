@@ -9,6 +9,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -38,7 +39,7 @@ public class TransferHistory extends DocAbstractIdEntity {
   @Column(name = "outgoing_doc_id", columnDefinition = "BIGINT")
   private List<Long> outgoingDocumentIds;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "processing_method_id", referencedColumnName = "id")
   private ProcessingMethod processingMethod;
 
@@ -51,7 +52,7 @@ public class TransferHistory extends DocAbstractIdEntity {
   @Column(name = "is_transfer_to_same_level", columnDefinition = "BOOLEAN")
   private Boolean isTransferToSameLevel;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "return_request_id", referencedColumnName = "id")
   private ReturnRequest returnRequest;
 

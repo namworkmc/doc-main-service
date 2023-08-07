@@ -2,6 +2,7 @@ package edu.hcmus.doc.mainservice.util.mapper.decorator;
 
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetListDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.PublishDocumentDto;
@@ -133,6 +134,14 @@ public abstract class OutgoingDocumentMapperDecorator implements OutgoingDocumen
     dto.setIsDocTransferredByNextUserInFlow(processingDocumentService.isExistUserWorkingOnThisDocumentAtSpecificStep(
         outgoingDocument.getId(), step + 1, ProcessingDocumentTypeEnum.OUTGOING_DOCUMENT));
 
+    return dto;
+  }
+
+  @Override
+  public OutgoingDocumentGetListDto toListDto(OutgoingDocument outgoingDocument) {
+    OutgoingDocumentGetListDto dto = delegate.toListDto(outgoingDocument);
+    dto.setDocumentTypeName(outgoingDocument.getDocumentType().getType());
+    dto.setPublishingDepartmentName(outgoingDocument.getPublishingDepartment().getDepartmentName());
     return dto;
   }
 }

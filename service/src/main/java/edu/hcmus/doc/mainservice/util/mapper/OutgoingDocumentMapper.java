@@ -1,6 +1,7 @@
 package edu.hcmus.doc.mainservice.util.mapper;
 
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetListDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.PublishDocumentDto;
@@ -26,6 +27,8 @@ import org.mapstruct.MappingConstants.ComponentModel;
 public interface OutgoingDocumentMapper {
 
   OutgoingDocumentGetDto toDto(OutgoingDocument entity);
+
+  OutgoingDocumentGetListDto toListDto(OutgoingDocument entity);
 
   @Mapping(target = "status", ignore = true)
   @Mapping(target = "folder", ignore = true)

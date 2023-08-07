@@ -20,7 +20,7 @@ import lombok.Data;
 @Table(name = "extend_request", schema = SCHEMA_NAME, catalog = CATALOG_NAME)
 public class ExtendRequest extends DocAbstractIdEntity {
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "processing_user_id", referencedColumnName = "id", nullable = false)
   private ProcessingUser processingUser;
 

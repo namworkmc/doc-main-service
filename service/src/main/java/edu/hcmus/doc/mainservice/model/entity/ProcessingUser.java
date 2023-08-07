@@ -30,7 +30,7 @@ public class ProcessingUser extends DocAbstractIdEntity {
   @Column(name = "step", nullable = false, columnDefinition = "INT NOT NULL")
   private Integer step;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "processing_method_id", referencedColumnName = "id", updatable = false, nullable = false)
   private ProcessingMethod processingMethod;
 

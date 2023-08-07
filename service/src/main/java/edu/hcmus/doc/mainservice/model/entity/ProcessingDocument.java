@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -18,7 +19,7 @@ import lombok.Data;
 @Table(name = "processing_document", schema = "doc_main", catalog = "doc")
 public class ProcessingDocument extends DocAbstractIdEntity {
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id", updatable = false, nullable = false)
   private IncomingDocument incomingDoc;
 
@@ -35,7 +36,7 @@ public class ProcessingDocument extends DocAbstractIdEntity {
   @Transient
   private LocalDate processingDuration;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "outgoing_document_id", referencedColumnName = "id")
   private OutgoingDocument outgoingDocument;
 

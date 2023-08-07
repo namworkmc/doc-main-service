@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -20,7 +21,7 @@ import lombok.Data;
 @Table(name = "document_reminder", schema = SCHEMA_NAME, catalog = CATALOG_NAME)
 public class DocumentReminder extends DocAbstractIdEntity {
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @NotNull
   @JoinColumn(name = "processing_user_id", referencedColumnName = "id", nullable = false)
   private ProcessingUser processingUser;

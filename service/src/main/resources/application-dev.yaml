@@ -55,6 +55,8 @@ logging:
   level:
     sql: debug
     web: debug
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 doc:
   http:

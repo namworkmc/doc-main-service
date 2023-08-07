@@ -5,6 +5,7 @@ import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModa
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPutDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWrapperDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.TransferDocDto;
 import edu.hcmus.doc.mainservice.model.entity.IncomingDocument;
 import edu.hcmus.doc.mainservice.model.entity.OutgoingDocument;
@@ -27,7 +28,7 @@ public interface OutgoingDocumentService {
 
   long getTotalPages(OutgoingDocSearchCriteriaDto searchCriteriaDto, long limit);
 
-  List<OutgoingDocument> searchOutgoingDocuments(OutgoingDocSearchCriteriaDto searchCriteria, int page, int pageSize);
+  OutgoingDocumentWrapperDto searchOutgoingDocuments(OutgoingDocSearchCriteriaDto searchCriteria, int page, int pageSize);
 
   TransferDocumentModalSettingDto getTransferOutgoingDocumentModalSetting();
 

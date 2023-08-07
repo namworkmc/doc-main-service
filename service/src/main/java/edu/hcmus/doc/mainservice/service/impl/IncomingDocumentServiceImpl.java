@@ -15,10 +15,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.hcmus.doc.mainservice.model.dto.Attachment.AttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.DocumentTypeStatisticsDto;
 import edu.hcmus.doc.mainservice.model.dto.DocumentTypeStatisticsWrapperDto;
+import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPutDto;
+import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWrapperDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentMenuConfig;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentStatisticsDto;
@@ -161,9 +163,35 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   }
 
   @Override
-  public List<ProcessingDocument> searchIncomingDocuments(SearchCriteriaDto searchCriteria,
+  public IncomingDocumentWrapperDto searchIncomingDocuments(SearchCriteriaDto searchCriteria,
       int page, int pageSize) {
-    return processingDocumentRepository.searchByCriteria(searchCriteria, page, pageSize);
+    List<ProcessingDocument> allProcessingDocumentList = processingDocumentRepository.searchByCriteria(searchCriteria, page, pageSize);
+
+    User currentUser = SecurityUtils.getCurrentUser();
+    int step = TransferDocumentUtils.getStep(currentUser, null, true);
+    int collaboratorStep = TransferDocumentUtils.getStep(currentUser, null, false);
+
+    List<Long> transferredIncomingDocumentList = processingDocumentRepository.checkIncomingDocumentSearchByCriteria(currentUser.getId(), step, ProcessingDocumentRoleEnum.REPORTER);
+    List<Long> collaboratorIncomingDocumentList = processingDocumentRepository.checkIncomingDocumentSearchByCriteria(currentUser.getId(), collaboratorStep, ProcessingDocumentRoleEnum.COLLABORATOR);
+    List<Long> transferPermissionDocumentIdList = processingDocumentRepository.getIncomingDocumentsWithTransferPermission();
+    Map<Long, String> processingTimeOfIncomingDocumentList = processingDocumentRepository.getProcessingTimeOfIncomingDocumentList(currentUser.getId());
+
+    List<IncomingDocumentDto> incomingDocumentDtoList = new ArrayList<>();
+    allProcessingDocumentList.forEach(processingDocument -> {
+      IncomingDocumentDto incomingDocumentDto = incomingDecoratorDocumentMapper.toDto(processingDocument);
+      incomingDocumentDto.setIsDocTransferred(transferredIncomingDocumentList.contains(incomingDocumentDto.getId()));
+      incomingDocumentDto.setIsDocCollaborator(collaboratorIncomingDocumentList.contains(incomingDocumentDto.getId()));
+      incomingDocumentDto.setIsTransferable(transferPermissionDocumentIdList.contains(incomingDocumentDto.getId()));
+      incomingDocumentDto.setCustomProcessingDuration(processingTimeOfIncomingDocumentList.getOrDefault(incomingDocumentDto.getId(), ""));
+      incomingDocumentDtoList.add(incomingDocumentDto);
+    });
+
+    IncomingDocumentWrapperDto incomingDocumentWrapperDto = new IncomingDocumentWrapperDto();
+    incomingDocumentWrapperDto.setIncomingDocumentDtoList(incomingDocumentDtoList);
+    incomingDocumentWrapperDto.setTotalElements(getTotalElements(searchCriteria));
+    incomingDocumentWrapperDto.setTotalPages((incomingDocumentWrapperDto.getTotalElements() / pageSize) + (incomingDocumentWrapperDto.getTotalElements() % pageSize == 0 ? 0 : 1));
+
+    return incomingDocumentWrapperDto;
   }
 
   @Override

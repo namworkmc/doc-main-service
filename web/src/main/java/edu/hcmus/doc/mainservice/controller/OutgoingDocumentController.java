@@ -6,8 +6,10 @@ import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetListDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPutDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWrapperDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.PublishDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailCustomResponse;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
@@ -71,19 +73,16 @@ public class OutgoingDocumentController extends DocAbstractController {
   }
 
   @PostMapping("/search")
-  public DocPaginationDto<OutgoingDocumentGetDto> getOutgoingDocuments(
+  public DocPaginationDto<OutgoingDocumentGetListDto> getOutgoingDocuments(
       @RequestBody OutgoingDocSearchCriteriaDto searchCriteria,
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "3") int pageSize
   ) {
+    OutgoingDocumentWrapperDto outgoingDocumentWrapperDto = outgoingDocumentService.searchOutgoingDocuments(searchCriteria, page, pageSize);
     return paginationMapper.toDto(
-        outgoingDocumentService
-            .searchOutgoingDocuments(searchCriteria, page, pageSize)
-            .stream()
-            .map(outgoingDecoratorDocumentMapper::toDto)
-            .toList(),
-        outgoingDocumentService.getTotalElements(searchCriteria),
-        outgoingDocumentService.getTotalPages(searchCriteria, pageSize));
+        outgoingDocumentWrapperDto.getOutgoingDocumentGetListDto(),
+        outgoingDocumentWrapperDto.getTotalElements(),
+        outgoingDocumentWrapperDto.getTotalPages());
   }
 
   @GetMapping("/transfer-outgoing-documents-setting")

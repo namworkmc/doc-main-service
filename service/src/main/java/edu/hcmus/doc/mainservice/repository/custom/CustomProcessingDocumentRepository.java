@@ -14,6 +14,7 @@ import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import edu.hcmus.doc.mainservice.repository.DocAbstractSearchRepository;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface CustomProcessingDocumentRepository
@@ -52,4 +53,9 @@ public interface CustomProcessingDocumentRepository
   boolean isDocumentClosed(Long documentId, ProcessingDocumentTypeEnum processingDocumentType);
 
   Optional<ProcessingDocument> findProcessingDocumentByProcessingUserId(Long processingUserId);
+
+  List<Long>  checkIncomingDocumentSearchByCriteria(long userId, int step, ProcessingDocumentRoleEnum role);
+
+  Map<Long, String> getProcessingTimeOfIncomingDocumentList(long userId);
+
 }

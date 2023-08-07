@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -27,19 +28,19 @@ public class ReturnRequest extends DocAbstractIdEntity {
   @Column(name = "return_type", nullable = false)
   private ReturnRequestType type;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "incoming_doc_id", referencedColumnName = "id")
   private IncomingDocument incomingDocument;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "outgoing_doc_id", referencedColumnName = "id")
   private OutgoingDocument outgoingDocument;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "current_processing_user_id", referencedColumnName = "id", updatable = false, nullable = false)
   private User currentProcessingUser;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "previous_processing_user_id", referencedColumnName = "id", updatable = false, nullable = false)
   private User previousProcessingUser;
 }
