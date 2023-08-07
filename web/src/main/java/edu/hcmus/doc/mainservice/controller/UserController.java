@@ -1,6 +1,7 @@
 package edu.hcmus.doc.mainservice.controller;
 
 import edu.hcmus.doc.mainservice.DocURL;
+import edu.hcmus.doc.mainservice.model.dto.ChangePasswordDto;
 import edu.hcmus.doc.mainservice.model.dto.DocStatisticsSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.DocStatisticsWrapperDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistoryDto;
@@ -53,9 +54,9 @@ public class UserController extends DocAbstractController {
   }
 
   @PutMapping("/current/password")
-  public Long updateCurrentUserPassword(@RequestParam String oldPassword,
-      @RequestParam String newPassword) {
-    return userService.updateCurrentUserPassword(oldPassword, newPassword);
+  public Long updateCurrentUserPassword(@RequestParam String oldPassword, @RequestParam String newPassword, @RequestParam String confirmPassword) {
+    var changePasswordDto = new ChangePasswordDto(oldPassword, newPassword, confirmPassword);
+    return userService.updateCurrentUserPassword(changePasswordDto);
   }
 
   @PutMapping("/current")

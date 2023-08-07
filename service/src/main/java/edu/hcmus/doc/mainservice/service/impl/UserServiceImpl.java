@@ -1,5 +1,9 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
+import static edu.hcmus.doc.mainservice.model.exception.UserPasswordException.PASSWORD_CONFIRMATION_INVALID;
+import static edu.hcmus.doc.mainservice.model.exception.UserPasswordException.PASSWORD_NOT_CHANGED;
+
+import edu.hcmus.doc.mainservice.model.dto.ChangePasswordDto;
 import edu.hcmus.doc.mainservice.model.dto.DocListStatisticsDto;
 import edu.hcmus.doc.mainservice.model.dto.DocPaginationDto;
 import edu.hcmus.doc.mainservice.model.dto.DocStatisticsDto;
@@ -23,7 +27,7 @@ import edu.hcmus.doc.mainservice.model.exception.EmailExistedException;
 import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.TransferHistoryNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
-import edu.hcmus.doc.mainservice.model.exception.UserPasswordIncorrectException;
+import edu.hcmus.doc.mainservice.model.exception.UserPasswordException;
 import edu.hcmus.doc.mainservice.model.exception.UsernameExistedException;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingUserRepository;
@@ -39,6 +43,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,6 +65,7 @@ public class UserServiceImpl implements UserService {
   private final ProcessingDocumentRepository processingDocumentRepository;
   private final ProcessingUserRepository processingUserRepository;
   private final ProcessingUserRoleRepository processingUserRoleRepository;
+
   @Override
   public List<User> getUsers(String query, long first, long max) {
     return userRepository.getUsers(query, first, max);
@@ -148,13 +154,22 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Long updateCurrentUserPassword(String oldPassword, String newPassword) {
+  public Long updateCurrentUserPassword(@Valid ChangePasswordDto changePasswordDto) {
+
     User user = getCurrentUserFromDB();
-    if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-      throw new UserPasswordIncorrectException();
+    if (changePasswordDto.getOldPassword().equals(changePasswordDto.getNewPassword())) {
+      throw new UserPasswordException(PASSWORD_NOT_CHANGED);
     }
 
-    user.setPassword(passwordEncoder.encode(newPassword));
+    if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
+      throw new UserPasswordException();
+    }
+
+    if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmPassword())) {
+      throw new UserPasswordException(PASSWORD_CONFIRMATION_INVALID);
+    }
+
+    user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
     return userRepository.save(user).getId();
   }
 
