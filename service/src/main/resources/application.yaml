@@ -11,3 +11,8 @@ doc:
 
 firebase:
   googleCredentials: firebase-service-account.json
+
+sendinblue:
+  api-key: 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
+  sender-name: HCMUS DOC
+  sender-email: doc.hcmus@gmail.com

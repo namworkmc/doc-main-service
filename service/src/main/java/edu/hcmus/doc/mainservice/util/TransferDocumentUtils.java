@@ -15,7 +15,9 @@ import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingStatus;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class TransferDocumentUtils {
 
@@ -82,13 +84,14 @@ public class TransferDocumentUtils {
   /**
    * Create transfer history base on transfer type
    *
-   * @param reporter User
-   * @param assignee User
+   * @param reporter       User
+   * @param assignee       User
    * @param transferDocDto TransferDocDto
    * @return TransferHistory
    */
   public static TransferHistory createTransferHistory(User reporter, User assignee,
-      TransferDocDto transferDocDto, ProcessingMethod processingMethod, ProcessingDocumentType transferType) {
+      TransferDocDto transferDocDto, ProcessingMethod processingMethod,
+      ProcessingDocumentType transferType) {
     TransferHistory transferHistory = new TransferHistory();
     transferHistory.setSender(reporter);
     transferHistory.setReceiver(assignee);
@@ -156,6 +159,12 @@ public class TransferDocumentUtils {
     processingUserRole.setRole(role);
 
     return processingUserRole;
+  }
+
+  public static String formatDocIds(List<Long> docIds) {
+    return "[" + docIds.stream()
+        .map(Object::toString)
+        .collect(Collectors.joining(", ")) + "]";
   }
 
 }

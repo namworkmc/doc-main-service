@@ -7,6 +7,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import edu.hcmus.doc.mainservice.util.FirebaseProperties;
+import edu.hcmus.doc.mainservice.util.SendInBlueProperties;
 import edu.hcmus.doc.mainservice.util.keycloak.KeycloakProperties;
 import javax.annotation.PostConstruct;
 import javax.validation.Validation;
@@ -25,6 +26,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import sendinblue.ApiClient;
+import sendinblue.auth.ApiKeyAuth;
 
 @Configuration
 @RequiredArgsConstructor
@@ -36,6 +39,8 @@ public class DocMainServiceConfig {
   private final KeycloakProperties keycloakProperties;
 
   private final FirebaseProperties firebaseProperties;
+
+  private final SendInBlueProperties sendInBlueProperties;
 
   private final ObjectMapper objectMapper;
 
@@ -100,5 +105,15 @@ public class DocMainServiceConfig {
   public Validator validator() {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     return factory.getValidator();
+  }
+
+  @Bean
+  public ApiKeyAuth apiKeyAuth(){
+    ApiClient defaultClient = sendinblue.Configuration.getDefaultApiClient();
+
+    // Configure API key authorization: api-key
+    ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key");
+    apiKey.setApiKey(sendInBlueProperties.getApiKey());
+    return apiKey;
   }
 }
