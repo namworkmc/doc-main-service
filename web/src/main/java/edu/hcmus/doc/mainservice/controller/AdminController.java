@@ -14,8 +14,8 @@ import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.service.DepartmentService;
 import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.UserService;
-import edu.hcmus.doc.mainservice.util.mapper.DepartmentMapper;
 import java.util.List;
+import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,6 @@ public class AdminController extends DocAbstractController {
   private final UserService userService;
   private final DepartmentService departmentService;
   private final DocumentTypeService documentTypeService;
-  private final DepartmentMapper departmentMapper;
 
   @GetMapping("/selection/departments")
   public List<DepartmentDto> getDepartmentsForSelection() {
@@ -133,7 +132,7 @@ public class AdminController extends DocAbstractController {
 
   @DeleteMapping("/departments")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteDepartments(@RequestBody List<Long> departmentIds) {
+  public void deleteDepartments(@RequestBody Set<Long> departmentIds) {
     departmentService.deleteDepartments(departmentIds);
   }
 }

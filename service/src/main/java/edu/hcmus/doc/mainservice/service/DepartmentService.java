@@ -4,6 +4,7 @@ import edu.hcmus.doc.mainservice.model.dto.DepartmentDto;
 import edu.hcmus.doc.mainservice.model.dto.DepartmentSearchCriteria;
 import edu.hcmus.doc.mainservice.model.entity.Department;
 import java.util.List;
+import java.util.Set;
 
 public interface DepartmentService extends SearchService<DepartmentDto, DepartmentSearchCriteria> {
 
@@ -13,7 +14,7 @@ public interface DepartmentService extends SearchService<DepartmentDto, Departme
 
   Long saveDepartment(Department department, Long newTruongPhongId);
 
-  void deleteDepartments(List<Long> departmentIds);
+  void deleteDepartments(Set<Long> departmentIds);
 
   boolean isUserTruongPhongOfAnotherDepartment(Long userId, Long departmentId);
 }

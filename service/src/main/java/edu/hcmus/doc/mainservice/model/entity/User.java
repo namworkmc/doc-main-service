@@ -7,6 +7,7 @@ import edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -56,7 +57,7 @@ public class User extends DocAbstractIdEntity {
   @Column(name = "role_title")
   private String roleTitle;
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<DocFirebaseTokenEntity> firebaseTokens = new HashSet<>();
 
   @Override

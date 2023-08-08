@@ -189,11 +189,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void deleteUsers(List<Long> userIds) {
-    List<User> users = userRepository.getUsersIn(userIds);
-    users.parallelStream()
-        .filter(user -> user.getRole() != DocSystemRoleEnum.DOC_ADMIN)
-        .forEach(user -> user.setDeleted(true));
-    userRepository.saveAll(users);
+    userRepository.deleteAllById(userIds);
   }
 
   @Override

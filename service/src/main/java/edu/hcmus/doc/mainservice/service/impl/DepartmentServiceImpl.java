@@ -1,14 +1,19 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
+import static edu.hcmus.doc.mainservice.model.exception.DepartmentEditException.USERS_ARE_AVAILABLE_IN_DEPARTMENT;
+
 import edu.hcmus.doc.mainservice.model.dto.DepartmentDto;
 import edu.hcmus.doc.mainservice.model.dto.DepartmentSearchCriteria;
 import edu.hcmus.doc.mainservice.model.dto.DocPaginationDto;
 import edu.hcmus.doc.mainservice.model.entity.Department;
+import edu.hcmus.doc.mainservice.model.exception.DepartmentEditException;
 import edu.hcmus.doc.mainservice.repository.DepartmentRepository;
+import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.service.DepartmentService;
 import edu.hcmus.doc.mainservice.util.mapper.DepartmentMapper;
 import edu.hcmus.doc.mainservice.util.mapper.PaginationMapper;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +26,7 @@ public class DepartmentServiceImpl implements DepartmentService {
   private final DepartmentRepository departmentRepository;
   private final DepartmentMapper departmentMapper;
   private final PaginationMapper paginationMapper;
+  private final UserRepository userRepository;
 
   @Override
   public List<Department> getAllDepartments() {
@@ -44,12 +50,12 @@ public class DepartmentServiceImpl implements DepartmentService {
   }
 
   @Override
-  public void deleteDepartments(List<Long> departmentIds) {
-    List<Department> departments = departmentRepository.findAllById(departmentIds);
-    departments.parallelStream()
-        .filter(department -> !department.getDepartmentName().equals("RA"))
-        .forEach(department -> department.setDeleted(true));
-    departmentRepository.saveAll(departments);
+  public void deleteDepartments(Set<Long> departmentIds) {
+    if (userRepository.existsByDepartmentIdIn(departmentIds)) {
+      throw new DepartmentEditException(USERS_ARE_AVAILABLE_IN_DEPARTMENT);
+    }
+
+    departmentRepository.deleteAllById(departmentIds);
   }
 
   @Override
