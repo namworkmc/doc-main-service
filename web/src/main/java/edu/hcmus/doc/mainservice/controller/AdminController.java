@@ -135,4 +135,9 @@ public class AdminController extends DocAbstractController {
   public void deleteDepartments(@RequestBody Set<Long> departmentIds) {
     departmentService.deleteDepartments(departmentIds);
   }
+
+  @GetMapping("/users/reset-password/{userId}")
+  public Long resetUserPassword(@PathVariable Long userId) {
+    return userService.resetUserPassword(userId);
+  }
 }

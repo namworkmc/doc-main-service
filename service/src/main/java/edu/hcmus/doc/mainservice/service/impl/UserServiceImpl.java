@@ -2,6 +2,7 @@ package edu.hcmus.doc.mainservice.service.impl;
 
 import static edu.hcmus.doc.mainservice.model.exception.UserPasswordException.PASSWORD_CONFIRMATION_INVALID;
 import static edu.hcmus.doc.mainservice.model.exception.UserPasswordException.PASSWORD_NOT_CHANGED;
+import static edu.hcmus.doc.mainservice.security.util.SecurityUtils.generateRandomPassword;
 
 import edu.hcmus.doc.mainservice.model.dto.ChangePasswordDto;
 import edu.hcmus.doc.mainservice.model.dto.DocListStatisticsDto;
@@ -35,6 +36,7 @@ import edu.hcmus.doc.mainservice.repository.ProcessingUserRoleRepository;
 import edu.hcmus.doc.mainservice.repository.TransferHistoryRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
+import edu.hcmus.doc.mainservice.service.EmailService;
 import edu.hcmus.doc.mainservice.service.UserService;
 import edu.hcmus.doc.mainservice.util.mapper.PaginationMapper;
 import edu.hcmus.doc.mainservice.util.mapper.TransferHistoryMapper;
@@ -65,6 +67,7 @@ public class UserServiceImpl implements UserService {
   private final ProcessingDocumentRepository processingDocumentRepository;
   private final ProcessingUserRepository processingUserRepository;
   private final ProcessingUserRoleRepository processingUserRoleRepository;
+  private final EmailService emailService;
 
   @Override
   public List<User> getUsers(String query, long first, long max) {
@@ -133,7 +136,14 @@ public class UserServiceImpl implements UserService {
       throw new EmailExistedException();
     });
 
-    return userRepository.save(user).getId();
+    String password = generateRandomPassword();
+    user.setPassword(passwordEncoder.encode(password));
+    Long id = userRepository.save(user).getId();
+
+    // send email to user with new password
+    emailService.sendPasswordEmail(user.getEmail(), user.getUsername(),  user.getFullName(), password, true);
+
+    return id;
   }
 
   @Override
@@ -364,5 +374,16 @@ public class UserServiceImpl implements UserService {
     docStatisticsDto.setNumberOfUnprocessedDocumentOverdue(unprocessedDocumentOverdue.size());
 
     return docStatisticsDto;
+  }
+
+  @Override
+  public Long resetUserPassword(Long userId) {
+    User user = getUserById(userId);
+    String password = generateRandomPassword();
+    user.setPassword(passwordEncoder.encode(password));
+
+    // send email
+    emailService.sendPasswordEmail(user.getEmail(), user.getUsername(), user.getFullName(), password, false);
+    return userRepository.save(user).getId();
   }
 }

@@ -23,29 +23,57 @@ public class EmailServiceImpl implements EmailService {
   private final SendInBlueProperties sendInBlueProperties;
 
   @Override
-  public void sendPasswordEmail(String toEmail, String toUsername, String generatedPassword) {
+  public void sendPasswordEmail(String toEmail, String toUsername, String toFullname,
+      String generatedPassword, boolean isCreateAccount) {
     Properties params = new Properties();
     params.setProperty("parameter", "My param value");
     params.setProperty("subject", "New Subject");
-    params.setProperty("username", toUsername);
+
+    params.setProperty("fullname", toFullname);
     params.setProperty("password", generatedPassword);
     log.info("Send email to {}", toUsername);
-    sendEmail(2L, toEmail, params);
+    if (isCreateAccount) {
+      params.setProperty("username", toUsername);
+      sendEmail(4L, toEmail, params);
+    } else {
+      sendEmail(2L, toEmail, params);
+    }
   }
 
   @Override
-  public void sendTransferEmail(String from, String toEmail, String to,
-      String type, String docIds, String action) {
+  public void sendTransferDocumentEmail(String from, String toEmail, String to, String docIds) {
     Properties params = new Properties();
     params.setProperty("parameter", "My param value");
     params.setProperty("subject", "New Subject");
     params.setProperty("to_username", to);
     params.setProperty("from_username", from);
-    params.setProperty("type", type);
     params.setProperty("docIds", docIds);
-    params.setProperty("action", action);
     log.info("Send transfer email from {} to {}", from, to);
     sendEmail(3L, toEmail, params);
+  }
+
+  @Override
+  public void sendReturnDocumentEmail(String from, String toEmail, String to, String docIds) {
+    Properties params = new Properties();
+    params.setProperty("parameter", "My param value");
+    params.setProperty("subject", "New Subject");
+    params.setProperty("to_username", to);
+    params.setProperty("from_username", from);
+    params.setProperty("docIds", docIds);
+    log.info("Send transfer email from {} to {}", from, to);
+    sendEmail(6L, toEmail, params);
+  }
+
+  @Override
+  public void sendSendBackDocumentEmail(String from, String toEmail, String to, String docIds) {
+    Properties params = new Properties();
+    params.setProperty("parameter", "My param value");
+    params.setProperty("subject", "New Subject");
+    params.setProperty("to_username", to);
+    params.setProperty("from_username", from);
+    params.setProperty("docIds", docIds);
+    log.info("Send transfer email from {} to {}", from, to);
+    sendEmail(5L, toEmail, params);
   }
 
   private void sendEmail(Long templateId, String toEmail, Properties params) {

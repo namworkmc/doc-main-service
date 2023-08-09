@@ -1,8 +1,11 @@
 package edu.hcmus.doc.mainservice.service;
 
-import java.util.List;
-
 public interface EmailService {
-  void sendPasswordEmail(String toEmail, String toUsername, String generatedPassword);
-  void sendTransferEmail(String from, String toEmail, String to, String type, String docIds, String action);
+  void sendPasswordEmail(String toEmail, String toUsername,  String toFullname, String generatedPassword, boolean isCreateAccount);
+
+  void sendTransferDocumentEmail(String from, String toEmail, String to, String docIds);
+
+  void sendReturnDocumentEmail(String from, String toEmail, String to, String docIds);
+
+  void sendSendBackDocumentEmail(String from, String toEmail, String to, String docIds);
 }
