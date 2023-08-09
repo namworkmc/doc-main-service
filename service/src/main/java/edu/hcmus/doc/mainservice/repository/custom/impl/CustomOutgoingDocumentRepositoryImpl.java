@@ -72,6 +72,13 @@ public class CustomOutgoingDocumentRepositoryImpl
             .limit(limit)
             .fetch();
   }
+  @Override
+  public List<OutgoingDocument> searchALlByCriteria(OutgoingDocSearchCriteriaDto searchCriteriaDto) {
+    return
+        buildSearchQuery(searchCriteriaDto)
+            .orderBy(outgoingDocument.id.desc())
+            .fetch();
+  }
 
   @Override
   public JPAQuery<OutgoingDocument> buildSearchQuery(OutgoingDocSearchCriteriaDto searchCriteriaDto) {
@@ -164,10 +171,10 @@ public class CustomOutgoingDocumentRepositoryImpl
         .leftJoin(processingDocument)
         .on(outgoingDocument.id.eq(processingDocument.outgoingDocument.id))
         .fetchJoin()
-        .innerJoin(processingUser)
+        .leftJoin(processingUser)
         .on(processingUser.processingDocument.id.eq(processingDocument.id))
         .fetchJoin()
-        .innerJoin(processingUserRole)
+        .leftJoin(processingUserRole)
         .on(processingUser.id.eq(processingUserRole.processingUser.id))
         .distinct()
         .where(where.and(outgoingDocument.status.eq(OutgoingDocumentStatusEnum.RELEASED).not()))

@@ -22,4 +22,6 @@ public interface CustomOutgoingDocumentRepository
 
   Map<Long, String> getProcessingTimeOfOutgoingDocumentList(long userId);
 
+  List<OutgoingDocument> searchALlByCriteria(OutgoingDocSearchCriteriaDto searchCriteriaDto);
+
 }

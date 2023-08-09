@@ -246,6 +246,22 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   }
 
   @Override
+  public List<OutgoingDocumentGetListDto> searchAllOutgoingDocuments(OutgoingDocSearchCriteriaDto searchCriteria) {
+    List<OutgoingDocument> allOutgoingDocumentList = outgoingDocumentRepository.searchALlByCriteria(searchCriteria);
+
+    Map<Long, String> processingTimeOfOutgoingDocumentList = outgoingDocumentRepository.getProcessingTimeOfOutgoingDocumentList(SecurityUtils.getCurrentUserId());
+
+    List<OutgoingDocumentGetListDto> outgoingDocumentGetListDtoList = new ArrayList<>();
+    allOutgoingDocumentList.forEach(outgoingDocument -> {
+      OutgoingDocumentGetListDto outgoingDocumentGetListDto = outgoingDecoratorDocumentMapper.toListDto(outgoingDocument);
+      outgoingDocumentGetListDto.setOrdinalNumber(outgoingDocumentGetListDtoList.size() + 1);
+      outgoingDocumentGetListDto.setCustomProcessingDuration(processingTimeOfOutgoingDocumentList.getOrDefault(outgoingDocument.getId(), ""));
+      outgoingDocumentGetListDtoList.add(outgoingDocumentGetListDto);
+    });
+    return outgoingDocumentGetListDtoList;
+  }
+
+  @Override
   public TransferDocumentModalSettingDto getTransferOutgoingDocumentModalSetting() {
     TransferDocumentModalSettingDto settings = new TransferDocumentModalSettingDto();
     List<TransferDocumentMenuConfig> menuConfigs = new ArrayList<>();

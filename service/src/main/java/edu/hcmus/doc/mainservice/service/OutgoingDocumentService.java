@@ -3,6 +3,7 @@ package edu.hcmus.doc.mainservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocSearchCriteriaDto;
+import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetListDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWithAttachmentPutDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentWrapperDto;
@@ -29,6 +30,8 @@ public interface OutgoingDocumentService {
   long getTotalPages(OutgoingDocSearchCriteriaDto searchCriteriaDto, long limit);
 
   OutgoingDocumentWrapperDto searchOutgoingDocuments(OutgoingDocSearchCriteriaDto searchCriteria, int page, int pageSize);
+
+  List<OutgoingDocumentGetListDto> searchAllOutgoingDocuments(OutgoingDocSearchCriteriaDto searchCriteria);
 
   TransferDocumentModalSettingDto getTransferOutgoingDocumentModalSetting();
 

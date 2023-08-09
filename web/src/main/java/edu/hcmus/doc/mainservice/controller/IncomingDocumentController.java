@@ -2,7 +2,6 @@ package edu.hcmus.doc.mainservice.controller;
 
 import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.dto.DocPaginationDto;
-import edu.hcmus.doc.mainservice.model.dto.ElasticSearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPostDto;
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWithAttachmentPutDto;
@@ -10,7 +9,6 @@ import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.IncomingDocumentWrap
 import edu.hcmus.doc.mainservice.model.dto.IncomingDocument.TransferDocumentModalSettingDto;
 import edu.hcmus.doc.mainservice.model.dto.OutgoingDocument.OutgoingDocumentGetDto;
 import edu.hcmus.doc.mainservice.model.dto.ProcessingDetailsDto;
-import edu.hcmus.doc.mainservice.model.dto.ProcessingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.StatisticsWrapperDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailCustomResponse;
@@ -24,7 +22,6 @@ import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingUserRoleService;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -75,6 +72,13 @@ public class IncomingDocumentController extends DocAbstractController {
         incomingDocumentWrapperDto.getTotalPages());
   }
 
+  @PostMapping("/search/all")
+  public List<IncomingDocumentDto> getAllIncomingDocuments(
+      @RequestBody SearchCriteriaDto searchCriteria
+  ) {
+    return incomingDocumentService.searchAllIncomingDocuments(searchCriteria);
+  }
+
   @SneakyThrows
   @PostMapping("/create")
   public IncomingDocumentDto createIncomingDocument(
@@ -83,22 +87,6 @@ public class IncomingDocumentController extends DocAbstractController {
         incomingDocumentService.createIncomingDocument(incomingDocumentWithAttachmentPostDto));
   }
 
-  @PostMapping("/elastic/search")
-  public DocPaginationDto<IncomingDocumentDto> getIncomingDocumentsByElasticSearch(
-      @RequestBody ElasticSearchCriteriaDto elasticSearchCriteriaDto,
-      @RequestParam(required = false, defaultValue = "0") int page,
-      @RequestParam(required = false, defaultValue = "3") int pageSize
-  ) throws ExecutionException, InterruptedException {
-    ProcessingDocumentSearchResultDto processingDocumentSearchResultDto = processingDocumentService.searchProcessingDocumentsByElasticSearch(
-        elasticSearchCriteriaDto, page, pageSize);
-    return paginationMapper.toDto(
-        processingDocumentSearchResultDto.getProcessingDocuments()
-            .stream()
-            .map(incomingDecoratorDocumentMapper::toDto)
-            .toList(),
-        processingDocumentSearchResultDto.getTotalElements(),
-        processingDocumentSearchResultDto.getTotalPages());
-  }
 
   @PostMapping("/transfer-documents")
   public void transferDocuments(@RequestBody TransferDocDto transferDocDto) {

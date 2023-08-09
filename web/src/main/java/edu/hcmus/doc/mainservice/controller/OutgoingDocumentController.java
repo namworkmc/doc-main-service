@@ -85,6 +85,11 @@ public class OutgoingDocumentController extends DocAbstractController {
         outgoingDocumentWrapperDto.getTotalPages());
   }
 
+  @PostMapping("/search/all")
+  public List<OutgoingDocumentGetListDto> getAllOutgoingDocuments(@RequestBody OutgoingDocSearchCriteriaDto searchCriteria) {
+    return outgoingDocumentService.searchAllOutgoingDocuments(searchCriteria);
+  }
+
   @GetMapping("/transfer-outgoing-documents-setting")
   public TransferDocumentModalSettingDto getTransferOutgoingDocumentModalSetting() {
     return outgoingDocumentService.getTransferOutgoingDocumentModalSetting();

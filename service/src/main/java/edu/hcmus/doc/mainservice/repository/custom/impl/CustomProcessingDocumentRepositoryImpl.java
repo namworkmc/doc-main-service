@@ -17,7 +17,6 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import edu.hcmus.doc.mainservice.model.dto.DocListStatisticsDto;
-import edu.hcmus.doc.mainservice.model.dto.IncomingDocumentSearchResultDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailResponse;
@@ -29,7 +28,6 @@ import edu.hcmus.doc.mainservice.model.entity.QDocumentType;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.QProcessingUserRole;
-import edu.hcmus.doc.mainservice.model.entity.QSendingLevel;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentRoleEnum;
@@ -164,70 +162,61 @@ public class CustomProcessingDocumentRepositoryImpl
   }
 
   @Override
-  public List<ProcessingDocument> findProcessingDocumentsByElasticSearchResult(
-      List<IncomingDocumentSearchResultDto> incomingDocumentSearchResultDtoList, long offset,
-      long limit) {
+  public List<ProcessingDocument> searchAllByCriteria(SearchCriteriaDto searchCriteriaDto) {
     BooleanBuilder where = new BooleanBuilder();
-    where.and(incomingDocument.id.in(
-        incomingDocumentSearchResultDtoList.stream().map(IncomingDocumentSearchResultDto::getId)
-            .toList()));
-    return selectFrom(processingDocument)
-        .rightJoin(processingDocument.incomingDoc, incomingDocument)
-        .innerJoin(incomingDocument.sendingLevel, QSendingLevel.sendingLevel)
-        .innerJoin(incomingDocument.documentType, QDocumentType.documentType)
-        .innerJoin(incomingDocument.distributionOrg,
-            QDistributionOrganization.distributionOrganization)
-        .where(where)
-        .select(
-            processingDocument.id,
-            processingStatusCases,
-            incomingDocument.id,
-            incomingDocument.incomingNumber,
-            incomingDocument.originalSymbolNumber,
-            incomingDocument.arrivingDate,
-            incomingDocument.summary,
-            incomingDocument.sendingLevel.id,
-            incomingDocument.sendingLevel.level,
-            incomingDocument.documentType.id,
-            incomingDocument.documentType.type,
-            incomingDocument.distributionOrg.id,
-            incomingDocument.distributionOrg.name)
-        .orderBy(incomingDocument.id.asc())
-        .offset(offset * limit)
-        .limit(limit)
-        .fetch()
-        .stream()
-        .map(tuple -> {
-          ProcessingDocument processingDocument = new ProcessingDocument();
-          processingDocument.setId(tuple.get(QProcessingDocument.processingDocument.id));
-          processingDocument.setStatus(ProcessingStatus.valueOf(tuple.get(processingStatusCases)));
-          processingDocument.initIncomingDocument();
-          processingDocument.getIncomingDoc().setId(tuple.get(incomingDocument.id));
-          processingDocument.getIncomingDoc()
-              .setIncomingNumber(tuple.get(incomingDocument.incomingNumber));
-          processingDocument.getIncomingDoc()
-              .setOriginalSymbolNumber(tuple.get(incomingDocument.originalSymbolNumber));
-          processingDocument.getIncomingDoc()
-              .setArrivingDate(tuple.get(incomingDocument.arrivingDate));
-          processingDocument.getIncomingDoc().setSummary(tuple.get(incomingDocument.summary));
-          processingDocument.getIncomingDoc().initSendingLevel();
-          processingDocument.getIncomingDoc().getSendingLevel()
-              .setId(tuple.get(incomingDocument.sendingLevel.id));
-          processingDocument.getIncomingDoc().getSendingLevel()
-              .setLevel(tuple.get(incomingDocument.sendingLevel.level));
-          processingDocument.getIncomingDoc().initDocumentType();
-          processingDocument.getIncomingDoc().getDocumentType()
-              .setId(tuple.get(incomingDocument.documentType.id));
-          processingDocument.getIncomingDoc().getDocumentType()
-              .setType(tuple.get(incomingDocument.documentType.type));
-          processingDocument.getIncomingDoc().initDistributionOrg();
-          processingDocument.getIncomingDoc().getDistributionOrg()
-              .setId(tuple.get(incomingDocument.distributionOrg.id));
-          processingDocument.getIncomingDoc().getDistributionOrg()
-              .setName(tuple.get(incomingDocument.distributionOrg.name));
-          return processingDocument;
-        })
-        .toList();
+    if (searchCriteriaDto.getStatus() != null) {
+      where.and(Expressions.stringPath(STATUS_ALIAS).eq(searchCriteriaDto.getStatus().value));
+    }
+
+    return
+        searchQueryByCriteria(searchCriteriaDto)
+            .select(
+                processingDocument.id,
+                processingStatusCases,
+                incomingDocument.id,
+                incomingDocument.name,
+                incomingDocument.incomingNumber,
+                incomingDocument.originalSymbolNumber,
+                incomingDocument.arrivingDate,
+                incomingDocument.summary,
+                incomingDocument.documentType.id,
+                incomingDocument.documentType.type,
+                incomingDocument.distributionOrg.id,
+                incomingDocument.distributionOrg.name)
+            .where(where)
+            .orderBy(incomingDocument.id.desc())
+            .fetch()
+            .stream()
+            .map(tuple -> {
+              ProcessingDocument processingDocument = new ProcessingDocument();
+              processingDocument.setId(tuple.get(QProcessingDocument.processingDocument.id));
+              processingDocument.setStatus(
+                  ProcessingStatus.valueOf(tuple.get(processingStatusCases)));
+              processingDocument.initIncomingDocument();
+              processingDocument.getIncomingDoc().setId(tuple.get(incomingDocument.id));
+              processingDocument.getIncomingDoc().setName(tuple.get(incomingDocument.name));
+              processingDocument.getIncomingDoc()
+                  .setIncomingNumber(tuple.get(incomingDocument.incomingNumber));
+              processingDocument.getIncomingDoc()
+                  .setOriginalSymbolNumber(tuple.get(incomingDocument.originalSymbolNumber));
+              processingDocument.getIncomingDoc()
+                  .setArrivingDate(tuple.get(incomingDocument.arrivingDate));
+              processingDocument.getIncomingDoc().setSummary(tuple.get(incomingDocument.summary));
+              processingDocument.getIncomingDoc().initSendingLevel();
+              processingDocument.getIncomingDoc().setSendingLevel(null);
+              processingDocument.getIncomingDoc().initDocumentType();
+              processingDocument.getIncomingDoc().getDocumentType()
+                  .setId(tuple.get(incomingDocument.documentType.id));
+              processingDocument.getIncomingDoc().getDocumentType()
+                  .setType(tuple.get(incomingDocument.documentType.type));
+              processingDocument.getIncomingDoc().initDistributionOrg();
+              processingDocument.getIncomingDoc().getDistributionOrg()
+                  .setId(tuple.get(incomingDocument.distributionOrg.id));
+              processingDocument.getIncomingDoc().getDistributionOrg()
+                  .setName(tuple.get(incomingDocument.distributionOrg.name));
+              return processingDocument;
+            })
+            .toList();
   }
 
   private JPAQuery<IncomingDocument> searchQueryByCriteria(SearchCriteriaDto searchCriteriaDto) {
@@ -332,10 +321,10 @@ public class CustomProcessingDocumentRepositoryImpl
         .select(incomingDocument.id)
         .leftJoin(processingDocument)
         .on(incomingDocument.id.eq(processingDocument.incomingDoc.id))
-        .innerJoin(processingUser)
+        .leftJoin(processingUser)
         .on(processingUser.processingDocument.id.eq(processingDocument.id))
         .fetchJoin()
-        .innerJoin(processingUserRole)
+        .leftJoin(processingUserRole)
         .on(processingUser.id.eq(processingUserRole.processingUser.id))
         .distinct()
         .where(where)

@@ -195,6 +195,23 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   }
 
   @Override
+  public List<IncomingDocumentDto> searchAllIncomingDocuments(SearchCriteriaDto searchCriteria) {
+    List<ProcessingDocument> allProcessingDocumentList = processingDocumentRepository.searchAllByCriteria(searchCriteria);
+
+    Map<Long, String> processingTimeOfIncomingDocumentList = processingDocumentRepository.getProcessingTimeOfIncomingDocumentList(SecurityUtils.getCurrentUserId());
+
+    List<IncomingDocumentDto> incomingDocumentDtoList = new ArrayList<>();
+    allProcessingDocumentList.forEach(processingDocument -> {
+      IncomingDocumentDto incomingDocumentDto = incomingDecoratorDocumentMapper.toDto(processingDocument);
+      incomingDocumentDto.setOrdinalNumber(incomingDocumentDtoList.size() + 1);
+      incomingDocumentDto.setCustomProcessingDuration(processingTimeOfIncomingDocumentList.getOrDefault(incomingDocumentDto.getId(), ""));
+      incomingDocumentDtoList.add(incomingDocumentDto);
+    });
+
+    return incomingDocumentDtoList;
+  }
+
+  @Override
   public List<IncomingDocument> getIncomingDocuments(String query, long offset, long limit) {
     return incomingDocumentRepository.getIncomingDocuments(query, offset, limit);
   }
