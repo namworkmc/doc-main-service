@@ -4,6 +4,7 @@ import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.dto.TokenDto;
 import edu.hcmus.doc.mainservice.service.DocumentReminderService;
 import edu.hcmus.doc.mainservice.service.KeycloakService;
+import edu.hcmus.doc.mainservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,8 @@ public class SecurityController {
   private final KeycloakService keycloakService;
 
   private final DocumentReminderService documentReminderService;
+
+  private final UserService userService;
 
   @PostMapping(value = "/auth/token")
   public ResponseEntity<TokenDto> login(
@@ -41,5 +44,10 @@ public class SecurityController {
       @RequestParam(required = false, defaultValue = "") String firebaseCloudMessagingToken) {
     keycloakService.revokeTokens(refreshToken, firebaseCloudMessagingToken);
     return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/auth/forgot-password")
+  public ResponseEntity<Long> forgotPassword(@RequestParam String email) {
+    return ResponseEntity.ok().body(userService.resetUserPasswordByEmail(email));
   }
 }

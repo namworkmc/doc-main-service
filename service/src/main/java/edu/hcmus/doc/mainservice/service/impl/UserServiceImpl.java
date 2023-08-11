@@ -377,8 +377,19 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Long resetUserPassword(Long userId) {
+  public Long resetUserPasswordById(Long userId) {
     User user = getUserById(userId);
+    String password = generateRandomPassword();
+    user.setPassword(passwordEncoder.encode(password));
+
+    // send email
+    emailService.sendPasswordEmail(user.getEmail(), user.getUsername(), user.getFullName(), password, false);
+    return userRepository.save(user).getId();
+  }
+
+  @Override
+  public Long resetUserPasswordByEmail(String email) {
+    User user = getUserByEmail(email);
     String password = generateRandomPassword();
     user.setPassword(passwordEncoder.encode(password));
 

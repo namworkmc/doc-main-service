@@ -138,6 +138,6 @@ public class AdminController extends DocAbstractController {
 
   @GetMapping("/users/reset-password/{userId}")
   public Long resetUserPassword(@PathVariable Long userId) {
-    return userService.resetUserPassword(userId);
+    return userService.resetUserPasswordById(userId);
   }
 }

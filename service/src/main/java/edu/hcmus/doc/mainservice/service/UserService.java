@@ -52,5 +52,7 @@ public interface UserService extends SearchService<UserDto, UserSearchCriteria> 
 
   List<DocStatisticsDto> getStatistics(DocStatisticsSearchCriteriaDto docStatisticsSearchCriteriaDto);
 
-  Long resetUserPassword(Long userId);
+  Long resetUserPasswordById(Long userId);
+
+  Long resetUserPasswordByEmail(String email);
 }
