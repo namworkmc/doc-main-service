@@ -25,7 +25,7 @@ public class TransferDocDto {
   private List<Long> collaboratorIds;
 
   @Nullable
-  @StringDateFutureOrPresent
+  @StringDateFutureOrPresent(message = "transfer_modal.form.processing_time_must_be_future")
   private String processingTime;
 
   @Nullable
