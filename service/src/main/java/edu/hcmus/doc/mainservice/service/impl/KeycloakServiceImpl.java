@@ -1,6 +1,6 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
-import edu.hcmus.doc.mainservice.annotation.PasswordValidator;
+import edu.hcmus.doc.mainservice.util.validator.annotation.PasswordValidator;
 import edu.hcmus.doc.mainservice.model.dto.TokenDto;
 import edu.hcmus.doc.mainservice.model.entity.DocFirebaseTokenEntity;
 import edu.hcmus.doc.mainservice.model.entity.User;

@@ -1,4 +1,4 @@
-package edu.hcmus.doc.mainservice.annotation;
+package edu.hcmus.doc.mainservice.util.validator.annotation;
 
 
 import java.lang.annotation.ElementType;

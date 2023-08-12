@@ -101,7 +101,7 @@ public class OutgoingDocumentController extends DocAbstractController {
   }
 
   @PostMapping("/transfer-documents")
-  public void transferDocuments(@RequestBody TransferDocDto transferDocDto) {
+  public void transferDocuments(@Valid @RequestBody TransferDocDto transferDocDto) {
     outgoingDocumentService.transferDocuments(transferDocDto);
   }
 

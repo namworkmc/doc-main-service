@@ -1,6 +1,6 @@
 package edu.hcmus.doc.mainservice.model.dto;
 
-import edu.hcmus.doc.mainservice.annotation.PasswordValidator;
+import edu.hcmus.doc.mainservice.util.validator.annotation.PasswordValidator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

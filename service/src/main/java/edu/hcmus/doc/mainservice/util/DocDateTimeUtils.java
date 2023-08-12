@@ -3,12 +3,17 @@ package edu.hcmus.doc.mainservice.util;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class DocDateTimeUtils {
 
   public static final String YYYY_MM_DD_FORMAT = "yyyy-MM-dd";
+
+  public static final String DD_MM_YYYY_FORMAT = "dd/MM/yyyy";
+
+  public static final DateTimeFormatter DD_MM_YYYY_FORMATTER = DateTimeFormatter.ofPattern(DD_MM_YYYY_FORMAT);
 
   public static LocalDateTime getAtStartOfDay(LocalDate date) {
     return date.atStartOfDay();
