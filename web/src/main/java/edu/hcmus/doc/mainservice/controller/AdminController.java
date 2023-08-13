@@ -11,9 +11,11 @@ import edu.hcmus.doc.mainservice.model.dto.UserSearchCriteria;
 import edu.hcmus.doc.mainservice.model.entity.Department;
 import edu.hcmus.doc.mainservice.model.entity.DocumentType;
 import edu.hcmus.doc.mainservice.model.entity.User;
+import edu.hcmus.doc.mainservice.model.enums.BatchJobEnum;
 import edu.hcmus.doc.mainservice.service.DepartmentService;
 import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.UserService;
+import edu.hcmus.doc.mainservice.service.impl.DocScheduleService;
 import java.util.List;
 import java.util.Set;
 import javax.validation.Valid;
@@ -38,6 +40,7 @@ public class AdminController extends DocAbstractController {
   private final UserService userService;
   private final DepartmentService departmentService;
   private final DocumentTypeService documentTypeService;
+  private final DocScheduleService docScheduleService;
 
   @GetMapping("/selection/departments")
   public List<DepartmentDto> getDepartmentsForSelection() {
@@ -139,5 +142,10 @@ public class AdminController extends DocAbstractController {
   @GetMapping("/users/reset-password/{userId}")
   public Long resetUserPassword(@PathVariable Long userId) {
     return userService.resetUserPasswordById(userId);
+  }
+
+  @GetMapping("/batch-jobs/{batchJob}")
+  public void triggerBatchJobManually(@PathVariable BatchJobEnum batchJob) {
+    batchJob.executor.accept(docScheduleService);
   }
 }

@@ -13,3 +13,4 @@ update "user" set username = 'hieutruong' where username = 'giamdoc';
 update "user" set password = '$2a$10$Y9k.vSI6bdAHjU1c0kWoJeknpF.OOu/3c2SoHa/9eVaqdC/4PeAWK' where username = 'hieutruong'; -- Hieutruong1!
 update "user" set password = '$2a$10$je4.LUb.x6dnSXDNfQ6W7ug/GCY7.vdlA26RetkA01gq/r4760hQO' where username = 'truongphong'; -- Truongphong1!
 update "user" set password = '$2a$10$MlnVNEjjikpl1RufVHQW7OACxZHaBbTjama5besBUSPC08ZvNLx5a' where username = 'chuyenvien'; -- Chuyenvien1!
+update "user" set password = '$2a$10$41iSGPpUcxH5oFRCfsaAHeCPygiwgoy3JhPC/3YT/Lb4euGFQ3dX6' where username = 'docadmin'; -- Docadmin1!

@@ -3,12 +3,10 @@ package edu.hcmus.doc.mainservice.service.impl;
 import static edu.hcmus.doc.mainservice.model.enums.BatchJobEnum.RESET_FOLDER_NEXT_NUMBER_BATCH_JOB;
 import static edu.hcmus.doc.mainservice.model.enums.BatchJobEnum.UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
 import edu.hcmus.doc.mainservice.model.dto.MobileNotificationMessageDto;
 import edu.hcmus.doc.mainservice.model.entity.DocumentReminder;
 import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
-import edu.hcmus.doc.mainservice.repository.DocumentReminderRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.DocumentReminderService;
 import edu.hcmus.doc.mainservice.service.FolderService;
@@ -32,8 +30,6 @@ public class DocScheduleService {
 
   private final DocumentReminderService documentReminderService;
 
-  private final DocumentReminderRepository documentReminderRepository;
-
   @Scheduled(cron = "${doc.schedule.reset-folder-next-number-cron}")
   public void resetFolderNextNumber() {
     log.info(RESET_FOLDER_NEXT_NUMBER_BATCH_JOB.info);
@@ -50,8 +46,9 @@ public class DocScheduleService {
     log.info(UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB.info);
     SecurityUtils.setSecurityContextForBatchJob(UPDATE_DOCUMENT_REMINDER_STATUS_BATCH_JOB.value);
 
-    List<DocumentReminder> reminders = documentReminderRepository.getDocumentRemindersByStatusIn(List.of(
-        DocumentReminderStatusEnum.ACTIVE, DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION));
+    List<DocumentReminder> reminders = documentReminderService.getDocumentRemindersByStatusIn(
+        List.of(DocumentReminderStatusEnum.ACTIVE,
+            DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION));
 
     reminders.forEach(reminder -> {
       LocalDateTime expirationDateTime = DocDateTimeUtils.getAtEndOfDay(reminder.getExpirationDate());
@@ -65,24 +62,26 @@ public class DocScheduleService {
 
       try {
         MobileNotificationMessageDto message;
-        if (Objects.nonNull(reminder.getProcessingUser().getProcessingDocument().getIncomingDoc())){
-          message = documentReminderService.buildMobileNotificationMessage(reminder.getStatus(),
-              reminder.getProcessingUser().getProcessingDocument().getIncomingDoc().getIncomingNumber());
-          message.setProcessingDocumentType(ProcessingDocumentTypeEnum.INCOMING_DOCUMENT);
-          message.setDocumentId(reminder.getProcessingUser().getProcessingDocument().getIncomingDoc().getId());
-        } else {
-          message = documentReminderService.buildMobileNotificationMessage(reminder.getStatus(),
-              reminder.getProcessingUser().getProcessingDocument().getOutgoingDocument().getOutgoingNumber());
-          message.setProcessingDocumentType(ProcessingDocumentTypeEnum.OUTGOING_DOCUMENT);
-          message.setDocumentId(reminder.getProcessingUser().getProcessingDocument().getOutgoingDocument().getId());
-        }
+        if (reminder.getStatus() != DocumentReminderStatusEnum.ACTIVE) {
+          if (Objects.nonNull(reminder.getProcessingUser().getProcessingDocument().getIncomingDoc())){
+            message = documentReminderService.buildMobileNotificationMessage(reminder.getStatus(),
+                reminder.getProcessingUser().getProcessingDocument().getIncomingDoc().getIncomingNumber());
+            message.setProcessingDocumentType(ProcessingDocumentTypeEnum.INCOMING_DOCUMENT);
+            message.setDocumentId(reminder.getProcessingUser().getProcessingDocument().getIncomingDoc().getId());
+          } else {
+            message = documentReminderService.buildMobileNotificationMessage(reminder.getStatus(),
+                reminder.getProcessingUser().getProcessingDocument().getOutgoingDocument().getOutgoingNumber());
+            message.setProcessingDocumentType(ProcessingDocumentTypeEnum.OUTGOING_DOCUMENT);
+            message.setDocumentId(reminder.getProcessingUser().getProcessingDocument().getOutgoingDocument().getId());
+          }
 
-        documentReminderService.pushMobileNotificationsByUserId(message, reminder.getProcessingUser().getUser().getId());
-      } catch (FirebaseMessagingException e) {
+          documentReminderService.pushMobileNotificationsByUserId(message, reminder.getProcessingUser().getUser().getId());
+        }
+      } catch (Exception e) {
         log.error("Error when sending mobile notification: {}", e.getMessage(), e);
       }
     });
 
-    documentReminderRepository.saveAll(reminders);
+    documentReminderService.saveAll(reminders);
   }
 }

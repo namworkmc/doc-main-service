@@ -12,6 +12,7 @@ import edu.hcmus.doc.mainservice.model.entity.DocFirebaseTokenEntity;
 import edu.hcmus.doc.mainservice.model.entity.DocumentReminder;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
+import edu.hcmus.doc.mainservice.model.enums.DocFirebaseTokenType;
 import edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum;
 import edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentTypeEnum;
 import edu.hcmus.doc.mainservice.repository.DocumentReminderRepository;
@@ -27,13 +28,14 @@ import java.time.YearMonth;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,7 +120,7 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
   }
 
   @Override
-  public Long createDocumentReminder(ProcessingUser processingUser) {
+  public void createDocumentReminder(ProcessingUser processingUser) {
     DocumentReminder documentReminder = new DocumentReminder();
     documentReminder.setProcessingUser(processingUser);
     documentReminder.setExpirationDate(processingUser.getProcessingDuration());
@@ -133,7 +135,8 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
         documentReminder.setStatus(DocumentReminderStatusEnum.EXPIRED);
       } else {
         documentReminder.setStatus(DocumentReminderStatusEnum.ACTIVE);
-        return documentReminderRepository.save(documentReminder).getId();
+        documentReminderRepository.save(documentReminder);
+        return;
       }
 
       if (processingUser.getProcessingDocument().getIncomingDoc() != null){
@@ -155,11 +158,11 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
       log.error("Error when sending mobile notification: {}", e.getMessage(), e);
     }
 
-    return documentReminderRepository.save(documentReminder).getId();
+    documentReminderRepository.save(documentReminder);
   }
 
   @Override
-  public String pushMobileNotification(MobileNotificationMessageDto mobileNotificationMessageDto)
+  public void pushMobileNotification(MobileNotificationMessageDto mobileNotificationMessageDto)
       throws FirebaseMessagingException {
     Message message = Message.builder()
         .putData("processingDocumentType", mobileNotificationMessageDto.getProcessingDocumentType().name())
@@ -174,7 +177,6 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
     String res = firebaseMessaging.send(message);
     log.info(FIREBASE_NOTIFICATION_RESPONSE_LOG, res);
 
-    return res;
   }
 
   @Override
@@ -201,10 +203,11 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
         .addAllTokens(tokens)
         .build();
     BatchResponse batchResponse = firebaseMessaging.sendEachForMulticast(multicastMessage);
-    batchResponse.getResponses().forEach(response -> {
-      log.info(FIREBASE_NOTIFICATION_RESPONSE_LOG, response.getMessageId());
-      log.error("Error when sending mobile notification: {}", response.getException().getMessage(), response.getException());
-    });
+    batchResponse.getResponses().forEach(response -> Optional.ofNullable(response.getMessageId())
+        .ifPresentOrElse(
+            messageId -> log.info(FIREBASE_NOTIFICATION_RESPONSE_LOG, messageId),
+            () -> log.error("Error when sending mobile notification: {}",
+                response.getException().getMessage(), response.getException())));
   }
 
   @Override
@@ -214,21 +217,38 @@ public class DocumentReminderServiceImpl implements DocumentReminderService {
 
     String title = null;
     String body = null;
-    if (documentReminderStatus == DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION) {
-      title = DocMessageUtils.getContent("reminder.message.close-to-expire.title");
-      body = DocMessageUtils.getContent("reminder.message.close-to-expire.body", documentNumber);
-    } else if (documentReminderStatus == DocumentReminderStatusEnum.EXPIRED) {
-      title = DocMessageUtils.getContent("reminder.message.expired.title");
-      body = DocMessageUtils.getContent("reminder.message.expired.body", documentNumber);
-    }
+    try {
+      if (documentReminderStatus == DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION) {
+        title = DocMessageUtils.getContent("reminder.message.close-to-expire.title");
+        body = DocMessageUtils.getContent("reminder.message.close-to-expire.body", documentNumber);
+      } else if (documentReminderStatus == DocumentReminderStatusEnum.EXPIRED) {
+        title = DocMessageUtils.getContent("reminder.message.expired.title");
+        body = DocMessageUtils.getContent("reminder.message.expired.body", documentNumber);
+      }
 
-    if (StringUtils.isAnyBlank(title, body)) {
-      throw new IllegalArgumentException("Title or body is blank");
+      if (StringUtils.isAnyBlank(title, body)) {
+        throw new IllegalArgumentException("Title: " + title + " or body " + body + " is blank");
+      }
+    } catch (IllegalArgumentException e) {
+      log.error("Error when building mobile notification message: {}", e.getMessage(), e);
     }
 
     return MobileNotificationMessageDto.builder()
         .title(title)
         .body(body)
         .build();
+  }
+
+  @Override
+  public void saveAll(List<DocumentReminder> documentReminders) {
+    documentReminderRepository.saveAll(documentReminders);
+  }
+
+  @Override
+  public List<DocumentReminder> getDocumentRemindersByStatusIn(
+      List<DocumentReminderStatusEnum> statuses) {
+    return documentReminderRepository.getDocumentRemindersByStatusIn(
+        List.of(DocumentReminderStatusEnum.ACTIVE,
+            DocumentReminderStatusEnum.CLOSE_TO_EXPIRATION));
   }
 }
