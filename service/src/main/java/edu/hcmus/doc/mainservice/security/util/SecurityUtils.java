@@ -23,7 +23,7 @@ public final class SecurityUtils {
 
   private static final int ONE_DAY = 86400;
 
-  private static final String SPECIAL_CHARACTERS = "!@#$%^&*()_+";
+  private static final String SPECIAL_CHARACTERS = "@$!%*?&";
 
   private SecurityUtils() {
   }
