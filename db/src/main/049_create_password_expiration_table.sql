@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset doc:049
+
 CREATE TABLE doc_main.password_expiration
 (
     id            serial4      NOT NULL,
