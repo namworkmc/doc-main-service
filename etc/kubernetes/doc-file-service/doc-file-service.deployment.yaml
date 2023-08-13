@@ -25,7 +25,7 @@ spec:
               port: 8081
               path: /actuator/health/liveness
             initialDelaySeconds: 60
-            periodSeconds: 30
+            periodSeconds: 60
           ports:
             - containerPort: 8081
           env:
@@ -208,6 +208,30 @@ spec:
                 configMapKeyRef:
                   name: doc-file-service-config
                   key: doc-file-service-aws-s3-bucket-name
+
+            - name: DOC_FILE_SERVICE_MINIO_URL
+              valueFrom:
+                secretKeyRef:
+                  key: minio-url
+                  name: doc-minio-secret
+
+            - name: DOC_FILE_SERVICE_MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: minio-access-key
+                  name: doc-minio-secret
+
+            - name: DOC_FILE_SERVICE_MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: minio-secret-key
+                  name: doc-minio-secret
+
+            - name: DOC_FILE_SERVICE_MINIO_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: minio-bucket-name
+                  name: doc-minio-secret
 
             - name: TZ
               valueFrom:

@@ -1,3 +1,5 @@
+#! /bin/bash
+
 kubectl delete -f ./doc-ingress/doc-kong.yaml
 kubectl delete -f ./doc-ingress/doc-ingress.yaml
 
@@ -21,3 +23,8 @@ kubectl delete -f ./doc-file-service/doc-file-service.secret.yaml
 kubectl delete -f ./doc-file-service/doc-file-service.deployment.yaml
 
 kubectl delete -f ./doc-main-service/doc-front.deployment.yaml
+
+kubectl delete -f ./common/doc-const.config.yaml
+
+kubectl delete -f ./doc-minio/doc-minio.secret.yaml
+kubectl delete -f ./doc-minio/doc-minio.deployment.yaml

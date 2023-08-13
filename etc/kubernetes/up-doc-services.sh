@@ -1,7 +1,6 @@
-kubectl apply -f ./common/doc-const.config.yaml
+#! /bin/bash
 
-kubectl apply -f ./doc-ingress/doc-kong.yaml
-kubectl apply -f ./doc-ingress/doc-ingress.yaml
+kubectl apply -f ./common/doc-const.config.yaml
 
 kubectl apply -f ./doc-keycloak/doc-keycloak.config.yaml
 kubectl apply -f ./doc-keycloak/doc-keycloak.secret.yaml
@@ -23,3 +22,9 @@ kubectl apply -f ./doc-file-service/doc-file-service.secret.yaml
 kubectl apply -f ./doc-file-service/doc-file-service.deployment.yaml
 
 kubectl apply -f ./doc-main-service/doc-front.deployment.yaml
+
+kubectl apply -f ./doc-minio/doc-minio.secret.yaml
+kubectl apply -f ./doc-minio/doc-minio.deployment.yaml
+
+kubectl apply -f ./doc-ingress/doc-kong.yaml
+kubectl apply -f ./doc-ingress/doc-ingress.yaml

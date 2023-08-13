@@ -1,3 +1,5 @@
+#! /bin/bash
+
 kubectl apply -f ./dashboard/dashboard.deployment.yaml
 kubectl apply -f ./dashboard/dashboard.config.yaml
 
