@@ -51,4 +51,5 @@
   <include id="046" file="046_add_columns_for_return_request_table.sql" relativeToChangelogFile="true" />
   <include id="047" file="047_update_users_password_to_adapt_with_requirements.sql" relativeToChangelogFile="true" />
   <include id="048" file="048_update_transfer_history_table.sql" relativeToChangelogFile="true" />
+  <include id="049" file="049_create_password_expiration_table.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>

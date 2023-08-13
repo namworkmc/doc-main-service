@@ -3,6 +3,7 @@ package edu.hcmus.doc.mainservice.service.impl;
 import static edu.hcmus.doc.mainservice.model.enums.MESSAGE.user_has_already_exists_in_the_flow_of_document;
 import static edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType.OUTGOING_DOCUMENT;
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcessingDocument;
+import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.formatDocIds;
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.getStepOutgoingDocument;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,6 +50,7 @@ import edu.hcmus.doc.mainservice.repository.TransferHistoryRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
+import edu.hcmus.doc.mainservice.service.EmailService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.OutgoingDocumentService;
@@ -91,6 +93,8 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
   private final FolderService folderService;
   private final ProcessingUserRepository processingUserRepository;
   private final ProcessingMethodService processingMethodService;
+
+  private final EmailService emailService;
 
   @Override
   public OutgoingDocument getOutgoingDocumentById(Long id) {
@@ -390,6 +394,10 @@ public class OutgoingDocumentServiceImpl implements OutgoingDocumentService {
         assignee, transferDocDto, processingMethodService.findByName(transferDocDto.getProcessingMethod()), OUTGOING_DOCUMENT);
     // save transfer history
     transferHistoryRepository.save(transferHistory);
+
+    // send email to assignee
+    emailService.sendTransferDocumentEmail(reporter.getFullName(), assignee.getEmail(),
+        assignee.getFullName(), formatDocIds(transferDocDto.getDocumentIds()));
   }
 
   @Override

@@ -55,4 +55,6 @@ public interface UserService extends SearchService<UserDto, UserSearchCriteria> 
   Long resetUserPasswordById(Long userId);
 
   Long resetUserPasswordByEmail(String email);
+
+  Long updateUserPassword(String username, String oldPassword, String newPassword, String confirmPassword);
 }

@@ -7,6 +7,7 @@ import static edu.hcmus.doc.mainservice.model.exception.IncomingDocumentNotFound
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcessingDocument;
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcessingUser;
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcessingUserRole;
+import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.formatDocIds;
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.getStep;
 import static java.time.temporal.IsoFields.QUARTER_OF_YEAR;
 
@@ -61,6 +62,7 @@ import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
 import edu.hcmus.doc.mainservice.service.AttachmentService;
 import edu.hcmus.doc.mainservice.service.DocumentReminderService;
+import edu.hcmus.doc.mainservice.service.EmailService;
 import edu.hcmus.doc.mainservice.service.FolderService;
 import edu.hcmus.doc.mainservice.service.IncomingDocumentService;
 import edu.hcmus.doc.mainservice.service.ProcessingMethodService;
@@ -119,6 +121,8 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   private final LinkedDocumentRepository linkedDocumentRepository;
 
   private final ProcessingMethodService processingMethodService;
+
+  private final EmailService emailService;
 
   @Override
   public long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
@@ -278,6 +282,9 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
     // save transfer history
     transferHistoryRepository.save(transferHistory);
+    // send email to assignee
+    emailService.sendTransferDocumentEmail(reporter.getFullName(), assignee.getEmail(),
+        assignee.getFullName(), formatDocIds(transferDocDto.getDocumentIds()));
   }
 
   private void transferToSameLevel(TransferDocDto transferDocDto, User reporter, User assignee,

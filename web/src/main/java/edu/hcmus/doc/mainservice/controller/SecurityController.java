@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,5 +50,10 @@ public class SecurityController {
   @PostMapping("/auth/forgot-password")
   public ResponseEntity<Long> forgotPassword(@RequestParam String email) {
     return ResponseEntity.ok().body(userService.resetUserPasswordByEmail(email));
+  }
+
+  @PutMapping("/auth/change-password")
+  public Long updateCurrentUserPassword(@RequestParam String username, @RequestParam String oldPassword, @RequestParam String newPassword, @RequestParam String confirmPassword) {
+    return userService.updateUserPassword(username, oldPassword, newPassword, confirmPassword);
   }
 }

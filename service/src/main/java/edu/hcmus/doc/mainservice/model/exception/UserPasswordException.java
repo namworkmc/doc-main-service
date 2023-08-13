@@ -8,6 +8,8 @@ public class UserPasswordException extends DocBusinessException {
 
   public static final String PASSWORD_NOT_CHANGED = "user.password.not_changed";
 
+  public static final String PASSWORD_NEED_CHANGED = "user.password.need_changed";
+
   public UserPasswordException() {
     super(USER_PASSWORD_INCORRECT);
   }

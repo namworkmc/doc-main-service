@@ -14,6 +14,7 @@ import edu.hcmus.doc.mainservice.model.dto.TransferHistory.TransferHistorySearch
 import edu.hcmus.doc.mainservice.model.dto.UserDepartmentDto;
 import edu.hcmus.doc.mainservice.model.dto.UserDto;
 import edu.hcmus.doc.mainservice.model.dto.UserSearchCriteria;
+import edu.hcmus.doc.mainservice.model.entity.PasswordExpiration;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingDocument;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUser;
 import edu.hcmus.doc.mainservice.model.entity.ProcessingUserRole;
@@ -30,6 +31,7 @@ import edu.hcmus.doc.mainservice.model.exception.TransferHistoryNotFoundExceptio
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserPasswordException;
 import edu.hcmus.doc.mainservice.model.exception.UsernameExistedException;
+import edu.hcmus.doc.mainservice.repository.PasswordExpirationRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingUserRepository;
 import edu.hcmus.doc.mainservice.repository.ProcessingUserRoleRepository;
@@ -42,6 +44,7 @@ import edu.hcmus.doc.mainservice.util.mapper.PaginationMapper;
 import edu.hcmus.doc.mainservice.util.mapper.TransferHistoryMapper;
 import edu.hcmus.doc.mainservice.util.mapper.UserMapper;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -68,6 +71,7 @@ public class UserServiceImpl implements UserService {
   private final ProcessingUserRepository processingUserRepository;
   private final ProcessingUserRoleRepository processingUserRoleRepository;
   private final EmailService emailService;
+  private final PasswordExpirationRepository passwordExpirationRepository;
 
   @Override
   public List<User> getUsers(String query, long first, long max) {
@@ -380,8 +384,20 @@ public class UserServiceImpl implements UserService {
   public Long resetUserPasswordById(Long userId) {
     User user = getUserById(userId);
     String password = generateRandomPassword();
-    user.setPassword(passwordEncoder.encode(password));
+    String passwordHash = passwordEncoder.encode(password);
+    user.setPassword(passwordHash);
 
+    PasswordExpiration passwordExpiration = new PasswordExpiration();
+    passwordExpiration.setPassword(passwordHash);
+    passwordExpiration.setUser(user);
+    passwordExpiration.setCreationTime(LocalDateTime.now());
+    passwordExpiration.setNeedsChange(true);
+
+    // delete old password
+    List<PasswordExpiration> oldRequest = passwordExpirationRepository.findPasswordExpirationByUserId(
+        userId);
+    passwordExpirationRepository.deleteAll(oldRequest);
+    passwordExpirationRepository.save(passwordExpiration);
     // send email
     emailService.sendPasswordEmail(user.getEmail(), user.getUsername(), user.getFullName(), password, false);
     return userRepository.save(user).getId();
@@ -391,10 +407,48 @@ public class UserServiceImpl implements UserService {
   public Long resetUserPasswordByEmail(String email) {
     User user = getUserByEmail(email);
     String password = generateRandomPassword();
-    user.setPassword(passwordEncoder.encode(password));
+    String passwordHash = passwordEncoder.encode(password);
+    user.setPassword(passwordHash);
 
+    PasswordExpiration passwordExpiration = new PasswordExpiration();
+    passwordExpiration.setPassword(passwordHash);
+    passwordExpiration.setUser(user);
+    passwordExpiration.setCreationTime(LocalDateTime.now());
+    passwordExpiration.setNeedsChange(true);
+
+    // delete old password
+    List<PasswordExpiration> oldRequest = passwordExpirationRepository.findPasswordExpirationByUserId(
+        user.getId());
+    passwordExpirationRepository.deleteAll(oldRequest);
+    passwordExpirationRepository.save(passwordExpiration);
     // send email
     emailService.sendPasswordEmail(user.getEmail(), user.getUsername(), user.getFullName(), password, false);
+    return userRepository.save(user).getId();
+  }
+
+  @Override
+  public Long updateUserPassword(String username, String oldPassword, String newPassword,
+      String confirmPassword) {
+
+    User user = getUserByUsername(username);
+    if (oldPassword.equals(newPassword)) {
+      throw new UserPasswordException(PASSWORD_NOT_CHANGED);
+    }
+
+    if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+      throw new UserPasswordException();
+    }
+
+    if (!newPassword.equals(confirmPassword)) {
+      throw new UserPasswordException(PASSWORD_CONFIRMATION_INVALID);
+    }
+
+    user.setPassword(passwordEncoder.encode(newPassword));
+    // delete old password
+    List<PasswordExpiration> oldRequest = passwordExpirationRepository.findPasswordExpirationByUserId(
+        user.getId());
+    passwordExpirationRepository.deleteAll(oldRequest);
+
     return userRepository.save(user).getId();
   }
 }

@@ -1,5 +1,7 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
+import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.formatDocIds;
+
 import edu.hcmus.doc.mainservice.model.dto.ReturnRequest.ReturnRequestGetDto;
 import edu.hcmus.doc.mainservice.model.dto.ReturnRequest.ReturnRequestPostDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
@@ -35,6 +37,7 @@ import edu.hcmus.doc.mainservice.repository.ReturnRequestRepository;
 import edu.hcmus.doc.mainservice.repository.TransferHistoryRepository;
 import edu.hcmus.doc.mainservice.repository.UserRepository;
 import edu.hcmus.doc.mainservice.security.util.SecurityUtils;
+import edu.hcmus.doc.mainservice.service.EmailService;
 import edu.hcmus.doc.mainservice.service.ProcessingDocumentService;
 import edu.hcmus.doc.mainservice.service.ReturnRequestService;
 import edu.hcmus.doc.mainservice.util.TransferDocumentUtils;
@@ -72,6 +75,8 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
   private final ProcessingDocumentRepository processingDocumentRepository;
 
   private final ProcessingDocumentService processingDocumentService;
+
+  private final EmailService emailService;
 
   @Override
   public List<ReturnRequestGetDto> getReturnRequestsByDocumentId(Long documentId,
@@ -215,6 +220,12 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
       TransferHistory transferHistory = createTransferHistory(returnRequest, type);
       transferHistoryRepository.save(transferHistory);
     });
+    // send email
+    // send back: current = sender, previous = receiver
+    User currentProcessingUser = returnRequests.get(0).getCurrentProcessingUser();
+    User previousProcessingUser = returnRequests.get(0).getPreviousProcessingUser();
+    emailService.sendSendBackDocumentEmail(currentProcessingUser.getFullName(), previousProcessingUser.getEmail(),
+        previousProcessingUser.getFullName(), formatDocIds(returnRequestDto.getDocumentIds()));
     return returnRequests.stream().map(ReturnRequest::getId).toList();
   }
 
@@ -311,6 +322,12 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
       }
     });
 
+    // send email
+    // return request: previous = sender, current = receiver
+    User currentProcessingUser = returnRequests.get(0).getCurrentProcessingUser();
+    User previousProcessingUser = returnRequests.get(0).getPreviousProcessingUser();
+    emailService.sendReturnDocumentEmail(previousProcessingUser.getFullName(), currentProcessingUser.getEmail(),
+        currentProcessingUser.getFullName(), formatDocIds(returnRequestDto.getDocumentIds()));
     return returnRequests.stream().map(ReturnRequest::getId).toList();
   }
 
