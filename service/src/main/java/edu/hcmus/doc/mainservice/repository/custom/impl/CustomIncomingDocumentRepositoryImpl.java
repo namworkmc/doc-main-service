@@ -97,6 +97,13 @@ public class CustomIncomingDocumentRepositoryImpl
                 .fetchFirst();
     }
 
+    @Override
+    public IncomingDocument getIncomingDocumentByIdForStatistic(Long id) {
+        return selectFrom(incomingDocument)
+                .where(incomingDocument.id.eq(id))
+                .fetchFirst();
+    }
+
   @Override
   public List<IncomingDocument> getIncomingDocumentsByIds(List<Long> ids) {
     return selectFrom(incomingDocument)

@@ -1,7 +1,5 @@
 package edu.hcmus.doc.mainservice.repository.custom.impl;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.set;
 import static edu.hcmus.doc.mainservice.model.entity.QIncomingDocument.incomingDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QOutgoingDocument.outgoingDocument;
 import static edu.hcmus.doc.mainservice.model.entity.QProcessingDocument.processingDocument;
@@ -16,6 +14,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQuery;
+import edu.hcmus.doc.mainservice.model.dto.DocDetailStatisticsDto;
 import edu.hcmus.doc.mainservice.model.dto.DocListStatisticsDto;
 import edu.hcmus.doc.mainservice.model.dto.SearchCriteriaDto;
 import edu.hcmus.doc.mainservice.model.dto.TransferDocument.GetTransferDocumentDetailRequest;
@@ -41,11 +40,11 @@ import edu.hcmus.doc.mainservice.util.DocMessageUtils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
@@ -521,7 +520,7 @@ public class CustomProcessingDocumentRepositoryImpl
   }
 
   @Override
-  public DocListStatisticsDto getDocListStatistics(Long userId, LocalDate fromDate,
+  public DocListStatisticsDto getDocListStatistics(List<Long> userIdList, LocalDate fromDate,
       LocalDate toDate, ProcessingDocumentType processingDocumentType) {
     QProcessingDocument qProcessingDocument = processingDocument;
     QProcessingUser qProcessingUser = processingUser;
@@ -542,37 +541,63 @@ public class CustomProcessingDocumentRepositoryImpl
       ));
     }
 
-    Map<String, Set<Long>> receivedDocuments = selectFrom(qProcessingDocument)
-        .select(qProcessingDocument.id)
+    Map<String, Map<Long, List<DocDetailStatisticsDto>>> receivedDocuments = new HashMap<>();
+
+    List<Tuple> queryResults = selectFrom(qProcessingDocument)
+        .distinct()
+        .select(
+            documentCase,
+            qProcessingDocument.id,
+            qProcessingDocument.incomingDoc.id,
+            qProcessingDocument.outgoingDocument.id,
+            qProcessingDocument.status,
+            qProcessingUser.user.id,
+            qProcessingUser.processingDuration,
+            qProcessingUserRole.createdDate
+        )
         .leftJoin(qProcessingUser)
         .on(qProcessingDocument.id.eq(qProcessingUser.processingDocument.id))
         .leftJoin(qProcessingUserRole)
         .on(qProcessingUser.id.eq(qProcessingUserRole.processingUser.id))
-        .where(qProcessingUser.user.id.eq(userId)
-            .and(where))
-        .transform(groupBy(documentCase).as(set(qProcessingDocument.id)));
+        .where(
+            qProcessingUser.user.id.in(userIdList)  // Assuming userIdList is a List<Long>
+                .and(where)
+        )
+        .fetch();
 
-    if (receivedDocuments.isEmpty() || Objects.isNull(receivedDocuments.get("received_document"))) {
-      return null;
-    } else {
-      DocListStatisticsDto docListStatisticsDto = new DocListStatisticsDto();
-      docListStatisticsDto.setUserId(userId);
-      if (Objects.isNull(receivedDocuments.get("transferred_document"))) {
-        docListStatisticsDto.setProcessedDocuments(new ArrayList<>());
-        docListStatisticsDto.setUnprocessedDocuments(
-            receivedDocuments.get("received_document").stream().toList());
-      } else {
-        List<Long> processedDocuments = receivedDocuments.get("received_document").stream()
-            .filter(receivedDocuments.get("transferred_document")::contains)
-            .toList();
-        List<Long> unprocessedDocuments = receivedDocuments.get("received_document").stream()
-            .filter(docId -> !processedDocuments.contains(docId))
-            .toList();
-        docListStatisticsDto.setProcessedDocuments(processedDocuments);
-        docListStatisticsDto.setUnprocessedDocuments(unprocessedDocuments);
-      }
-      return docListStatisticsDto;
+    for (Tuple tuple : queryResults) {
+      String caseType = tuple.get(documentCase);
+      Long documentId = tuple.get(qProcessingDocument.id);
+      Long incomingDocId = tuple.get(qProcessingDocument.incomingDoc.id);
+      Long outgoingDocId = tuple.get(qProcessingDocument.outgoingDocument.id);
+      Long userId = tuple.get(qProcessingUser.user.id);
+      ProcessingStatus status = tuple.get(qProcessingDocument.status);
+      LocalDate processingDuration = tuple.get(qProcessingUser.processingDuration);
+      LocalDate createdDate = Objects.isNull(qProcessingUserRole.createdDate) ? null : Objects.requireNonNull(
+          tuple.get(qProcessingUserRole.createdDate)).toLocalDate();
+
+      DocDetailStatisticsDto docDetailStatisticsDto = new DocDetailStatisticsDto();
+      docDetailStatisticsDto.setDocId(documentId);
+      docDetailStatisticsDto.setIncomingDocId(incomingDocId);
+      docDetailStatisticsDto.setOutgoingDocId(outgoingDocId);
+      docDetailStatisticsDto.setStatus(status);
+      docDetailStatisticsDto.setProcessingDuration(processingDuration);
+      docDetailStatisticsDto.setCreatedDate(createdDate);
+
+      receivedDocuments
+          .computeIfAbsent(caseType, k -> new HashMap<>())
+          .computeIfAbsent(userId, k -> new ArrayList<>())
+          .add(docDetailStatisticsDto);
     }
+
+    Map<Long, List<DocDetailStatisticsDto>> receivedDocs = receivedDocuments.getOrDefault("received_document", new HashMap<>());
+    Map<Long, List<DocDetailStatisticsDto>> transferredDocs = receivedDocuments.getOrDefault("transferred_document", new HashMap<>());
+    DocListStatisticsDto docListStatisticsDto = new DocListStatisticsDto();
+
+    docListStatisticsDto.setReceivedDocuments(receivedDocs);
+    docListStatisticsDto.setTransferredDocuments(transferredDocs);
+
+    return docListStatisticsDto;
   }
 
   /**

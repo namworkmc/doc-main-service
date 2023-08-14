@@ -15,6 +15,8 @@ public interface CustomIncomingDocumentRepository {
 
   IncomingDocument getIncomingDocumentById(Long id);
 
+  IncomingDocument getIncomingDocumentByIdForStatistic(Long id);
+
   List<IncomingDocument> getIncomingDocumentsByIds(List<Long> ids);
 
   Map<String, Set<Long>> getQuarterProcessingStatisticsByUserId(Long userId);

@@ -50,6 +50,13 @@ public class CustomOutgoingDocumentRepositoryImpl
   }
 
   @Override
+  public OutgoingDocument getOutgoingDocumentByIdForStatistic(Long id) {
+    return selectFrom(QOutgoingDocument.outgoingDocument)
+        .where(QOutgoingDocument.outgoingDocument.id.eq(id))
+        .fetchFirst();
+  }
+
+  @Override
   public long getTotalElements(OutgoingDocSearchCriteriaDto searchCriteriaDto) {
     return buildSearchQuery(searchCriteriaDto)
         .fetch()

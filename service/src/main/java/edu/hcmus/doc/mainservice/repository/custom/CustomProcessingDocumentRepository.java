@@ -37,7 +37,7 @@ public interface CustomProcessingDocumentRepository
 
   Optional<ProcessingStatus> getProcessingStatus(Long documentId);
 
-  DocListStatisticsDto getDocListStatistics(Long userId, LocalDate fromDate, LocalDate toDate, ProcessingDocumentType processingDocumentType);
+  DocListStatisticsDto getDocListStatistics(List<Long> userId, LocalDate fromDate, LocalDate toDate, ProcessingDocumentType processingDocumentType);
 
   Optional<ProcessingDocument> findProcessingDocumentById(Long id);
 

@@ -10,6 +10,8 @@ public interface CustomOutgoingDocumentRepository
         extends DocAbstractSearchRepository<OutgoingDocument, OutgoingDocSearchCriteriaDto> {
   OutgoingDocument getOutgoingDocumentById(Long id);
 
+  OutgoingDocument getOutgoingDocumentByIdForStatistic(Long id);
+
   List<OutgoingDocument> getOutgoingDocumentsByIds(List<Long> ids);
 
   List<OutgoingDocument> getDocumentsLinkedToIncomingDocument(Long sourceDocumentId);
