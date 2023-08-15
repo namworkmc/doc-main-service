@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: doc-file-service
-          image: hcmusdoc/doc-file-service:release-v1.1.0
+          image: hcmusdoc/doc-file-service:release-v1.2.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:

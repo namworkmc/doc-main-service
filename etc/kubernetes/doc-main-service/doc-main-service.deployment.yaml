@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: doc-main-service
-          image: hcmusdoc/doc-main-service:release-v1.1.1
+          image: hcmusdoc/doc-main-service:release-v1.2.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:

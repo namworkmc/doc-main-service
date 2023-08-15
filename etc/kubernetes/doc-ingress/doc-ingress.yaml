@@ -9,13 +9,13 @@ spec:
   rules:
     - http:
         paths:
-          #          - path: /
-          #            pathType: Prefix
-          #            backend:
-          #              service:
-          #                name: doc-keycloak
-          #                port:
-          #                  number: 8180
+#          - path: /
+#            pathType: ImplementationSpecific
+#            backend:
+#              service:
+#                name: doc-keycloak
+#                port:
+#                  number: 8180
 
           - path: /doc-rabbitmq
             pathType: ImplementationSpecific
@@ -48,3 +48,11 @@ spec:
                 name: doc-front
                 port:
                   number: 3000
+
+#          - path: /
+#            pathType: ImplementationSpecific
+#            backend:
+#              service:
+#                name: doc-minio
+#                port:
+#                  number: 9001

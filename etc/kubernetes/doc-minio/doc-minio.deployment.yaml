@@ -41,6 +41,14 @@ spec:
                 configMapKeyRef:
                   name: doc-const-config
                   key: vietnam-timezone
+          volumeMounts:
+            - mountPath: /data
+              name: doc-minio-volume
+
+      volumes:
+        - name: doc-minio-volume
+          persistentVolumeClaim:
+            claimName: doc-minio-pvc
 
 ---
 
