@@ -1,7 +1,9 @@
 package edu.hcmus.doc.mainservice.service.impl;
 
 import edu.hcmus.doc.mainservice.model.entity.PasswordExpiration;
+import edu.hcmus.doc.mainservice.model.enums.MESSAGE;
 import edu.hcmus.doc.mainservice.repository.PasswordExpirationRepository;
+import edu.hcmus.doc.mainservice.util.DocMessageUtils;
 import edu.hcmus.doc.mainservice.util.validator.annotation.PasswordValidator;
 import edu.hcmus.doc.mainservice.model.dto.TokenDto;
 import edu.hcmus.doc.mainservice.model.entity.DocFirebaseTokenEntity;
@@ -61,7 +63,7 @@ public class KeycloakServiceImpl implements KeycloakService {
   @Override
   public TokenDto getToken(String username, String password, String firebaseToken) {
     if (StringUtils.isBlank(username) || StringUtils.isBlank(password) || !password.matches(PasswordValidator.PASSWORD_REGEX)) {
-      throw new DocMandatoryFields("Username or password is invalid");
+      throw new DocMandatoryFields(DocMessageUtils.getContent(MESSAGE.invalid_login_information));
     }
 
     User user = userRepository.findUserByUsername(username).orElseThrow(UserNotFoundException::new);

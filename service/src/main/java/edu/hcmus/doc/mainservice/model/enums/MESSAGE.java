@@ -19,4 +19,5 @@ public enum MESSAGE {
   user_not_have_permission_to_transfer_document_in_same_level,
   user_not_have_permission_to_transfer_this_document,
   infinite_processing_duration,
+  invalid_login_information
 }
