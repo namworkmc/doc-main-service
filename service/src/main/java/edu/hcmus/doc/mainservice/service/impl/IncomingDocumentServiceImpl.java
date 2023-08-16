@@ -3,6 +3,7 @@ package edu.hcmus.doc.mainservice.service.impl;
 import static edu.hcmus.doc.mainservice.model.enums.DocSystemRoleEnum.VAN_THU;
 import static edu.hcmus.doc.mainservice.model.enums.ProcessingDocumentType.INCOMING_DOCUMENT;
 import static edu.hcmus.doc.mainservice.model.enums.TransferDocumentType.TRANSFER_TO_GIAM_DOC;
+import static edu.hcmus.doc.mainservice.model.exception.DocumentNotFoundException.DOCUMENT_NOT_FOUND;
 import static edu.hcmus.doc.mainservice.model.exception.IncomingDocumentNotFoundException.INCOMING_DOCUMENT_NOT_FOUND;
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcessingDocument;
 import static edu.hcmus.doc.mainservice.util.TransferDocumentUtils.createProcessingUser;
@@ -51,6 +52,8 @@ import edu.hcmus.doc.mainservice.model.exception.LinkedDocumentExistedException;
 import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentException;
 import edu.hcmus.doc.mainservice.model.exception.ProcessingDocumentNotFoundException;
 import edu.hcmus.doc.mainservice.model.exception.UserNotFoundException;
+import edu.hcmus.doc.mainservice.repository.DistributionOrganizationRepository;
+import edu.hcmus.doc.mainservice.repository.DocumentTypeRepository;
 import edu.hcmus.doc.mainservice.repository.IncomingDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.LinkedDocumentRepository;
 import edu.hcmus.doc.mainservice.repository.OutgoingDocumentRepository;
@@ -124,6 +127,10 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
   private final EmailService emailService;
 
+  private final DocumentTypeRepository documentTypeRepository;
+
+  private final DistributionOrganizationRepository distributionOrganizationRepository;
+
   @Override
   public long getTotalElements(SearchCriteriaDto searchCriteriaDto) {
     return processingDocumentRepository.getTotalElements(searchCriteriaDto);
@@ -140,6 +147,9 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
 
     IncomingDocument persistedIncomingDocument = getIncomingDocumentById(incomingDocumentPutDto.getId());
     incomingDecoratorDocumentMapper.partialUpdate(incomingDocumentPutDto, persistedIncomingDocument);
+    persistedIncomingDocument.setDocumentType(documentTypeRepository.findById(incomingDocumentPutDto.getDocumentType()).orElseThrow(() -> new DocumentNotFoundException(DOCUMENT_NOT_FOUND)));
+    persistedIncomingDocument.setDistributionOrg(distributionOrganizationRepository.findById(incomingDocumentPutDto.getDistributionOrg()).orElseThrow(() -> new IncomingDocumentNotFoundException("Distribution organization not found")));
+    persistedIncomingDocument.setFolder(folderService.findById(incomingDocumentPutDto.getFolder()));
 
     if (Objects.nonNull(incomingDocumentWithAttachmentPutDto.getAttachments())) {
       AttachmentPostDto attachmentPostDto = attachmentMapperDecorator.toAttachmentPostDto(
@@ -160,7 +170,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
     IncomingDocument incomingDocument = incomingDocumentRepository.getIncomingDocumentById(id);
 
     if (ObjectUtils.isEmpty(incomingDocument)) {
-      throw new DocumentNotFoundException(DocumentNotFoundException.DOCUMENT_NOT_FOUND);
+      throw new DocumentNotFoundException(DOCUMENT_NOT_FOUND);
     }
 
     return incomingDocument;
@@ -452,7 +462,7 @@ public class IncomingDocumentServiceImpl implements IncomingDocumentService {
   public void deleteLinkedDocuments(Long targetDocumentId, Long linkedDocumentId) {
     LinkedDocument linkedDocument = linkedDocumentRepository.getLinkedDocument(targetDocumentId, linkedDocumentId);
     if (linkedDocument == null) {
-      throw new DocumentNotFoundException(DocumentNotFoundException.DOCUMENT_NOT_FOUND);
+      throw new DocumentNotFoundException(DOCUMENT_NOT_FOUND);
     }
     linkedDocumentRepository.delete(linkedDocument);
   }
