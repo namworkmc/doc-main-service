@@ -3,20 +3,25 @@ package edu.hcmus.doc.mainservice.controller;
 import edu.hcmus.doc.mainservice.DocURL;
 import edu.hcmus.doc.mainservice.model.dto.DepartmentDto;
 import edu.hcmus.doc.mainservice.model.dto.DepartmentSearchCriteria;
+import edu.hcmus.doc.mainservice.model.dto.DistributionOrganizationDto;
+import edu.hcmus.doc.mainservice.model.dto.DistributionOrganizationSearchCriteria;
 import edu.hcmus.doc.mainservice.model.dto.DocPaginationDto;
 import edu.hcmus.doc.mainservice.model.dto.DocumentTypeDto;
 import edu.hcmus.doc.mainservice.model.dto.DocumentTypeSearchCriteria;
 import edu.hcmus.doc.mainservice.model.dto.UserDto;
 import edu.hcmus.doc.mainservice.model.dto.UserSearchCriteria;
 import edu.hcmus.doc.mainservice.model.entity.Department;
+import edu.hcmus.doc.mainservice.model.entity.DistributionOrganization;
 import edu.hcmus.doc.mainservice.model.entity.DocumentType;
 import edu.hcmus.doc.mainservice.model.entity.User;
 import edu.hcmus.doc.mainservice.model.enums.BatchJobEnum;
 import edu.hcmus.doc.mainservice.service.DepartmentService;
+import edu.hcmus.doc.mainservice.service.DistributionOrganizationService;
 import edu.hcmus.doc.mainservice.service.DocumentTypeService;
 import edu.hcmus.doc.mainservice.service.UserService;
 import edu.hcmus.doc.mainservice.service.impl.DocScheduleService;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +46,7 @@ public class AdminController extends DocAbstractController {
   private final DepartmentService departmentService;
   private final DocumentTypeService documentTypeService;
   private final DocScheduleService docScheduleService;
+  private final DistributionOrganizationService distributionOrganizationService;
 
   @GetMapping("/selection/departments")
   public List<DepartmentDto> getDepartmentsForSelection() {
@@ -83,6 +89,28 @@ public class AdminController extends DocAbstractController {
     return departmentService.search(departmentSearchCriteria, page, pageSize);
   }
 
+  @PostMapping("/search/distribution-organizations")
+  public DocPaginationDto<DistributionOrganizationDto> searchDistributionOrganizations(
+      @RequestBody DistributionOrganizationSearchCriteria distributionOrganizationSearchCriteria,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "10") int pageSize
+  ) {
+    return distributionOrganizationService.search(distributionOrganizationSearchCriteria, page, pageSize);
+  }
+
+  @PostMapping("/distribution-organizations")
+  @ResponseStatus(HttpStatus.CREATED)
+  public Long saveDistributionOrganization(@RequestBody @Valid DistributionOrganizationDto distributionOrganizationDto) {
+    DistributionOrganization distributionOrganization;
+    if (!distributionOrganizationDto.isPersisted()) {
+      distributionOrganization = distributionOrganizationMapper.toEntity(distributionOrganizationDto);
+    } else {
+      distributionOrganization = distributionOrganizationMapper.partialUpdate(distributionOrganizationDto, distributionOrganizationService.findById(distributionOrganizationDto.getId()));
+    }
+
+    return distributionOrganizationService.saveDistributionOrganization(distributionOrganization);
+  }
+
   @PostMapping("/users")
   @ResponseStatus(HttpStatus.CREATED)
   public Long createUser(@RequestBody @Valid UserDto userDto) {
@@ -112,7 +140,8 @@ public class AdminController extends DocAbstractController {
       department = departmentMapper.partialUpdate(departmentDto, departmentService.getDepartmentById(departmentDto.getId()));
     }
 
-    return departmentService.saveDepartment(department, departmentDto.getTruongPhong().getId());
+    return departmentService.saveDepartment(department, Objects.requireNonNull(
+        departmentDto.getTruongPhong()).getId());
   }
 
   @PutMapping("/users/{id}")

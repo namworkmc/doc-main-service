@@ -17,8 +17,8 @@ class DistributionOrganizationServiceTest extends AbstractServiceTest {
 
   @BeforeEach
   void setUp() {
-    this.distributionOrganizationService
-        = new DistributionOrganizationServiceImpl(distributionOrganizationRepository);
+//    this.distributionOrganizationService
+//        = new DistributionOrganizationServiceImpl(distributionOrganizationRepository);
   }
 
   @Test

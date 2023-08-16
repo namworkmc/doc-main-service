@@ -109,6 +109,7 @@
             <classPattern>edu.hcmus.doc.mainservice.model.dto.DocumentReminderWrapperDto</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.enums.DocumentReminderStatusEnum</classPattern>
             <classPattern>edu.hcmus.doc.mainservice.model.dto.ProcessingMethodDto</classPattern>
+            <classPattern>edu.hcmus.doc.mainservice.model.dto.DistributionOrganizationSearchCriteria</classPattern>
           </classPatterns>
           <excludeClasses>
             <class>java.io.Serializable</class>
