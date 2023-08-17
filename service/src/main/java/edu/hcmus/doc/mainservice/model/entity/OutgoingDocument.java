@@ -55,7 +55,6 @@ public class OutgoingDocument extends DocAbstractIdEntity {
   @Column(name = "signer")
   private String signer;
 
-  @FutureOrPresent
   @Column(name = "release_date")
   private LocalDate releaseDate;
 
