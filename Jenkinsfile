@@ -4,6 +4,9 @@ pipeline {
         jdk 'Temurin jdk-17+35'
         maven 'mvn-3.6.0'
     }
+    triggers {
+        pollSCM '* * * * *'
+    }
     stages {
         stage('Checkout') {
             steps {
