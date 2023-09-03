@@ -1,8 +1,8 @@
 pipeline {
-    agent {
-        dockerContainer {
-            image 'maven:3.9.3-eclipse-temurin-17'
-        }
+    agent any
+    tools {
+        jdk 'Temurin jdk-17+35'
+        maven 'mvn-3.6.0'
     }
     stages {
         stage('Checkout') {
@@ -13,14 +13,10 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'mvn install -Dmaven.test.failure.ignore=true'
-            }
-        }
-        stage('Deliver') {
-            steps {
-                echo 'Deliver....'
+                label 'doc-main-service-docker'
                 sh '''
-                echo "doing delivery stuff.."
+                    mvn install -Dmaven.test.failure.ignore=true
+                    docker build -t hcmusdoc/doc-main-service . 
                 '''
             }
         }
