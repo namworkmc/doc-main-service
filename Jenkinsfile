@@ -5,7 +5,7 @@ pipeline {
         maven 'mvn-3.6.0'
     }
     triggers {
-        pollSCM '* * * * *'
+        pollSCM '0 * * * * *'
     }
     stages {
         stage('Checkout') {
