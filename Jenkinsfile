@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools {
         jdk 'eclipse-temurin-17.0.5+8'
-        maven 'maven-3.8.6'
+        maven 'maven-3.6.0'
     }
     stages {
         stage('Checkout') {
