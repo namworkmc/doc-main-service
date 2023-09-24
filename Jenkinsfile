@@ -17,10 +17,12 @@ pipeline {
         stage('Build') {
             steps {
                 label 'doc-main-service-docker'
-                sh '''
+                script {
+                    sh '''
                     mvn install -Dmaven.test.failure.ignore=true
                     docker build -t hcmusdoc/doc-main-service . 
-                '''
+                    '''
+                }
             }
         }
         stage('Deploy to Kubernetes') {
