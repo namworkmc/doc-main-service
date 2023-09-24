@@ -1,11 +1,8 @@
 pipeline {
     agent any
     tools {
-        jdk 'Temurin jdk-17+35'
-        maven 'mvn-3.6.0'
-    }
-    triggers {
-        pollSCM '* * * * *'
+        jdk 'eclipse-temurin-17.0.5+8'
+        maven 'maven-3.6.0'
     }
     stages {
         stage('Checkout') {
