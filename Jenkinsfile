@@ -11,14 +11,17 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/namworkmc/doc-main-service'
             }
         }
-        stage('Build') {
+        stage('Build and build') {
             steps {
-                label 'doc-main-service-docker'
                 script {
                     sh '''
                     mvn install -Dmaven.test.failure.ignore=true
-                    docker build -t hcmusdoc/doc-main-service . 
+                    docker build -t hcmusdoc/doc-main-service:${BUILD_TAG} .
                     '''
+
+                    withDockerRegistry(credentialsId: 'prj-doc-docker-registry', toolName: 'Docker', url: 'hcmusdoc/doc-main-service') {
+                            sh 'docker push hcmusdoc/doc-main-service:${BUILD_TAG}'
+                    }
                 }
             }
         }
