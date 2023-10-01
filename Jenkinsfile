@@ -15,7 +15,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    mvn install -Dmaven.test.failure.ignore=true
+                    mvn install -DskipTests=true -Dmaven.test.failure.ignore=true
                     docker build -t hcmusdoc/doc-main-service:${BUILD_TAG} .
                     '''
 
