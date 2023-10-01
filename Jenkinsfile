@@ -19,7 +19,7 @@ pipeline {
                     docker build -t hcmusdoc/doc-main-service:${BUILD_TAG} .
                     '''
 
-                    withDockerRegistry(credentialsId: 'prj-doc-docker-registry', toolName: 'Docker', url: 'hcmusdoc/doc-main-service') {
+                    withDockerRegistry(credentialsId: 'prj-doc-docker-registry') {
                             sh 'docker push hcmusdoc/doc-main-service:${BUILD_TAG}'
                     }
                 }
