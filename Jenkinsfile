@@ -20,7 +20,7 @@ pipeline {
                     '''
 
                     withDockerRegistry(credentialsId: 'prj-doc-docker-registry') {
-                            sh 'docker push hcmusdoc/doc-main-service:${BUILD_TAG}'
+                        sh 'docker push hcmusdoc/doc-main-service:${BUILD_TAG}'
                     }
                 }
             }

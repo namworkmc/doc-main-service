@@ -122,3 +122,22 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
+# Project specific
+.github
+.idea
+.mvn
+common/doc-main-service-common.iml
+db/doc-main-service-db.iml
+etc/docker
+etc/kubernetes
+service/doc-main-service-service.iml
+web/doc-main-service-web.iml
+.gitignore
+build-image.sh
+doc-main-service-parent.iml
+Dockerfile
+Dockerfile.mvn
+mvnw
+mvnw.cmd
+README.md
+Jenkinsfile
